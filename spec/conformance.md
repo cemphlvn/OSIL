@@ -56,7 +56,28 @@ none of those. The harness (`tools/onnx_roundtrip.py` for ONNX) builds each
 case, round-trips it, verifies per-contract-field, writes the matrix cell and a
 report under `docs/reports/`.
 
-## 4. Registration
+## 4. Compression metrics (sibling of the preservation score)
+
+**compression ladder** — a measurement scale (genus) that orders size metrics
+by semantic rung: bytes → tokens → productions → concepts (differentia). A
+compression claim MUST name its rung. Byte ratios are the crudest rung and are
+never the headline claim — the founding text's own caveat ("not mainly fewer
+bytes") is normative here.
+
+**covering set** — a fixture subset (genus) that fires every grammar
+production (differentia). The corpus's "books": the same minimal-covering
+pattern as a curriculum spine, computed by `tools/compression_scan.py`.
+
+**naming opportunity** — a recurring corpus pattern (genus) not reducible to
+one production or declared concept (differentia). The name-direction output of
+representational compression; always PROPOSE-ONLY (vocabulary and grammar
+changes stay constitutional).
+
+Baselines live in `conformance/compression/baselines.yaml`, agent-maintained
+like matrix cells; the regression a baseline guards against is representations
+silently getting less compact.
+
+## 5. Registration
 
 An ecosystem is a REGISTERED interop when its `registry/entries/<eco>.yaml`
 carries an `interop` binding naming its suite and its machine-readable contract.

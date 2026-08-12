@@ -28,6 +28,7 @@ if they don't apply to you.
 | Upstream ecosystem release tracking | `improvable/drift-watch/SKILL.md` |
 | Compatibility matrix maintenance | `improvable/matrix-refresh/SKILL.md` |
 | Visual golden-render checks | `improvable/render-verify/SKILL.md` |
+| Compression metrics / naming detection | `improvable/compression-scout/SKILL.md` |
 | Improving any skill from feedback | `improvable/skill-improver/SKILL.md` |
 
 ## Hard rules

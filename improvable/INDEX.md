@@ -13,6 +13,7 @@ and `AGENTS.md` are projections of this index — if they disagree, this file wi
 | `drift-watch` | upstream release tracking | `profiles/ecosystem/<eco>/`, `conformance/matrix/` | sync, report | scheduled | template |
 | `matrix-refresh` | compatibility matrix cells | `conformance/matrix/` | refresh | scheduled | active (G3) |
 | `render-verify` | visual golden-render diffing | `conformance/golden-render/` | add, verify | per-PR | active (G4) |
+| `compression-scout` | compression ladder metrics; covering sets; naming opportunities | `conformance/compression/`, `docs/reports/` | measure, report, propose | on-demand + per-release | active |
 
 ## Skill file contract
 

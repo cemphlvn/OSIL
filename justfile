@@ -23,6 +23,10 @@ render-bless:
 # full gatekeeper: grammar/corpus contract + interop round-trip + golden render
 test: check roundtrip render
 
+# compression ladder scan: covering set, naming candidates, interop ratios
+compress:
+    uv run --with onnx python3 tools/compression_scan.py
+
 # show corpus inventory with document kinds
 corpus:
     @ls -1 conformance/corpus/

@@ -39,10 +39,14 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 | Upstream ecosystem release tracking | `improvable/drift-watch/SKILL.md` |
 | Compatibility matrix maintenance | `improvable/matrix-refresh/SKILL.md` |
 | Visual golden-render checks | `improvable/render-verify/SKILL.md` |
+| Compression metrics / naming detection | `improvable/compression-scout/SKILL.md` |
 | Improving any skill from feedback | `improvable/skill-improver/SKILL.md` |
 
 ## Current gate
 
-G1 is the critical path: `grammar/oaas.ebnf` must parse 100% of
-`conformance/corpus/`. No parser exists yet (`tools/` is empty); building the
-minimal parser/validator is the highest-leverage next task.
+G0-G4 are done (grammar v0.3; `just test` = check + roundtrip + render;
+`just compress` = compression ladder). G5 (Linux Foundation) is open, blocked
+on two maintainer decisions: project name (OAAX collision, research U1) and
+license ratification (U2). Open gaps: GAP-2 (binding univocity), GAP-4
+(multi-output edges, pinned by corpus 018). G4 working decisions D1-D3 are
+open discussions in conformance/golden-render/README.md.
