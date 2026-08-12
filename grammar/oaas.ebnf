@@ -146,3 +146,9 @@ comment         = "//" , { any_char_to_eol } ;             (* line comments *)
 (* NOTE on keywords: all keywords are CONTEXTUAL — a word like `equivalence`
    may appear as a plain identifier inside an id_list (see corpus 005). Parsers
    must match keywords by position, not reserve them globally. *)
+
+(* NOTE on bindings (ADR-0008, G11 — GAP-2 closed WITHOUT grammar change):
+   `:` is ROLE BINDING — closed grammar roles only (purpose, goal, preserves).
+   `=` is ASSERTED EQUALITY — open keys to values; the block kind supplies the
+   force (profile/guards/args/layout: stipulated; constraints: required).
+   Rejection R006 pins the colon-misuse refusal. *)

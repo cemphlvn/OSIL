@@ -1,9 +1,0 @@
-// EXPECTED-FAIL: GAP-2 — `:` vs `=` binding univocity is undecided.
-// provenance: the intake transcript's ORIGINAL form (`privacy: local_only`),
-// which 007 normalized to `=`. This pin makes GAP-2's closure falsifiable in
-// BOTH directions: ratify colon-bindings -> this parses (XPASS ritual flips
-// the marker); ratify =-only -> this fixture is deleted in the same change.
-operator inference {
-    goal: minimize_latency
-    privacy: local_only
-}

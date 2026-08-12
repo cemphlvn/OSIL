@@ -16,6 +16,8 @@ boundaries that carry policy weight:
 - R004 — output arity (G6, out_spec)
 - R005 — dangling dot in a path component (G9 boundary, discharged at G10-A
   under the boundary obligation)
+- R006 — colon binding on an open key (ADR-0008 role-binding rule; PROMOTED
+  from corpus pin 021 at G11 — the lifecycle's third exit, first performance)
 
 Taxonomy (spec/conformance.md §2): temporal pins (`EXPECTED-FAIL: GAP-n`,
 closable via the XPASS ritual) live in corpus/; permanent rejections

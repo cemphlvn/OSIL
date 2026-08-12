@@ -81,6 +81,16 @@ Corpus: `020`.
 that must never parse (differentia). Permanent, never flipped — distinct from
 temporal gap-pins (spec/conformance.md §2). Home: `conformance/rejections/`.
 
+**role binding** (`:`) — a declaration form (genus) that binds a closed grammar
+role — `purpose`, `goal`, `preserves` — to a term or constraint (differentia).
+Roles are grammar keywords; user keys never bind with `:` (refusal pinned by
+R006). ADR-0008.
+
+**asserted equality** (`=`) — a relational expression (genus) asserting that a
+key equals a value, whose force is supplied by its block kind — stipulated in
+profile fields, guards, args, and layout attributes; required in constraint
+blocks (differentia). One meaning spec-wide. ADR-0008.
+
 ## 3. The sovereignty principle (normative once ratified)
 
 OAAS MUST NOT redefine the normative semantics of an external ecosystem when a

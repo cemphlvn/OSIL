@@ -1,0 +1,13 @@
+// MUST-FAIL: role-binding rule (ADR-0008, G11) — `:` binds only the CLOSED
+// grammar roles (purpose, goal, preserves); open keys bind with `=`.
+// `privacy` is an open key, so the colon form is a univocity refusal.
+//
+// provenance: born as conformance/corpus/021-colon-binding.oaas (GAP-2 pin,
+// G7 — the intake transcript's original form). PROMOTED here at G11: the pin
+// lifecycle's third exit (G10-B), FIRST PERFORMANCE — the ratified decision
+// made this construct a permanent refusal, and promotion preserves the
+// boundary that deletion would have erased. Corpus id 021 is retired forever.
+operator inference {
+    goal: minimize_latency
+    privacy: local_only
+}
