@@ -6,7 +6,7 @@ Status: draft-0. This document defines what EVERY ecosystem profile
 ## 1. Sovereignty
 
 An ecosystem profile references native identities (`onnx::MatMul@13`,
-`egg::RewriteSet@name`, `mlir::linalg.matmul`) and MUST NOT redefine their
+`egglog::RewriteSet@name`, `mlir::linalg.matmul`) and MUST NOT redefine their
 semantics. OAAS supplies architectural context around them; the upstream
 specification remains the sole normative source.
 
@@ -44,7 +44,7 @@ differ in kind, not just in format:
 | Ecosystem | Contributes | Projection preserves | Source stratum (G13) |
 |---|---|---|---|
 | ONNX | executable graph interchange | computation | OAAS-CIR |
-| egg / e-graphs | equivalence-space search | equivalence (guards included) | OAAS-SIR |
+| egglog / e-graphs | equivalence-space search | equivalence (guards included) | OAAS-SIR |
 | MLIR | lowering toward hardware | execution | OAAS-CIR |
 | (identity) | OAAS native | everything, incl. visual layout | OAAS-NATIVE |
 

@@ -11,5 +11,5 @@ side's variables and is not a bare variable; otherwise it realizes as a
 DIRECTED rule from the groundable side (bidirectional as assertion, directed
 as computation). The realized direction is recorded per case. Engine:
 egglog, decided by research U5 (ADR-0009); egg remains the algorithm citation
-(POPL 2021), never executed. Contract: profiles/ecosystem/egg/CONTRACT.oaas;
+(POPL 2021), never executed. Contract: profiles/ecosystem/egglog/CONTRACT.oaas;
 harness: tools/egraph_roundtrip.py (`just egraph`).

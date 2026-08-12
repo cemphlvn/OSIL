@@ -9,7 +9,7 @@ Gate G14 requires score = 1.0 (scope = the fixture list, reported alongside).
 
 The corpus IS the rule set: each declared equivalence is simultaneously a
 conformance fixture, a rewrite rule the engine runs, and a preservation test.
-Fields (profiles/ecosystem/egg/CONTRACT.oaas):
+Fields (profiles/ecosystem/egglog/CONTRACT.oaas):
   rule_identity     — every declared equivalence translates 1:1 to a native
                       rewrite; none silently dropped. Bidirectional when BOTH
                       directions are realizable; DIRECTED otherwise. A
@@ -35,7 +35,7 @@ Guards map to DATA per ADR-0009: `guards { k = v }` -> one nullary relation
 `k__v`, asserted once in the positive lane, attached to the birewrite as a
 condition. No code generation.
 
-Run: `just egraph`  (uv supplies egglog, pinned per profiles/ecosystem/egg/VERSIONS).
+Run: `just egraph`  (uv supplies egglog, pinned per profiles/ecosystem/egglog/VERSIONS).
 Writes: conformance/matrix/matrix.yaml cell (own cell only, idempotent) +
 docs/reports/roundtrip-egraph-<date>.md
 """
@@ -326,7 +326,7 @@ def main():
     today = datetime.date.today().isoformat()
 
     observed = pkg_version("egglog")
-    pins = (ROOT / "profiles" / "ecosystem" / "egg" / "VERSIONS").read_text()
+    pins = (ROOT / "profiles" / "ecosystem" / "egglog" / "VERSIONS").read_text()
     pinned = re.search(r"egglog pypi = (\S+)", pins).group(1)
     drift = "" if observed == pinned else f"  [DRIFT: pinned {pinned}]"
     upstream = f"egglog {observed} (PyPI; vendored core rev 2e5657b)"

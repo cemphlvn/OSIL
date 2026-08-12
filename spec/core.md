@@ -83,6 +83,16 @@ architecture constraints + security invariants. Corpus: `007-invariants.oaas`.
 guard conditions (differentia). Equivalences are the OAAS-side input to
 equality-saturation ecosystems. Corpus: `003-equivalence-distributivity.oaas`.
 
+**realizability** — a property of one direction of an equivalence (genus): the
+direction is realizable iff its match side both binds every variable the
+opposite side requires and is not a bare variable (differentia). An
+equivalence is bidirectional as assertion; it realizes as a bidirectional
+rule when both directions are realizable, as a directed rule from the
+groundable side when exactly one is, and MUST be refused as untranslatable
+when neither is — never silently dropped. Engine-forced, discovered at G14;
+realized directions are recorded per case (`just egraph`). Ratified into core
+by maintainer instruction 2026-08-12.
+
 **profile** — a named set of declarations (genus) that pins the versioned identity
 and semantics of one ecosystem, ontology, or domain for use inside OAAS graphs
 (differentia). Corpus: `001-profile-ecosystem-onnx.oaas`.

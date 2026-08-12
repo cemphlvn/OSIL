@@ -3,6 +3,8 @@
 Date: 2026-08-12 · Status: ACCEPTED (direction delegated to U5 evidence by the
 G14 gate definition itself — README row: "U5 decides egg-vs-egglog"; maintainer
 veto remains open under the ADR-0006/D1–D3 delegated-judgment precedent).
+Naming sub-question RATIFIED 2026-08-12, post-gate, by maintainer instruction
+("Kesin — rename to egglog/"): directory is now `profiles/ecosystem/egglog/`.
 
 ## Context
 `spec/interop/egraph.md` (draft-0) left the engine open: egg or egglog as the
