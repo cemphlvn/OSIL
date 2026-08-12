@@ -41,12 +41,15 @@ Rules:
 Each projection states which semantic dimension it preserves, because ecosystems
 differ in kind, not just in format:
 
-| Ecosystem | Contributes | Projection preserves |
-|---|---|---|
-| ONNX | executable graph interchange | computation |
-| egg / e-graphs | equivalence-space search | equivalence (guards included) |
-| MLIR | lowering toward hardware | execution |
-| (identity) | OAAS native | everything, incl. visual layout |
+| Ecosystem | Contributes | Projection preserves | Source stratum (G13) |
+|---|---|---|---|
+| ONNX | executable graph interchange | computation | OAAS-CIR |
+| egg / e-graphs | equivalence-space search | equivalence (guards included) | OAAS-SIR |
+| MLIR | lowering toward hardware | execution | OAAS-CIR |
+| (identity) | OAAS native | everything, incl. visual layout | OAAS-NATIVE |
+
+Source-stratum legality derives from the preserved dimension (spec/core.md);
+it is checked SEPARATELY from stratum name resolution.
 
 ## 5. Drift obligations
 

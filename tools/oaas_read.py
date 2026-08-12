@@ -125,7 +125,7 @@ def read_vocab(text):
     concept / invariant names. Other declarations are brace-skipped."""
     toks, i = _toks(text), 0
     out = {"profiles": [], "operators": [], "concepts": [], "invariants": [],
-           "pins": {}}
+           "pins": {}, "projections": []}
 
     def skip_block():
         nonlocal i
@@ -178,8 +178,30 @@ def read_vocab(text):
             i += 1
             out["invariants"].append(toks[i].text)
             i += 1
-        elif t.kind == "ident" and t.text in ("actor", "equivalence", "model",
-                                              "projection"):
+        elif t.kind == "ident" and t.text == "projection":
+            i += 1
+            name = toks[i].text
+            i += 1
+            src, pres = None, []
+            if i < len(toks) and toks[i].kind == "op" and toks[i].text == "{":
+                i += 1
+                while not (toks[i].kind == "op" and toks[i].text == "}"):
+                    if toks[i].kind == "ident" and toks[i].text == "from":
+                        i += 1
+                        src = toks[i].text
+                        i += 1
+                    elif toks[i].kind == "ident" and toks[i].text == "preserve":
+                        i += 1
+                        while toks[i].kind == "ident" or \
+                                (toks[i].kind == "op" and toks[i].text == ","):
+                            if toks[i].kind == "ident":
+                                pres.append(toks[i].text)
+                            i += 1
+                    else:
+                        i += 1
+                i += 1
+            out["projections"].append((name, src, pres))
+        elif t.kind == "ident" and t.text in ("actor", "equivalence", "model"):
             i += 2  # keyword + name
             if i < len(toks) and toks[i].kind == "op" and toks[i].text == "{":
                 skip_block()

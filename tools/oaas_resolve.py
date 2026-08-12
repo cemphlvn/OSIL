@@ -36,6 +36,39 @@ from oaas_read import read_flow, read_vocab
 MARKER = re.compile(r"^// MUST-FAIL-RESOLUTION\b", re.M)
 XMARK = re.compile(r"^// EXPECTED-FAIL\b", re.M)
 
+# G13 (design A): strata are core-defined metamodel symbols — a normative
+# core universe, never redeclared inside .oaas documents.
+CORE_STRATA = {"OAAS-SIR", "OAAS-CIR", "OAAS-NATIVE"}
+# stratum legality derives from the preserved dimension (spec/core.md)
+DIM_STRATUM = {"equivalence": "OAAS-SIR", "computation": "OAAS-CIR",
+               "execution": "OAAS-CIR", "everything": "OAAS-NATIVE"}
+
+
+def check_projections(vocab):
+    """Two DISTINCT checks (G13): stratum name resolution, then source-stratum
+    legality. RS005/RS006 pin them apart — they must never collapse."""
+    errors, total, resolved = [], 0, 0
+    for name, src, pres in vocab.get("projections", []):
+        total += 1
+        if src is None:
+            errors.append(f"projection {name}: no from-target")
+            continue
+        if src not in CORE_STRATA:
+            hint = difflib.get_close_matches(src, CORE_STRATA, 1)
+            errors.append(f"DANGLING-STRATUM: projection {name} from {src!r} "
+                          f"— not in the core stratum universe"
+                          + (f" — did you mean {hint[0]!r}?" if hint else ""))
+            continue
+        resolved += 1
+        for d in pres:
+            req = DIM_STRATUM.get(d)
+            if req and req != src:
+                errors.append(f"ILLEGAL-SOURCE-STRATUM: projection {name} "
+                              f"preserves {d!r}, which originates at {req}, "
+                              f"but declares from {src} (resolution passed; "
+                              "legality is the distinct check that failed)")
+    return errors, total, resolved
+
 
 def build_universe():
     profiles, ns_map, dir_vocab, errors = {}, {}, {}, []
@@ -169,6 +202,26 @@ def main():
               + "".join(f"\n         · {i}" for i in infos))
         failures += [f"{f.name}: {e}" for e in errs]
 
+    # G13: stratum resolution + legality over every projection declaration
+    # in the universe (profiles/**) AND the corpus's .oaas fixtures
+    s_total = s_resolved = 0
+    proj_files = sorted(ROOT.glob("profiles/**/*.oaas")) + \
+        sorted((ROOT / "conformance" / "corpus").glob("*.oaas"))
+    for f in proj_files:
+        text = f.read_text()
+        if XMARK.search("\n".join(text.splitlines()[:12])):
+            continue
+        v = read_vocab(text)
+        if not v.get("projections"):
+            continue
+        errs, t, r = check_projections(v)
+        s_total += t
+        s_resolved += r
+        print(f"{'STRATA' if not errs else 'FAIL':8} {f.relative_to(ROOT)} "
+              f"({t} projection source{'s' if t != 1 else ''})"
+              + "".join(f"\n         - {e}" for e in errs))
+        failures += [f"{f.name}: {e}" for e in errs]
+
     # pin consistency: profile.oaas is canonical; VERSIONS must mirror it
     for pf in sorted(ROOT.glob("profiles/ecosystem/*/profile.oaas")):
         vf = pf.parent / "VERSIONS"
@@ -185,13 +238,18 @@ def main():
               else f"PINDRIFT {pf.relative_to(ROOT)}")
 
     # resolution refusals: must parse, MUST fail resolution
-    for f in sorted((ROOT / "conformance" / "resolution").glob("*.flow")):
+    rej = ROOT / "conformance" / "resolution"
+    for f in sorted(rej.glob("*.flow")) + sorted(rej.glob("*.oaas")):
         text = f.read_text()
         if not MARKER.search("\n".join(text.splitlines()[:12])):
             failures.append(f"{f.name}: refusal fixture lacks "
                             "// MUST-FAIL-RESOLUTION marker")
             continue
-        errs, _, _, _ = resolve_flow(text, profiles, ns_map, dir_vocab, registry)
+        if f.suffix == ".flow":
+            errs, _, _, _ = resolve_flow(text, profiles, ns_map, dir_vocab,
+                                         registry)
+        else:
+            errs, _, _ = check_projections(read_vocab(text))
         if errs:
             print(f"REJECT   {f.relative_to(ROOT)}")
         else:
@@ -202,6 +260,8 @@ def main():
     rate = resolved / total if total else 0.0
     print(f"\nresolution rate: {resolved}/{total} = {rate:.2f} "
           "(north-star metric #1; gate requires 1.00)")
+    print(f"stratum sources: {s_resolved}/{s_total} resolve; "
+          "legality violations are listed above if any (G13)")
     if failures or rate < 1.0:
         for x in failures:
             print(f"FAIL {x}", file=sys.stderr)

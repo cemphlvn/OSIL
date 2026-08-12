@@ -18,6 +18,40 @@ explain against meaning rather than against syntax alone.
 members are semantically valid realizations of one declared intention
 (differentia). The central object of OAAS: compilation selects from this space
 under constraints and cost, rather than rewriting a single fixed program.
+Given technical teeth at G13 by the constitutional equation under
+*realization* below.
+
+**stratum** — a metamodel level (genus) at which an architecture document's
+content stands — a level OF the language, never a thing described IN it
+(differentia). Strata are CORE-DEFINED symbols (design A, G13): the normative
+core universe is `{OAAS-SIR, OAAS-CIR, OAAS-NATIVE}`; profiles MAY later
+declare compatible strata, but no `.oaas` document redeclares the metamodel.
+
+**OAAS-SIR** — the stratum (genus) at which an architecture states what it
+IS: semantic identity, intention, constraints, invariants — independent of
+computational form (differentia).
+
+**OAAS-CIR** — the stratum (genus) at which an architecture states HOW it is
+computed: explicit operators and dataflow structure (differentia).
+
+**OAAS-NATIVE** — the stratum (genus) comprising the total native document —
+both strata plus visual layout — from which only the identity projection
+departs (differentia).
+
+**realization** — a semantics-preserving commitment (genus) from an abstract
+semantic architecture (OAAS-SIR) to one computationally explicit architecture
+(OAAS-CIR) that satisfies the declared intention, constraints, and invariants
+(differentia). Defined by what it preserves and satisfies — never merely by
+its endpoints. One-to-many: an SIR has a realization SET, which yields the
+constitutional equation:
+
+> **semantic optimization space = valid realizations(SIR, constraints, invariants)**
+
+Projection-source legality derives from the preserved dimension: equivalence
+originates at OAAS-SIR; computation and execution at OAAS-CIR; everything at
+OAAS-NATIVE. Name resolution ("does the stratum exist?") and stratum legality
+("may this projection originate there?") are DISTINCT checks — the fixture
+pair RS005/RS006 pins them apart.
 
 **concept** — a semantic identity (genus) that names a computation independently of
 any particular realization and enumerates its equivalence conditions (differentia).

@@ -47,6 +47,16 @@ ratification. Automatic narrowing of scope may be permitted; widening never.
 - Deletions in `conformance/corpus/` (additions are free).
 - Anything under `CHARTER.md`, licensing, or LF process.
 
+## Witness diversity
+
+Evidence from a single parser/linter lineage is weak against shared blind
+spots: the SIR/CIR definition hole (closed at G13) was found by an EXTERNAL
+reading while every internal loop was green. Self-audits SHOULD therefore
+include a foreign-witness lane — an external human or alternate-model reader
+— before any claim of semantic closure. This is the structural form of the
+production-quality assessment's category-F conclusion: epistemic diversity
+is a conformance requirement, not a courtesy.
+
 ## Versioning
 
 Subtrees are independent version streams (see each README card). Real conformance

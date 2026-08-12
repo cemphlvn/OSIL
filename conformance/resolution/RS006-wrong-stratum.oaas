@@ -1,0 +1,9 @@
+// MUST-FAIL-RESOLUTION: illegal source stratum — OAAS-CIR RESOLVES (name
+// resolution passes), but `equivalence` originates at OAAS-SIR. This fixture
+// is the proof that name resolution ("does the stratum exist?") and stratum
+// legality ("may this projection originate there?") are DISTINCT checks that
+// must never collapse (G13; the external review's negative test, verbatim).
+projection EGraphWrong {
+    from OAAS-CIR
+    preserve equivalence
+}
