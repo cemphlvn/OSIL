@@ -40,6 +40,7 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 | Compatibility matrix maintenance | `improvable/matrix-refresh/SKILL.md` |
 | Visual golden-render checks | `improvable/render-verify/SKILL.md` |
 | Compression metrics / naming detection | `improvable/compression-scout/SKILL.md` |
+| Gate/loop report authoring | `improvable/gate-reporter/SKILL.md` |
 | Improving any skill from feedback | `improvable/skill-improver/SKILL.md` |
 
 ## Current gate

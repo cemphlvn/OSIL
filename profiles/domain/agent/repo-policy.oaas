@@ -12,7 +12,7 @@
 // ============================================================================
 
 profile domain.agent {
-    version = 2
+    version = 3
 }
 
 // -- human role (no skill counterpart; policy_check exempts it) --------------
@@ -58,6 +58,12 @@ actor compression-scout {
     scope { conformance/compression/ docs/reports/ }
     verbs { measure report propose }
     invariants { rung_named_per_claim propose_only_on_vocabulary }
+}
+
+actor gate-reporter {
+    scope { docs/reports/ }
+    verbs { report }
+    invariants { template_followed honesty_notes_required }
 }
 
 actor skill-improver {

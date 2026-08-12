@@ -17,7 +17,7 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G9 complete / GX (Linux Foundation) terminal**.
+Pre-release, gates **G0–G10 complete / GX (Linux Foundation) terminal**.
 Gate convention: numbered gates keep appending BEFORE the terminal gate GX —
 GX is always last. ONNX is the
 first REGISTERED LF interop; the repo fully self-describes (policy as actors,
@@ -39,6 +39,8 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G7 | the language's refusals are falsifiable: permanent rejections (`conformance/rejections/`, MUST-FAIL, never flipped) + GAP-2 pinned bidirectionally (021) | **done 2026-08-12** |
 | G8 | the structure is self-checking: policy agreement mechanical (`tools/policy_check.py`, actors parsed from OAAS text vs skill frontmatter), definition debt cleared, triad indexed, curriculum reachability measured, CI carries the gates | **done 2026-08-12** — GAP-5 discovered & pinned (022) |
 | G9 | GAP-5 closed: dotted path components (grammar v0.5) via the XPASS ritual on 022; policy scopes narrowed to file granularity matching skill declarations | **done 2026-08-12** |
+| G10-A | boundary obligation discharged for v0.5: R005 pins the dangling-dot refusal G9 left owed | **done 2026-08-12** |
+| G10-B | ritual completeness normative: pin lifecycle (flip / delete / PROMOTE), boundary obligation, ritual-vs-alarm XPASS — spec + merge gate | **done 2026-08-12** (executed before A: norm before instance) |
 | GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree

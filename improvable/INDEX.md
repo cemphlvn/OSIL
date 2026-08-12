@@ -14,6 +14,7 @@ and `AGENTS.md` are projections of this index — if they disagree, this file wi
 | `matrix-refresh` | compatibility matrix cells | `conformance/matrix/` | refresh | scheduled | active (G3) |
 | `render-verify` | visual golden-render diffing | `conformance/golden-render/` | add, verify | per-PR | active (G4) |
 | `compression-scout` | compression ladder metrics; covering sets; naming opportunities | `conformance/compression/`, `docs/reports/` | measure, report, propose | on-demand + per-release | active |
+| `gate-reporter` | canonical gate/loop report template | `docs/reports/` | report | per-gate + per-loop-run | active |
 
 ## Skill file contract
 
