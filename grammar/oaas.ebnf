@@ -1,42 +1,45 @@
-(* OAAS grammar — v0 DRAFT
-   Status: hand-drafted to cover conformance/corpus/001-008 exactly.
-   NOT yet backed by a parser: G1 is open until tools/ hosts a validator that
-   proves "100% of corpus parses; every production exemplified".
-   Known gap (deliberate): no actor/policy constructs — see
-   profiles/domain/agent/repo-policy.oaas (conformance test #0, EXPECTED-FAIL). *)
+(* OAAS grammar — v0.1 DRAFT
+   Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
+   .flow = flow document (composition). Kind is selected by file extension.
+   Backed by tools/oaas_check.py (G1 validator): every corpus file must parse,
+   every production must be exemplified by >=1 corpus file.
+   Known gap (deliberate): no actor/policy constructs — GAP-1 in GAPS.md,
+   conformance test #0 (profiles/domain/agent/repo-policy.oaas) EXPECTED-FAILs. *)
 
-document        = { declaration } ;
+(* ==== document kinds ====================================================== *)
+oaas_document   = { oaas_declaration } ;
+flow_document   = { flow_statement } ;
 
-declaration     = profile_decl
-                | projection_decl
-                | equivalence_decl
-                | model_decl
-                | invariant_decl
-                | operator_decl
-                | contract_decl
-                | concept_decl
-                | io_decl
-                | edge_stmt ;
+oaas_declaration = profile_decl
+                 | projection_decl
+                 | equivalence_decl
+                 | model_decl
+                 | invariant_decl
+                 | operator_decl
+                 | contract_decl
+                 | concept_decl ;
 
-(* -- profiles: pin an ecosystem's versioned identity ---------------------- *)
+flow_statement  = use_decl | io_decl | edge_stmt ;
+
+(* -- vocabulary: pin an ecosystem's versioned identity --------------------- *)
 profile_decl    = "profile" , qualified_id , "{" , { profile_field } , "}" ;
 profile_field   = identifier , "=" , literal
-                | identifier , string , "=" , literal ;        (* opset "ai.onnx" = 24 *)
+                | identifier , string , "=" , literal ;   (* opset "ai.onnx" = 24 *)
 
-(* -- projections: transformation into a sovereign ecosystem --------------- *)
+(* -- projections: transformation into a sovereign ecosystem ---------------- *)
 projection_decl = "projection" , identifier , "{" ,
                     "from" , identifier ,
                     "preserve" , id_list ,
                   "}" ;
 
-(* -- equivalences: semantic equality rules (egg-projectable) -------------- *)
+(* -- equivalences: semantic equality rules (egg-projectable) --------------- *)
 equivalence_decl = "equivalence" , identifier , "{" ,
                      expr , "<=>" , expr ,
                      [ guards_block ] ,
                    "}" ;
 guards_block    = "guards" , "{" , { identifier , "=" , literal } , "}" ;
 
-(* -- models: intention + constraints (configuration compression) ---------- *)
+(* -- models: intention + constraints (configuration compression) ----------- *)
 model_decl      = "model" , identifier , "{" , { model_field } , "}" ;
 model_field     = "purpose" , ":" , identifier
                 | constraints_block
@@ -44,25 +47,26 @@ model_field     = "purpose" , ":" , identifier
 constraints_block = "constraints" , "{" , { constraint } , "}" ;
 constraint      = identifier , rel_op , value ;
 
-(* -- invariants & constrained operators ----------------------------------- *)
+(* -- invariants & constrained operators ------------------------------------ *)
 invariant_decl  = "invariant" , identifier ;
 operator_decl   = "operator" , identifier , "{" , { operator_field } , "}" ;
 operator_field  = "goal" , ":" , identifier
                 | "preserves" , ":" , constraint
                 | constraint ;
 
-(* -- preservation contracts ------------------------------------------------ *)
+(* -- preservation contracts ------------------------------------------------- *)
 contract_decl   = preserves_block , [ may_lose_block ] ;
 preserves_block = "preserves" , "{" , id_list , "}" ;
 may_lose_block  = "may_lose" , "{" , id_list , "}" ;
 
-(* -- concepts: semantic identity with equivalence realizations ------------ *)
+(* -- concepts: semantic identity with equivalence realizations -------------- *)
 concept_decl    = "concept" , identifier , "{" ,
                     "equivalent_under" , "{" , arg_list , "}" ,
                     "to" , "{" , id_list , "}" ,
                   "}" ;
 
-(* -- graph statements ------------------------------------------------------ *)
+(* -- flow statements --------------------------------------------------------- *)
+use_decl        = "use" , qualified_id ;
 io_decl         = ( "input" | "const" | "output" ) , identifier , ":" , type ;
 edge_stmt       = id_list , "->" , op_ref , "->" , identifier ;
 op_ref          = [ identifier , "::" ] , identifier , [ "@" , integer ] ;
@@ -71,22 +75,27 @@ type            = identifier , [ "<" , identifier , ">" ] ,
 dim_list        = dim , { "," , dim } ;
 dim             = identifier | integer ;
 
-(* -- expressions (v0: enough for algebraic equivalences) ------------------- *)
+(* -- expressions (v0: enough for algebraic equivalences) -------------------- *)
 expr            = term , { add_op , term } ;
 term            = factor , { mul_op , factor } ;
 factor          = identifier | number | "(" , expr , ")" ;
 add_op          = "+" | "-" ;
 mul_op          = "*" | "/" | "<<" | ">>" ;
 
-(* -- lexical ---------------------------------------------------------------- *)
+(* -- lexical ------------------------------------------------------------------ *)
 qualified_id    = identifier , { "." , identifier } ;
 id_list         = identifier , { [ "," ] , identifier } ;
 arg_list        = arg , { "," , arg } ;
 arg             = identifier , [ "=" , literal ] ;
 rel_op          = "<" | "<=" | ">" | ">=" | "=" | "==" ;
 value           = literal | quantity ;
-quantity        = number , identifier ;                       (* 20ms, 2GB, 4GB *)
+quantity        = number , identifier ;   (* 20ms, 2GB — same-line juxtaposition;
+                                              boundary rule underspecified: GAP-3 *)
 literal         = number | string | identifier | boolean ;
 boolean         = "true" | "false" ;
 number          = integer | float ;
-comment         = "//" , { any_char_to_eol } ;                (* line comments *)
+comment         = "//" , { any_char_to_eol } ;             (* line comments *)
+
+(* NOTE on keywords: all keywords are CONTEXTUAL — a word like `equivalence`
+   may appear as a plain identifier inside an id_list (see corpus 005). Parsers
+   must match keywords by position, not reserve them globally. *)

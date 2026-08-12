@@ -34,6 +34,8 @@ if they don't apply to you.
 
 - `profiles/ecosystem/*`: NEVER redefine upstream semantics; you sync and report.
 - `conformance/corpus/`: additions free; deletions require human ratification.
+  Two document kinds (ADR-0005): `.oaas` = vocabulary, `.flow` = dataflow
+  composition; the validator selects the grammar's start symbol by extension.
 - `improvable/*/SKILL.md`: bodies may be improved if evals pass + CHANGELOG entry;
   frontmatter (`scope`/`verbs`/`invariants`) is constitutional — propose only.
 - Unverified claims are marked `ASSUMPTION:`; never silently resolve one.

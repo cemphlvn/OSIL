@@ -22,7 +22,8 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 3. **Triple representation**: any spec change that adds/renames a language
    construct must ship a grammar production + ≥1 corpus example in the same change.
 4. **Corpus discipline**: one construct per file, `//` provenance header, ids are
-   stable (`NNN-slug.oaas`). Never delete without human ratification.
+   stable (`NNN-slug.oaas` vocabulary / `NNN-slug.flow` flows — ADR-0005). Never
+   delete without human ratification.
 5. **Mark, don't resolve**: unverified claims get `ASSUMPTION:`; decisions get an
    ADR in `docs/decisions/`; research lands in `docs/research/U#-slug.md`.
 6. **Definitions** in `spec/` follow the ontology rules: univocity, Aristotelian

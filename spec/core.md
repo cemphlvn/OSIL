@@ -53,6 +53,18 @@ equality-saturation ecosystems. Corpus: `003-equivalence-distributivity.oaas`.
 and semantics of one ecosystem, ontology, or domain for use inside OAAS graphs
 (differentia). Corpus: `001-profile-ecosystem-onnx.oaas`.
 
+**architecture document** (`.oaas`) — a document (genus) that declares vocabulary:
+the general — profiles, concepts, equivalences, invariants, operators, contracts,
+models (differentia). ADR-0005.
+
+**flow document** (`.flow`) — a document (genus) that composes declared vocabulary
+into a particular executable dataflow graph (differentia). Flows are the primary
+visual objects: the identity projection's layout guarantee (spec/visual.md)
+attaches here. Corpus: `002-graph-onnx-matmul.flow`.
+
+**use declaration** — a flow statement (genus) that names the profile whose pinned
+semantics the flow's native identities resolve against (differentia). Corpus: `002`.
+
 ## 3. The sovereignty principle (normative once ratified)
 
 OAAS MUST NOT redefine the normative semantics of an external ecosystem when a

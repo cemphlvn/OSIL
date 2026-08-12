@@ -1,0 +1,11 @@
+// provenance: intake transcript, section 2 ("x * 2 ≡ x << 1 [integer constraints]")
+// normalized: bracket annotation "[integer constraints]" -> guards block
+equivalence strength_reduction {
+    x * 2
+    <=>
+    x << 1
+
+    guards {
+        numeric_semantics = integer
+    }
+}
