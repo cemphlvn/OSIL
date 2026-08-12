@@ -24,6 +24,13 @@ declares commutation GENERICALLY (`a then b <=> b then a` under
 Operand disambiguation (ADR-0010): an identifier naming a declared stage is
 a ground stage constant; any other identifier is a pattern variable.
 
+AGREEMENT LOOP (G8 pattern, post-G15 hardening): the justfile `test:` line
+and the corpus stage declarations must agree 1:1 — the pipeline may not run
+a stage its self-model omits (that was this loop's founding bug: `stages`
+itself was missing from 023), and the model may not keep a stage the
+pipeline dropped. Recipes outside `test:` (e.g. `derive`, advisory) are out
+of the loop's scope by design.
+
 Run: `just stages`. Writes: docs/reports/stage-commute-<date>.md
 """
 from __future__ import annotations
@@ -144,11 +151,30 @@ def compose(ids, leaf):
     return node
 
 
+def read_test_recipes():
+    """The justfile `test:` line — the pipeline's OTHER representation."""
+    for line in (ROOT / "justfile").read_text().splitlines():
+        if line.startswith("test:"):
+            return line.split(":", 1)[1].split()
+    raise RuntimeError("justfile has no test: line")
+
+
 def main():
     stages = read_stages()
     if not stages:
         print("FAIL: no stage declarations found in corpus/")
         sys.exit(1)
+
+    recipes = read_test_recipes()
+    if sorted(recipes) != sorted(stages):
+        missing = [r for r in recipes if r not in stages]
+        stale = [s for s in stages if s not in recipes]
+        print("AGREEMENT FAIL: justfile test-line vs corpus stage decls "
+              f"(undeclared recipes: {missing or 'none'}; "
+              f"stale declarations: {stale or 'none'})")
+        sys.exit(1)
+    print(f"AGREEMENT justfile test: == corpus stage decls "
+          f"({len(recipes)}/{len(recipes)}, 1:1)")
 
     disjoint = {}
     for a, b in combinations(sorted(stages), 2):
@@ -238,7 +264,10 @@ def main():
               f"as declared + {sum(ok for _, _, ok, _ in pin_rows)}/{len(pin_rows)}"
               f" pins hold -> {status.upper()}",
               "The architecture under test is this repository's own pipeline "
-              "(corpus 023/024).", "",
+              "(corpus 023/024).",
+              f"Agreement: justfile `test:` == corpus stage decls, "
+              f"{len(recipes)}/{len(recipes)} 1:1 (the observer is in its "
+              "own model).", "",
               "| composition | verdict | why |", "|---|---|---|"]
     for a, b, verdict, why, ok in rows:
         report.append(f"| `{a} then {b}` | {verdict}{'' if ok else ' MISMATCH'} | {why} |")

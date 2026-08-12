@@ -33,3 +33,11 @@ stage resolve {
     runs = tools.oaas_resolve
     reads { conformance.corpus  conformance.resolution  profiles }
 }
+
+// the observer, observed: the commutation harness is itself a stage of the
+// pipeline it models (agreement loop: justfile test-line == these decls, 1:1)
+stage stages {
+    runs = tools.stage_commute
+    reads { conformance.corpus  conformance.equivalence  justfile }
+    writes { docs.reports.stage_commute_dated }
+}
