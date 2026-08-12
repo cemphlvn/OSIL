@@ -34,10 +34,19 @@ list exercised, and a check timestamp (differentia). Lifecycle:
   ecosystem's suite, with the suite's scope stated in the gate record. A perfect
   score over a narrow suite is a narrow claim — suites grow monotonically, and
   the score is always reported together with the case count.
-- **Expected-fail pinning**: deliberately-open gaps are pinned by fixtures whose
-  header carries `// EXPECTED-FAIL: <gap-id>` at line start (syntactic marker;
-  prose mentions do not trigger). Parsing success of a pinned fixture fails the
-  build (XPASS) until the marker is removed by ratified change.
+- **Negative-fixture taxonomy** (two classes, two homes, two lifecycles):
+  - **Temporal pins** — deliberately-open gaps, pinned in `conformance/corpus/`
+    by a `// EXPECTED-FAIL: <gap-id>` header (syntactic marker at line start;
+    prose mentions do not trigger). Parsing success fails the build (XPASS)
+    until the marker is removed by ratified change — the XPASS ritual. Pins
+    make the *future* falsifiable.
+  - **Permanent rejections** — normative refusals, pinned in
+    `conformance/rejections/` by a `// MUST-FAIL: <rule>` header. These NEVER
+    flip: an XPASS is always a parser/spec regression. Rejections make the
+    *boundaries* falsifiable — without them a parser that accepts everything
+    would pass the positive suite. Selection principle: one fixture per
+    normative refusal, anchored to its rule/ADR; arbitrary syntax errors are
+    noise, not rejections.
 
 ## 3. Suite organization
 

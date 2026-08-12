@@ -729,8 +729,28 @@ def main():
                 failures.append(f"FAIL  {path.relative_to(root)}: {e}")
                 results.append(("FAIL", path))
 
+    # permanent rejections: conformance/rejections/* must NEVER parse.
+    # Unlike corpus gap-pins, MUST-FAIL markers never flip — an XPASS here is
+    # always a parser/spec regression, not a ritual step.
+    rej_dir = root / "conformance" / "rejections"
+    for path in sorted(rej_dir.glob("*.oaas")) + sorted(rej_dir.glob("*.flow")):
+        head = "\n".join(path.read_text().splitlines()[:12])
+        if not re.search(r"^// MUST-FAIL\b", head, re.M):
+            failures.append(f"{path.relative_to(root)}: rejection fixture "
+                            "lacks a // MUST-FAIL: marker")
+            results.append(("BADMETA", path))
+            continue
+        try:
+            parse_file(path, set(), set())
+            failures.append(f"XPASS {path.relative_to(root)} — rejection "
+                            "fixture PARSED: the parser now accepts what the "
+                            "spec forbids (regression, never a ritual)")
+            results.append(("XPASS", path))
+        except ParseError:
+            results.append(("REJECT", path))
+
     for status, path in results:
-        print(f"{status:6} {path.relative_to(root)}")
+        print(f"{status:7} {path.relative_to(root)}")
 
     # The denominator is derived from the EBNF itself, never self-asserted:
     # the validator's instrumented inventory must equal the grammar's rule set.

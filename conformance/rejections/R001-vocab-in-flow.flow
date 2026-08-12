@@ -1,0 +1,7 @@
+// MUST-FAIL: kind-purity — vocabulary declarations are illegal in a flow
+// document (ADR-0005: .flow composes the particular; .oaas declares the
+// general). A flow-authoring agent must be STRUCTURALLY unable to introduce
+// vocabulary; this fixture is the proof that the boundary holds.
+use domain.toolchain
+
+invariant Sneaky

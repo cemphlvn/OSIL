@@ -1,0 +1,7 @@
+// MUST-FAIL: adjacency — path components must be whitespace-free adjacent
+// (juxtaposition rule ratified at G2, closing GAP-3). `spec / ` is two paths
+// and an orphan slash, never one path.
+actor sloppy {
+    scope { spec / }
+    verbs { draft }
+}

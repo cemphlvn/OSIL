@@ -1,0 +1,5 @@
+// MUST-FAIL: output arity — a multi-output edge requires at least one
+// output identifier; `-> ()` is not an edge (G6, out_spec production).
+use domain.toolchain
+
+model -> toolchain::ExportFlow@1 -> ()

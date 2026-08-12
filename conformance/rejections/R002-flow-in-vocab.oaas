@@ -1,0 +1,3 @@
+// MUST-FAIL: kind-purity — flow statements (edges) are illegal in an
+// architecture document (ADR-0005). The dual of R001.
+X, W -> onnx::MatMul@13 -> Y
