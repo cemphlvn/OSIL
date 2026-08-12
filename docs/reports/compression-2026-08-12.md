@@ -2,8 +2,8 @@
 Rung discipline: every claim names its ladder rung (bytes -> tokens -> productions -> concepts).
 
 ## B. Corpus ladder
-- 20 fixtures (0 expected-fail, excluded from parse rungs)
-- bytes: 7492 · tokens: 779 · productions: 60 (all fired)
+- 22 fixtures (2 expected-fail, excluded from parse rungs)
+- bytes: 8383 · tokens: 779 · productions: 60 (all fired)
 
 ## C. Cover direction — the corpus's 'books'
 Greedy covering set: 9 fixtures cover all 60 productions:
@@ -25,6 +25,11 @@ Redundancy: fattest productions [('oaas_document', 14), ('oaas_declaration', 14)
 - `guards { numeric_semantics =` — 5 fixtures (003-equivalence-distributivity, 009-equivalence-strength-reduction, 013-equivalence-inverse-add, 014-equivalence-identity-div…)
 - `( a + b )` — 3 fixtures (003-equivalence-distributivity, 013-equivalence-inverse-add, 020-equivalence-associativity)
 - `ecosystem . onnx` — 3 fixtures (001-profile-ecosystem-onnx, 002-graph-onnx-matmul, 011-flow-matmul-roundtrip)
+
+## E. Curriculum views (resolution + reachability)
+- paths resolve: yes
+- unreachable corpus items (8): 009-equivalence-strength-reduction, 011-flow-matmul-roundtrip, 013-equivalence-inverse-add, 014-equivalence-identity-div, 015-equivalence-shift-zero, 020-equivalence-associativity, 021-colon-binding, 022-file-scoped-actor — report-only; pedagogy is ratified
+- minimal-spine.yaml regenerated from the covering set
 
 ## A. Interop axis (native vs projection, per ONNX case)
 - add: native 102B | flow text 129B / 51 tokens | passthrough 186B | text/native = 1.26, (text+passthrough)/native = 3.09

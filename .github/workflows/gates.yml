@@ -1,0 +1,19 @@
+# The merge gate, mechanized (GOVERNANCE.md): every push runs the gates.
+name: gates
+on: [push, pull_request]
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: corpus contract (grammar/coverage/pins/rejections)
+        run: python3 tools/oaas_check.py
+      - name: policy agreement (actors vs skills)
+        run: python3 tools/policy_check.py
+      - name: golden render (data gate, svg advisory)
+        run: python3 tools/render_check.py
+      - name: ONNX round-trip (preservation score)
+        run: uv run --with onnx python3 tools/onnx_roundtrip.py
+      - name: compression ladder (baselines, reachability)
+        run: uv run --with onnx python3 tools/compression_scan.py

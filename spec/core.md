@@ -65,6 +65,21 @@ attaches here. Corpus: `002-graph-onnx-matmul.flow`.
 **use declaration** — a flow statement (genus) that names the profile whose pinned
 semantics the flow's native identities resolve against (differentia). Corpus: `002`.
 
+**actor** — a policy subject (genus) that binds a named role to the subtrees it
+may modify (scope), the operations it may perform (verbs), the invariants it
+must preserve, and the change classes requiring human ratification
+(differentia). Introduced at G2; the repo's own policy is conformance test #0.
+Corpus: `010`. Scope paths are directory-granular pending GAP-5.
+
+**regime** — a validity domain (genus) whose carriers are the concrete
+arithmetics realizing it (differentia). Declared as concepts in
+`profiles/domain/numeric/`; canonical guard form `regime = <Concept>` (ADR-0007).
+Corpus: `020`.
+
+**rejection fixture** — a negative fixture (genus) pinning a normative refusal
+that must never parse (differentia). Permanent, never flipped — distinct from
+temporal gap-pins (spec/conformance.md §2). Home: `conformance/rejections/`.
+
 ## 3. The sovereignty principle (normative once ratified)
 
 OAAS MUST NOT redefine the normative semantics of an external ecosystem when a
@@ -80,9 +95,13 @@ requirements (`authenticated_encryption` rather than a cipher name) participate 
 rewrite legality and in projection contracts. A rewrite with a 1.8× speedup that
 breaks `ConstantTime` is illegal under a security profile — by construction.
 
-## 5. Open sections (stubs)
+## 5. Chapter map
 
-- Execution semantics → `spec/execution.md`
-- Interchange format → `spec/interchange.md`
-- Visual grammar & layout → `spec/visual.md`
+- Execution semantics → `spec/execution.md` (stub)
+- Interchange format → `spec/interchange.md` (stub)
+- Visual grammar & layout → `spec/visual.md` (working, G4)
+- Conformance & testing → `spec/conformance.md` (working: preservation score,
+  compression ladder, negative-fixture taxonomy)
+- Versioning & compatibility → `spec/versioning.md` (stub)
 - Ecosystem contracts → `spec/interop/`
+- Term inventory → `spec/TERMS.md` (maintained by univocity-lint)

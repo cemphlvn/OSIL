@@ -1,0 +1,24 @@
+# GENERATED VIEW — rewritten by tools/compression_scan.py from the
+# greedy covering set ('the corpus's books'). Do not hand-edit;
+# order = coverage-greedy, not pedagogy.
+id: minimal-spine
+title: Fewest fixtures that show the whole grammar
+steps:
+  - corpus: 019-toolchain-render
+    why: +21 productions (bounds, coord, dim, dim_list…)
+  - corpus: 007-invariants-operator
+    why: +11 productions (constraint, invariant_decl, literal, number…)
+  - corpus: 010-actor-policy
+    why: +8 productions (actor_decl, actor_field, invariants_block, path_list…)
+  - corpus: 003-equivalence-distributivity
+    why: +7 productions (add_op, equivalence_decl, expr, factor…)
+  - corpus: 008-concept-equivalent-under
+    why: +4 productions (arg, arg_list, boolean, concept_decl)
+  - corpus: 005-preservation-contract
+    why: +3 productions (contract_decl, may_lose_block, preserves_block)
+  - corpus: 006-model-intent-constraints
+    why: +3 productions (constraints_block, model_decl, model_field)
+  - corpus: 001-profile-ecosystem-onnx
+    why: +2 productions (profile_decl, profile_field)
+  - corpus: 004-projections
+    why: +1 productions (projection_decl)

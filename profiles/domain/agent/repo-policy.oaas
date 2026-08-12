@@ -3,38 +3,66 @@
 // CONFORMANCE TEST #0: OAAS expresses its own repository's operating policy.
 // "The first architecture OAAS describes is the OAAS repo."
 //
-// STATUS: PASSES since grammar v0.2 (gate G2 — GAP-1 closed, ratified by
-// maintainer instruction 2026-08-12). This file carried the expected-fail marker from G0;
-// during the closure sequence the XPASS guard fired and held the build red
-// until this marker flip, exactly as designed (see docs/reports/g2-2026-08-12).
+// STATUS: PASSES since grammar v0.2 (G2). Extended at G8 to cover every
+// deployed skill 1:1 — tools/policy_check.py mechanically verifies agreement
+// between these actors and improvable/*/SKILL.md frontmatter (the standing
+// loop GOVERNANCE.md promised). Scope granularity note: file-level scopes
+// (grammar/GAPS.md, spec/TERMS.md) are modeled at directory granularity
+// pending GAP-5 (dotted path components — pinned by corpus 022).
 // ============================================================================
 
 profile domain.agent {
-    version = 0
+    version = 1
 }
 
+// -- human role (no skill counterpart; policy_check exempts it) --------------
 actor spec-editor {
     scope { spec/ }
     verbs { draft refactor }
     invariants { univocity definitions_aristotelian }
-    ratify { normative_must }              // humans ratify MUST-level changes
+    ratify { normative_must }
 }
 
-actor ecosystem-adapter {
+// -- skill-bound actors: 1:1 with improvable/, frontmatter must agree --------
+actor corpus-gardener {
+    scope { conformance/corpus/ grammar/ curriculum/paths/ }
+    verbs { add refresh report }
+    invariants { every_example_parses no_deletion_without_ratification }
+}
+
+actor univocity-lint {
+    scope { spec/ docs/reports/ }
+    verbs { report propose }
+    invariants { read_only_on_spec_prose findings_cite_line }
+}
+
+actor drift-watch {
     scope { profiles/ecosystem/ conformance/matrix/ }
     verbs { sync report }
-    invariants { never_redefine_upstream }
+    invariants { never_redefine_upstream stale_before_bump }
 }
 
-actor corpus-gardener {
-    scope { conformance/corpus/ }
-    verbs { add refresh }
-    invariants { every_example_parses no_deletion_without_ratification }
+actor matrix-refresh {
+    scope { conformance/matrix/ }
+    verbs { refresh }
+    invariants { never_fabricate_pass }
+}
+
+actor render-verify {
+    scope { conformance/golden-render/ }
+    verbs { add verify }
+    invariants { zero_diff_gate goldens_ratified }
+}
+
+actor compression-scout {
+    scope { conformance/compression/ docs/reports/ }
+    verbs { measure report propose }
+    invariants { rung_named_per_claim propose_only_on_vocabulary }
 }
 
 actor skill-improver {
     scope { improvable/ }
-    verbs { edit_body }
+    verbs { edit-body propose-frontmatter }
     invariants { evals_pass changelog_logged frontmatter_constitutional }
 }
 

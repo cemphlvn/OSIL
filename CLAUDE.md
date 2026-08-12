@@ -45,10 +45,11 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 ## Current gate
 
 G0-G4 are done (grammar v0.3; `just test` = check + roundtrip + render;
-`just compress` = compression ladder). Gate convention: numbered gates append
+`just compress` = compression ladder; `just test` includes the policy
+agreement loop — actors in repo-policy.oaas must match skill frontmatter). Gate convention: numbered gates append
 BEFORE the terminal gate GX (Linux Foundation submission — blocked on
 maintainer calls: name-vs-OAAX, license). G5 (vocabulary self-extension) closed
-2026-08-12: the detector -> proposal -> ratification -> re-baseline loop works. Open gaps: GAP-2 only (binding univocity,
-pinned bidirectionally by corpus 021); GAP-4 closed at G6. Negative fixtures:
+2026-08-12: the detector -> proposal -> ratification -> re-baseline loop works. Open gaps: GAP-2 (binding univocity, pinned by
+021) and GAP-5 (file-granular paths, pinned by 022); GAP-4 closed at G6. Negative fixtures:
 gap-pins in corpus/, permanent rejections in conformance/rejections/ (G7). G4 working decisions D1-D3 are
 open discussions in conformance/golden-render/README.md.

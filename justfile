@@ -20,8 +20,12 @@ draw FILE *OUT:
 render-bless:
     python3 tools/render_check.py --bless
 
-# full gatekeeper: grammar/corpus contract + interop round-trip + golden render
-test: check roundtrip render
+# policy agreement: self-hosted actors vs skill frontmatter (G8)
+policy:
+    python3 tools/policy_check.py
+
+# full gatekeeper: contract + round-trip + render + policy agreement
+test: check roundtrip render policy
 
 # compression ladder scan: covering set, naming candidates, interop ratios
 compress:

@@ -144,6 +144,33 @@ def main():
     names = ngrams(rows)
     interop = interop_axis()
 
+    # curriculum: generated covering-set view + resolution/reachability
+    # (paths are VIEWS over the pool, ADR-0003; reporting only — pedagogy
+    # ordering stays human-ratified)
+    paths_dir = ROOT / "curriculum" / "paths"
+    spine_lines = [
+        "# GENERATED VIEW — rewritten by tools/compression_scan.py from the",
+        "# greedy covering set ('the corpus's books'). Do not hand-edit;",
+        "# order = coverage-greedy, not pedagogy.",
+        "id: minimal-spine",
+        "title: Fewest fixtures that show the whole grammar",
+        "steps:"]
+    for stem, gain in chosen:
+        spine_lines.append(f"  - corpus: {stem}")
+        spine_lines.append(f"    why: +{len(gain)} productions "
+                           f"({', '.join(gain[:4])}{'…' if len(gain) > 4 else ''})")
+    (paths_dir / "minimal-spine.yaml").write_text("\n".join(spine_lines) + "\n")
+
+    referenced, broken = set(), []
+    for py in sorted(paths_dir.glob("*.yaml")):
+        for m in re.finditer(r"-\s*corpus:\s*(\S+)", py.read_text()):
+            rid = m.group(1)
+            referenced.add(rid)
+            corp = ROOT / "conformance" / "corpus"
+            if not ((corp / f"{rid}.oaas").exists() or (corp / f"{rid}.flow").exists()):
+                broken.append(f"{py.name}: {rid}")
+    unreachable = sorted({r[0] for r in rows} - referenced)
+
     lines = [f"# Compression report — {today}",
              "Rung discipline: every claim names its ladder rung "
              "(bytes -> tokens -> productions -> concepts).", "",
@@ -171,6 +198,12 @@ def main():
                          + ("…" if len(fs) > 4 else "") + ")")
     else:
         lines.append("- none above threshold (>=3 fixtures)")
+    lines += ["", "## E. Curriculum views (resolution + reachability)",
+              f"- paths resolve: {'yes' if not broken else 'BROKEN: ' + '; '.join(broken)}",
+              f"- unreachable corpus items ({len(unreachable)}): "
+              + (", ".join(unreachable) if unreachable else "none")
+              + " — report-only; pedagogy is ratified",
+              "- minimal-spine.yaml regenerated from the covering set"]
     lines += ["", "## A. Interop axis (native vs projection, per ONNX case)"]
     if interop is None:
         lines.append("- skipped: onnx not importable (run `just compress`)")
