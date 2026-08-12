@@ -1,0 +1,10 @@
+// provenance: self-description P0 (2026-08-12); closes mul_op:>>
+equivalence shift_zero {
+    x >> 0
+    <=>
+    x
+
+    guards {
+        numeric_semantics = integer
+    }
+}

@@ -1,0 +1,11 @@
+// provenance: the repo's own G1 loop (tools/oaas_check.py) as a flow —
+// self-description P1 (2026-08-12). Note: the type production, born for
+// Tensor<f32>[N,D], expresses Files<oaas>[N] unchanged.
+use domain.toolchain
+
+input corpus : Files<oaas>[N]
+input grammar : Grammar<ebnf>[1]
+output report : Report<coverage>[1]
+
+corpus, grammar -> toolchain::Parse@2 -> ast
+ast -> toolchain::Coverage@2 -> report

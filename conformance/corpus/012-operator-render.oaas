@@ -1,0 +1,8 @@
+// provenance: profiles/domain/agent/toolchain.oaas (self-description P0,
+// 2026-08-12) — deliberately exercises rel_op:==, rel_op:>, literal:string
+operator render {
+    goal: deterministic_svg
+    renderer_version == 1
+    render_budget > 5ms
+    fonts = "PinnedMono"
+}

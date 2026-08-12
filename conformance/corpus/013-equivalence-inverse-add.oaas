@@ -1,0 +1,10 @@
+// provenance: self-description P0 (2026-08-12); closes add_op:-
+equivalence inverse_add {
+    (a + b) - b
+    <=>
+    a
+
+    guards {
+        numeric_semantics = exact
+    }
+}

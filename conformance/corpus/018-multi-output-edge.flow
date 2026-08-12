@@ -1,0 +1,9 @@
+// EXPECTED-FAIL: GAP-4 — multi-output edges are not yet in the grammar.
+// provenance: self-description P1 (2026-08-12). Needed by BOTH the toolchain
+// domain (ExportFlow -> text + passthrough) and the ONNX suite as it grows
+// (Split, Dropout have multiple outputs). Proposed syntax (D3): -> (Y, Z)
+use domain.toolchain
+
+input model : Model<onnx>[1]
+
+model -> toolchain::ExportFlow@1 -> (text, passthrough)

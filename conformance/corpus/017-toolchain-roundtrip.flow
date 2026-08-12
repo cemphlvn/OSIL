@@ -1,0 +1,14 @@
+// provenance: the repo's own G3 loop (tools/onnx_roundtrip.py) as a flow —
+// self-description P1 (2026-08-12)
+// normalized: ExportFlow's two products (text + passthrough) bundled as one
+// `image` artifact — v0 single-output edges; the honest gap is GAP-4 (see 018)
+use domain.toolchain
+
+input case : Generator<py>[1]
+const contract : Contract<oaas>[1]
+output score : Score<preservation>[1]
+
+case -> toolchain::MakeModel@1 -> model
+model -> toolchain::ExportFlow@1 -> image
+image -> toolchain::ImportModel@1 -> rebuilt
+model, rebuilt, contract -> toolchain::Verify@1 -> score

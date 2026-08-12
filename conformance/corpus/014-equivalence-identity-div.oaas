@@ -1,0 +1,10 @@
+// provenance: self-description P0 (2026-08-12); closes mul_op:/
+equivalence identity_div {
+    x / 1
+    <=>
+    x
+
+    guards {
+        numeric_semantics = exact
+    }
+}

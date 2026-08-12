@@ -1,0 +1,34 @@
+// profiles/domain/agent/toolchain.oaas
+// Use case #2: the repo's own machinery described in OAAS (self-description
+// bootstrap, docs/design/self-description-bootstrap.md). Vocabulary only;
+// the pipelines live in conformance/corpus/ (016, 017, 019).
+
+profile domain.toolchain {
+    version = 0
+}
+
+invariant Deterministic
+invariant ZeroDiff
+invariant PixelDiffNeverGates
+
+concept Validate {
+    equivalent_under { grammar_version = 2 }
+    to { oaas_check }
+}
+
+operator render {
+    goal: deterministic_svg
+    renderer_version == 1
+    render_budget > 5ms
+    fonts = "PinnedMono"
+}
+
+projection Identity {
+    from OAAS-NATIVE
+    preserve everything
+}
+
+preserves {
+    semantics
+    visual_layout
+}
