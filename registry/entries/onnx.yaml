@@ -2,6 +2,7 @@
 name: onnx
 kind: ir
 capabilities: [graph-interchange, versioned-operators, runtime-execution-via-ort]
+operators: [MatMul@13, Add@13, Split@13]   # the oracle (G12): ops the suite covers
 requirements: []
 versions:
   ir_version: 11        # ASSUMPTION: unverified, mirrors profiles/ecosystem/onnx/VERSIONS

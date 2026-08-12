@@ -1,0 +1,3 @@
+// MUST-FAIL-RESOLUTION: dangling use — the profile does not exist in the
+// universe; a particular without its universal (spec/execution.md, G12).
+use domain.phantom

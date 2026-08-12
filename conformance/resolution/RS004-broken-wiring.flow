@@ -1,0 +1,8 @@
+// MUST-FAIL-RESOLUTION: broken wiring — an edge consumes a value nobody
+// produces, and a declared output is never produced (G12 dataflow rules).
+use domain.toolchain
+
+input x : Data<raw>[1]
+output done : Data<raw>[1]
+
+nowhere -> toolchain::Parse@2 -> y

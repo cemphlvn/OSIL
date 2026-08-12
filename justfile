@@ -24,8 +24,12 @@ render-bless:
 policy:
     python3 tools/policy_check.py
 
-# full gatekeeper: contract + round-trip + render + policy agreement
-test: check roundtrip render policy
+# G12 resolver: references find their universals; refusals REJECT
+resolve:
+    python3 tools/oaas_resolve.py
+
+# full gatekeeper: contract + round-trip + render + policy + resolution
+test: check roundtrip render policy resolve
 
 # compression ladder scan: covering set, naming candidates, interop ratios
 compress:

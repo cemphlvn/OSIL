@@ -1,0 +1,7 @@
+// MUST-FAIL-RESOLUTION: unbound namespace — `ghost::` is bound by no use
+// declaration; namespaces resolve only through use bindings (G12).
+use domain.toolchain
+
+input x : Data<raw>[1]
+
+x -> ghost::Op@1 -> y

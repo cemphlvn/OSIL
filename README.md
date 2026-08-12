@@ -17,8 +17,8 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G11 complete / GX (Linux Foundation) terminal**.
-The GAPS ledger is fully closed.
+Pre-release, gates **G0–G12 complete / GX (Linux Foundation) terminal**.
+The GAPS ledger is fully closed; references resolve (`just resolve`).
 Gate convention: numbered gates keep appending BEFORE the terminal gate GX —
 GX is always last. ONNX is the
 first REGISTERED LF interop; the repo fully self-describes (policy as actors,
@@ -43,6 +43,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G10-A | boundary obligation discharged for v0.5: R005 pins the dangling-dot refusal G9 left owed | **done 2026-08-12** |
 | G10-B | ritual completeness normative: pin lifecycle (flip / delete / PROMOTE), boundary obligation, ritual-vs-alarm XPASS — spec + merge gate | **done 2026-08-12** (executed before A: norm before instance) |
 | G11 | GAP-2 closed: binding univocity ratified (ADR-0008 — `:` roles, `=` equality; grammar unchanged); pin 021 PROMOTED to R006 — the lifecycle's third exit, first performance | **done 2026-08-12** — no open gaps remain |
+| G12 | the resolver (rungs 1–2): resolution rate 1.00 over all flows; namespace binding normative; registry oracle live; pin-consistency; refusals RS001–004 REJECT | **done 2026-08-12** |
 | GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree

@@ -1,0 +1,9 @@
+// profiles/ecosystem/onnx/profile.oaas
+// CANONICAL in-language pins (G12): resolution pressure forced these out of
+// VERSIONS (plain text) into the language — `use ecosystem.onnx` was DANGLING
+// until this file existed. VERSIONS mirrors this for drift-watch; the
+// resolver enforces the two agree (pin-consistency loop).
+profile ecosystem.onnx {
+    ir_version = 13
+    opset "ai.onnx" = 27
+}

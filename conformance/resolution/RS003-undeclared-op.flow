@@ -1,0 +1,7 @@
+// MUST-FAIL-RESOLUTION: undeclared op — the namespace resolves but the
+// operation is not declared in the profile's vocabulary (G12).
+use domain.toolchain
+
+input x : Data<raw>[1]
+
+x -> toolchain::Phantom@1 -> y

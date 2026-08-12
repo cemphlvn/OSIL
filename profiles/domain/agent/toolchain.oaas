@@ -32,3 +32,15 @@ preserves {
     semantics
     visual_layout
 }
+
+// -- flow-op vocabulary (G12): resolution found all 9 flow ops undeclared —
+// the resolver's first catch. Each op the pipelines reference, now declared.
+operator Parse { goal: corpus_to_ast }
+operator Coverage { goal: production_coverage }
+operator MakeModel { goal: case_to_model }
+operator ExportFlow { goal: model_to_projection_image }
+operator ImportModel { goal: projection_image_to_model }
+operator Verify { goal: score_preservation }
+operator ParseLayout { goal: flow_to_layout_data }
+operator DataDiff { goal: layout_zero_diff }
+operator RenderSVG { goal: deterministic_svg }
