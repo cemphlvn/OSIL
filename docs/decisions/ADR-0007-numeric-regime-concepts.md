@@ -1,6 +1,8 @@
 # ADR-0007: Numeric regimes as named concepts (`domain.numeric`)
 
-Date: 2026-08-12 · Status: **PROPOSED — awaiting maintainer ratification**
+Date: 2026-08-12 · Status: **RATIFIED** (maintainer instruction, same day) —
+applied: profiles/domain/numeric/ · corpus 020 · spec/TERMS.md first entry ·
+re-baseline. Gate G5 closed by this application.
 Origin: compression-scout name-direction finding (docs/reports/
 compression-2026-08-12.md): `guards { numeric_semantics = … }` recurs across
 5 of 6 equivalence fixtures — the first mechanically-detected naming

@@ -1,0 +1,17 @@
+// profiles/domain/numeric/numeric.oaas
+// provenance: ADR-0007 (compression-scout naming finding), RATIFIED 2026-08-12
+// Numeric regimes: validity domains for equivalences, with substitutable
+// carriers — the category-substitution pattern applied to numerics.
+profile domain.numeric {
+    version = 0
+}
+
+concept ExactArithmetic {
+    equivalent_under { numeric_semantics = exact }
+    to { rational_arithmetic, arbitrary_precision, symbolic }
+}
+
+concept IntegerArithmetic {
+    equivalent_under { numeric_semantics = integer }
+    to { int32_wrapping, int64_wrapping, arbitrary_precision_integer }
+}

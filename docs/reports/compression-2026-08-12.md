@@ -2,8 +2,8 @@
 Rung discipline: every claim names its ladder rung (bytes -> tokens -> productions -> concepts).
 
 ## B. Corpus ladder
-- 19 fixtures (1 expected-fail, excluded from parse rungs)
-- bytes: 6879 · tokens: 727 · productions: 59 (all fired)
+- 20 fixtures (1 expected-fail, excluded from parse rungs)
+- bytes: 7326 · tokens: 752 · productions: 59 (all fired)
 
 ## C. Cover direction — the corpus's 'books'
 Greedy covering set: 9 fixtures cover all 59 productions:
@@ -17,11 +17,12 @@ Greedy covering set: 9 fixtures cover all 59 productions:
 - 001-profile-ecosystem-onnx  (+2: profile_decl, profile_field)
 - 004-projections  (+1: projection_decl)
 
-Redundancy: fattest productions [('oaas_document', 13), ('oaas_declaration', 13), ('literal', 10), ('id_list', 9), ('qualified_id', 6)]; single-witness productions (31): actor_decl, actor_field, arg, arg_list, boolean, bounds, concept_decl, constraints_block, contract_decl, coord, edge_layout, invariant_decl…
+Redundancy: fattest productions [('oaas_document', 14), ('oaas_declaration', 14), ('literal', 11), ('id_list', 9), ('equivalence_decl', 6)]; single-witness productions (31): actor_decl, actor_field, arg, arg_list, boolean, bounds, concept_decl, constraints_block, contract_decl, coord, edge_layout, invariant_decl…
 
 ## D. Name direction — unnamed recurring patterns (PROPOSE-ONLY)
 - `guards { numeric_semantics = exact } }` — 3 fixtures (003-equivalence-distributivity, 013-equivalence-inverse-add, 014-equivalence-identity-div)
 - `guards { numeric_semantics =` — 5 fixtures (003-equivalence-distributivity, 009-equivalence-strength-reduction, 013-equivalence-inverse-add, 014-equivalence-identity-div…)
+- `( a + b )` — 3 fixtures (003-equivalence-distributivity, 013-equivalence-inverse-add, 020-equivalence-associativity)
 - `use domain . toolchain input` — 3 fixtures (016-toolchain-check, 017-toolchain-roundtrip, 019-toolchain-render)
 - `ecosystem . onnx` — 3 fixtures (001-profile-ecosystem-onnx, 002-graph-onnx-matmul, 011-flow-matmul-roundtrip)
 

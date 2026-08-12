@@ -1,0 +1,13 @@
+// provenance: ADR-0007 ratification (2026-08-12) — first use of the CANONICAL
+// named-regime guard form. Associativity is the poster-child exact-only rule:
+// it silently FAILS under floating point, which is what regimes exist to say.
+// Raw form `numeric_semantics = exact` remains this guard's declared expansion.
+equivalence add_associativity {
+    (a + b) + c
+    <=>
+    a + (b + c)
+
+    guards {
+        regime = ExactArithmetic
+    }
+}
