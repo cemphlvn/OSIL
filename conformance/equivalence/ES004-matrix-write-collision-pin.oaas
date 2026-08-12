@@ -1,0 +1,17 @@
+// SUITE: stages
+// EXPECTED-FAIL — the G14 matrix wart, made normative: roundtrip and egraph
+// both write conformance.matrix.matrix_yaml, so their composition must NOT
+// commute (writes_disjoint is computed FALSE from corpus 023). XPASS (merge
+// observed) means the write collision was removed — the wart is FIXED — and
+// that change must be RATIFIED: re-declare stage write-sets in 023, retire
+// this pin through the lifecycle (G10), never let it flip silently.
+// provenance: G15 (ADR-0010); operands are declared stages — ground terms
+equivalence matrix_write_collision {
+    roundtrip then egraph
+    <=>
+    egraph then roundtrip
+
+    guards {
+        writes_disjoint = true
+    }
+}

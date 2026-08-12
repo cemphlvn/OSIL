@@ -32,8 +32,12 @@ policy:
 resolve:
     python3 tools/oaas_resolve.py
 
-# full gatekeeper: contract + round-trips + render + policy + resolution
-test: check roundtrip egraph render policy resolve
+# full gatekeeper: contract + round-trips + render + policy + resolution + stages
+test: check roundtrip egraph render policy resolve stages
+
+# G15 stage commutation: the pipeline tests itself (uv supplies egglog)
+stages:
+    uv run --with 'egglog==13.2.0' python3 tools/stage_commute.py
 
 # derivation scan (ADVISORY): what the declared equivalences jointly entail
 derive:

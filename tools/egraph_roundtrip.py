@@ -304,7 +304,7 @@ def run_fixture(fx):
 def read_directives(path):
     """`//` header directives, corpus EXPECTED-FAIL style: what this fixture
     expects OF THE ADAPTER (not of the grammar)."""
-    expects, pin_assert = None, []
+    expects, pin_assert, suite = None, [], None
     for line in path.read_text().splitlines():
         if not line.startswith("//"):
             break
@@ -316,7 +316,9 @@ def read_directives(path):
         elif body.startswith("PIN-ASSERT:"):
             k, v = body.split(":", 1)[1].split("=")
             pin_assert.append((k.strip(), v.strip()))
-    return expects, pin_assert
+        elif body.startswith("SUITE:"):
+            suite = body.split(":", 1)[1].strip()
+    return expects, pin_assert, suite
 
 
 def run_adapter_suite():
@@ -326,7 +328,10 @@ def run_adapter_suite():
     lifecycle, G10): capability arrived unratified — the run fails."""
     verdicts = []
     for path in sorted((ROOT / "conformance" / "equivalence").glob("*.oaas")):
-        expects, pin_assert = read_directives(path)
+        expects, pin_assert, suite = read_directives(path)
+        if suite is not None:  # foreign suite — owned by its own tool
+            print(f"SKIP (suite: {suite}) {path.name}")
+            continue
         fxs = read_equivalences(path)
         if expects is None or len(fxs) != 1:
             verdicts.append((path.name, "MALFORMED", False,
