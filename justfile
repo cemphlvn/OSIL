@@ -12,6 +12,10 @@ roundtrip:
 render:
     python3 tools/render_check.py
 
+# render one .flow (with layout block) to SVG: just draw FILE [OUT]
+draw FILE *OUT:
+    python3 tools/render_check.py --draw {{FILE}} {{OUT}}
+
 # bless goldens (RATIFICATION ACT - record who/why in the PR)
 render-bless:
     python3 tools/render_check.py --bless

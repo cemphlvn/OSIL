@@ -235,6 +235,22 @@ def render_svg(layout, title):
 
 
 def main():
+    if "--draw" in sys.argv:
+        # user-facing verb: render one .flow (with a layout block) to SVG.
+        # No auto-layout engine exists BY DESIGN (layout is data, the Mermaid
+        # trade was rejected) — a flow without a layout block cannot render.
+        i = sys.argv.index("--draw")
+        src = Path(sys.argv[i + 1])
+        out = Path(sys.argv[i + 2]) if len(sys.argv) > i + 2 else \
+            Path.cwd() / (src.stem + ".svg")
+        _, _, layout, _ = read(src.read_text())
+        if not layout["nodes"]:
+            sys.exit(f"{src}: no layout block — layout is data; add one "
+                     "(there is deliberately no auto-layout engine)")
+        out.write_text(render_svg(layout, src.stem))
+        print(f"wrote {out}")
+        return
+
     bless = "--bless" in sys.argv
     targets = [p for p in sorted((ROOT / "conformance" / "corpus").glob("*.flow"))
                if "layout {" in p.read_text()]
