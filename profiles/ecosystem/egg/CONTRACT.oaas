@@ -1,9 +1,12 @@
 // machine-readable preservation contract for the EGraph projection
 // provenance: spec/interop/egraph.md draft-0 + G13 report honesty note 3
 // ("realization sets are vocabulary, not machinery") — staged for G14
-// verification status: UNVERIFIED — all `preserves` fields pending the G14
-// round-trip harness (OAAS-SIR -> e-graph -> saturation -> extraction ->
-// OAAS-SIR); engine: egglog per ADR-0009 (research U5, 2026-08-12)
+// verification status: all four `preserves` fields VERIFIED mechanically at
+// G14 (2026-08-12, preservation score 4/4 over the 6 corpus equivalence
+// declarations — scope note: arithmetic SIR terms, 1-rule systems; see
+// docs/reports/roundtrip-egraph-2026-08-12.md); engine: egglog per ADR-0009.
+// Adapter realizability rule: a declared <=> realizes as a DIRECTED native
+// rule when only one direction is groundable (3 of 6 current fixtures).
 projection EGraph {
     from OAAS-SIR
     preserve equivalence

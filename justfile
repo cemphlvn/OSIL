@@ -8,6 +8,10 @@ check:
 roundtrip:
     uv run --with onnx python3 tools/onnx_roundtrip.py
 
+# G14 egglog round-trip suite: equivalence preservation score (uv supplies egglog)
+egraph:
+    uv run --with 'egglog==13.2.0' python3 tools/egraph_roundtrip.py
+
 # G4 golden-render loop: layout data gate + SVG advisory
 render:
     python3 tools/render_check.py
@@ -28,8 +32,8 @@ policy:
 resolve:
     python3 tools/oaas_resolve.py
 
-# full gatekeeper: contract + round-trip + render + policy + resolution
-test: check roundtrip render policy resolve
+# full gatekeeper: contract + round-trips + render + policy + resolution
+test: check roundtrip egraph render policy resolve
 
 # compression ladder scan: covering set, naming candidates, interop ratios
 compress:
