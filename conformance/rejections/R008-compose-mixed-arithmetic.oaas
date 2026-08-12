@@ -1,0 +1,8 @@
+// MUST-FAIL: sort boundary — stage composition and arithmetic do not mix in
+// one equivalence side; `then` operands are identifiers only (ADR-0010).
+// provenance: G15 boundary obligation.
+equivalence mixed_sorts {
+    render then policy + x
+    <=>
+    policy then render
+}

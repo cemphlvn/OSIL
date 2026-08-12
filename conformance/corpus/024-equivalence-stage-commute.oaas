@@ -1,0 +1,13 @@
+// provenance: G15 (ADR-0010) — commutation declared GENERICALLY: universals
+// in vocabulary, instances derived. `a` and `b` are pattern variables (they
+// name no declared stage); writes_disjoint is the first COMPUTED guard — the
+// harness asserts it from declared write-sets (both orders), never by hand.
+equivalence stage_commutation {
+    a then b
+    <=>
+    b then a
+
+    guards {
+        writes_disjoint = true
+    }
+}

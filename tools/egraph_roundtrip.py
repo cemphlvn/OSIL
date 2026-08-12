@@ -143,6 +143,18 @@ def read_equivalences(path):
         if (t.kind == "ident" and t.text == "equivalence" and i + 2 < len(toks)
                 and toks[i + 1].kind == "ident" and toks[i + 2].text == "{"):
             name = toks[i + 1].text
+            # compose-shaped equivalences (`a then b`) belong to the stage
+            # suite (tools/stage_commute.py) — skip LOUDLY, never silently
+            if (toks[i + 4].kind == "ident" and toks[i + 4].text == "then"):
+                print(f"SKIP (suite: stages) {path.name}: {name}")
+                depth, i = 1, i + 3
+                while depth:
+                    if toks[i].text == "{":
+                        depth += 1
+                    elif toks[i].text == "}":
+                        depth -= 1
+                    i += 1
+                continue
             lhs, i = parse_expr(toks, i + 3)
             if toks[i].text != "<=>":
                 raise SyntaxError(f"{path.name}: expected <=> in {name}")

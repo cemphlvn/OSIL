@@ -119,7 +119,7 @@ class Parser:
             "equivalence": self.equivalence_decl, "model": self.model_decl,
             "invariant": self.invariant_decl, "operator": self.operator_decl,
             "preserves": self.contract_decl, "concept": self.concept_decl,
-            "actor": self.actor_decl,
+            "actor": self.actor_decl, "stage": self.stage_decl,
         }
         fn = dispatch.get(t.text)
         if fn is None:
@@ -163,12 +163,57 @@ class Parser:
         self.expect_word("equivalence")
         self.expect_ident()
         self.expect_op("{")
-        self.expr()
-        self.expect_op("<=>")
-        self.expr()
+        # compose vs arithmetic: `then` is CONTEXTUAL — an identifier followed
+        # by the identifier `then` can only open a composition (ADR-0010)
+        if self.peek().kind == "ident" and self.peek(1).kind == "ident" \
+                and self.peek(1).text == "then":
+            self.alt("equivalence_decl:compose")
+            self.compose_expr()
+            self.expect_op("<=>")
+            self.compose_expr()
+        else:
+            self.alt("equivalence_decl:arith")
+            self.expr()
+            self.expect_op("<=>")
+            self.expr()
         if self.at_word("guards"):
             self.guards_block()
         self.expect_op("}")
+
+    def stage_decl(self):
+        self.fire("stage_decl")
+        self.expect_word("stage")
+        self.expect_ident()
+        self.expect_op("{")
+        if self.at_word("runs"):
+            self.expect_word("runs")
+            self.expect_op("=")
+            self.qualified_id()
+        while not self.at_op("}"):
+            self.resource_block()
+        self.expect_op("}")
+
+    def resource_block(self):
+        self.fire("resource_block")
+        t = self.peek()
+        if not self.at_word("reads", "writes"):
+            raise ParseError(f"line {t.line}: expected reads/writes block, "
+                             f"got {t.text!r}")
+        self.alt(f"resource_block:{t.text}")
+        self.expect_word(t.text)
+        self.expect_op("{")
+        while not self.at_op("}"):
+            self.qualified_id()
+        self.expect_op("}")
+
+    def compose_expr(self):
+        self.fire("compose_expr")
+        self.expect_ident()
+        self.expect_word("then")
+        self.expect_ident()
+        while self.at_word("then"):
+            self.expect_word("then")
+            self.expect_ident()
 
     def guards_block(self):
         self.fire("guards_block")
@@ -681,6 +726,7 @@ ALL_PRODUCTIONS = [
     "layout_block", "layout_stmt", "node_layout", "edge_layout",
     "label_layout", "viewport_stmt", "bounds", "point", "coord",
     "out_spec", "path_component",
+    "stage_decl", "resource_block", "compose_expr",
 ]
 
 
@@ -701,6 +747,8 @@ ALT_EXPECTED = sorted(
         "node_layout": ["collapsed", "z"],
         "out_spec": ["single", "multi"],
         "path_component": ["plain", "dotted"],
+        "equivalence_decl": ["arith", "compose"],
+        "resource_block": ["reads", "writes"],
     }.items() for alt in alt_names
 )
 

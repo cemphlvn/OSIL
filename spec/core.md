@@ -93,6 +93,21 @@ when neither is — never silently dropped. Engine-forced, discovered at G14;
 realized directions are recorded per case (`just egraph`). Ratified into core
 by maintainer instruction 2026-08-12.
 
+**stage** — a named toolchain step (genus) declared by what it runs and the
+resources it reads and writes (differentia). Stages make the pipeline itself
+vocabulary: architecture the machinery can compute over. Corpus:
+`023-stage-toolchain.oaas`. ADR-0010.
+
+**composition** (`then`) — the sequential compound of two stages (genus)
+whose meaning is the left stage's effect followed by the right's
+(differentia). `then` is a contextual keyword; operands are stage terms
+only — sorts do not mix (R008). Corpus: `024-equivalence-stage-commute.oaas`.
+
+**writes_disjoint** (guard) — a guard predicate over a composition (genus)
+holding iff the composed stages' declared write-sets do not intersect
+(differentia). The first COMPUTED guard: asserted by the harness from stage
+declarations, both orders, never by hand. ADR-0010.
+
 **profile** — a named set of declarations (genus) that pins the versioned identity
 and semantics of one ecosystem, ontology, or domain for use inside OAAS graphs
 (differentia). Corpus: `001-profile-ecosystem-onnx.oaas`.

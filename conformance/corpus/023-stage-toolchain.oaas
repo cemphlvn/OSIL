@@ -1,0 +1,35 @@
+// provenance: G15 (ADR-0010) — the `just test` pipeline as declared
+// vocabulary. Write-sets are FILE-granular resource ids; declarations are
+// self-class truth (fidelity to tool source is declared, not yet extracted).
+stage check {
+    runs = tools.oaas_check
+    reads { conformance.corpus  profiles  grammar.oaas_ebnf }
+}
+
+stage roundtrip {
+    runs = tools.onnx_roundtrip
+    reads { conformance.interop.onnx.cases  profiles.ecosystem.onnx.VERSIONS }
+    writes { conformance.matrix.matrix_yaml  docs.reports.roundtrip_onnx_dated }
+}
+
+stage egraph {
+    runs = tools.egraph_roundtrip
+    reads { conformance.corpus  conformance.equivalence
+            conformance.matrix.matrix_yaml  profiles.ecosystem.egglog.VERSIONS }
+    writes { conformance.matrix.matrix_yaml  docs.reports.roundtrip_egraph_dated }
+}
+
+stage render {
+    runs = tools.render_check
+    reads { conformance.corpus  conformance.golden-render }
+}
+
+stage policy {
+    runs = tools.policy_check
+    reads { improvable  profiles.domain.agent.repo-policy }
+}
+
+stage resolve {
+    runs = tools.oaas_resolve
+    reads { conformance.corpus  conformance.resolution  profiles }
+}

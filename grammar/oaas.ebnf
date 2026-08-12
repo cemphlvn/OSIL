@@ -1,4 +1,9 @@
-(* OAAS grammar — v0.5
+(* OAAS grammar — v0.6
+   v0.6 (G15, ratified 2026-08-13 per staged gate row + ADR-0010): stage-
+   composition term language — `stage` declarations (runs/reads/writes
+   resource footprint) and `then` composition in equivalences (CONTEXTUAL
+   keyword, no new operator token; `.` stays univocal as namespace path).
+   Boundary: R007 (stage-in-flow), R008 (compose mixed with arithmetic).
    Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
    .flow = flow document (composition). Kind is selected by file extension.
    Backed by tools/oaas_check.py: every corpus file must parse, every
@@ -31,7 +36,8 @@ oaas_declaration = profile_decl
                  | operator_decl
                  | contract_decl
                  | concept_decl
-                 | actor_decl ;
+                 | actor_decl
+                 | stage_decl ;
 
 flow_statement  = use_decl | io_decl | edge_stmt | layout_block ;
 
@@ -48,10 +54,22 @@ projection_decl = "projection" , identifier , "{" ,
 
 (* -- equivalences: semantic equality rules (egg-projectable) --------------- *)
 equivalence_decl = "equivalence" , identifier , "{" ,
-                     expr , "<=>" , expr ,
+                     ( compose_expr , "<=>" , compose_expr
+                     | expr , "<=>" , expr ) ,
                      [ guards_block ] ,
                    "}" ;
 guards_block    = "guards" , "{" , { identifier , "=" , literal } , "}" ;
+
+(* -- stages: the toolchain as vocabulary (G15, ADR-0010) -------------------- *)
+stage_decl      = "stage" , identifier , "{" ,
+                    [ "runs" , "=" , qualified_id ] ,
+                    { resource_block } ,
+                  "}" ;
+resource_block  = ( "reads" | "writes" ) , "{" , { qualified_id } , "}" ;
+(* sequential composition — CONTEXTUAL keyword `then`; operands are
+   identifiers only (a declared stage name = ground constant, anything else
+   = pattern variable — ADR-0010). Sorts do not mix: R008. *)
+compose_expr    = identifier , "then" , identifier , { "then" , identifier } ;
 
 (* -- models: intention + constraints (configuration compression) ----------- *)
 model_decl      = "model" , identifier , "{" , { model_field } , "}" ;

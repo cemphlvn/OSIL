@@ -1,0 +1,8 @@
+// MUST-FAIL: document-kind boundary (ADR-0005 family; siblings R001/R002) —
+// stages are VOCABULARY; a stage declaration may not appear in a .flow
+// document. provenance: G15 boundary obligation (ADR-0010).
+use domain.agent
+
+stage rogue {
+    runs = tools.nowhere
+}
