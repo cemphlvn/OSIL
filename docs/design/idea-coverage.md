@@ -16,7 +16,7 @@
 | Semantic compression | ~25% | **~25%** | correct and pointed: the measurement lens exists (ladder, covering set, baselines, scout), the ENGINE (wizard, expansion) does not — and this is the idea's LARGEST bar | `tools/compression_scan.py` | wizard behind resolver |
 | Config resolution | 0 | **~60% (G12)** | rungs 1–2 done: rate 18/18=1.00, namespace binding normative, registry oracle live, pin-consistency loop; rung 3 (types/shapes) + vocabulary cross-refs open | `tools/oaas_resolve.py`, `spec/execution.md` §1, `conformance/resolution/` | rung 3; then e-graph/wizard/compiler unblock |
 | Compiler | 0 | **0** | semantic optimization space, invariant-guarded rewrite engine: unrealized | none | behind resolver + e-graph |
-| ABI/binary contract | 0 | **0 — and UNHOMED** | the chart names a dimension the tree never carved: no subtree, no gap pin, no research unknown. Yet the security heritage (ConstantTime, "show every lowering where constant-time may be lost") only cashes out at the binary level | **none — structural hole** | carve the home (spec/interop chapter + profile) + queue the research unknown |
+| ABI/binary contract | 0 | **0 — and UNHOMED** | the chart names a dimension the tree never carved: no subtree, no gap pin, no research unknown. Yet the security heritage (ConstantTime, "show every lowering where constant-time may be lost") only cashes out at the binary level. External eval (2026-08-12) decomposes the future pillar: OAAS ABI · calling convention · component interface · binary artifact identity · reproducible-build contract · **Wasm Component/WIT binding** · native symbol/layout compat — and warns, correctly: never claim "binary compatibility" today; what exists is semantic/graph INTERCHANGE compatibility (verified: the repo makes no binary claim anywhere) | **none — structural hole** | carve the home + research unknown (WIT/Component Model is the concrete study target) |
 
 ## Dependency order of the zeros
 
@@ -40,3 +40,28 @@ ontology federation — parallel track, blocked on GAP-6 relations, not on resol
    GPU_X` — the transcript's vertical-optimization chains cannot be written
    in v0.5. Three idea-dimensions (federation, e-graph enrichment, compiler)
    quietly depend on it.
+
+## Addendum — external evaluation folded in (2026-08-12, post-G12)
+
+An external review of the repo-vs-idea delta confirmed this ledger on nearly
+every row, arrived STALE on one (its chart shows Config resolution at zero —
+G12 landed between its reading and now; the repo moves faster than the
+discussion loop), and contributed a third discovery neither ledger had:
+
+3. **SIR ↔ CIR — the missing middle, used-but-undefined at the center.**
+   `OAAS-SIR` / `OAAS-CIR` appear in corpus 004 (3×), in the machine-readable
+   `profiles/ecosystem/onnx/CONTRACT.oaas`, and in `spec/interop/egraph.md` —
+   and are defined NOWHERE: not in core.md, not as any declaration; the
+   resolver does not resolve projection `from` targets (flows only). This is
+   a BLOCKER-class univocity finding (nonroot terms without definitions) at
+   the architecture's exact center — the intended stratification
+   `intention → SIR (what it IS) → realization → CIR (how computed) →
+   projection → ecosystems` is the bridge between the ontology story and the
+   compiler story, and it is currently vocabulary-free. Caught by an external
+   reader doing univocity-lint's job — the lint that has never run a full
+   audit (assessment: spec maturity C−) would have found it.
+
+Strategic directive adopted from the review, consistent with our dependency
+graph: **pause horizontal grammar expansion; move vertically** — SIR/CIR
+definitions first (the definitional floor every vertical step stands on),
+then e-graph contract, wizard, compiler, ABI.
