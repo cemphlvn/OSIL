@@ -508,7 +508,19 @@ class Parser:
         self.expect_op("->")
         self.op_ref()
         self.expect_op("->")
-        self.expect_ident()
+        self.out_spec()
+
+    def out_spec(self):
+        # positional multi-output, ratified at G6 (D3): -> (Y, Z)
+        self.fire("out_spec")
+        if self.at_op("("):
+            self.alt("out_spec:multi")
+            self.take()
+            self.id_list()
+            self.expect_op(")")
+        else:
+            self.alt("out_spec:single")
+            self.expect_ident()
 
     def op_ref(self):
         self.fire("op_ref")
@@ -653,6 +665,7 @@ ALL_PRODUCTIONS = [
     "invariants_block", "ratify_block", "path_list", "path_ref",
     "layout_block", "layout_stmt", "node_layout", "edge_layout",
     "label_layout", "viewport_stmt", "bounds", "point", "coord",
+    "out_spec",
 ]
 
 
@@ -671,6 +684,7 @@ ALT_EXPECTED = sorted(
         "profile_field": ["plain", "string-keyed"],
         "actor_field": ["scope", "verbs", "invariants", "ratify"],
         "node_layout": ["collapsed", "z"],
+        "out_spec": ["single", "multi"],
     }.items() for alt in alt_names
 )
 

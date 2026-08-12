@@ -28,12 +28,15 @@ candidate fixes are optional edge names or ordinal disambiguation.
 REVISIT WHEN: the first flow needs parallel edges, or GAP-4 ratification
 introduces edge naming anyway.
 
-### D3 — multi-output edge syntax (GAP-4, pinned by corpus 018)
-PROPOSED, not yet grammar: `-> (Y, Z)`. Needed by toolchain ExportFlow and by
-ONNX Split/Dropout as the suite grows. OPEN: positional vs named outputs at
-the arrow; interaction with D2 anchoring once one edge has several
-destinations. REVISIT WHEN: the first ONNX multi-output case lands — that PR
-must close GAP-4 through the XPASS ritual on fixture 018.
+### D3 — multi-output edge syntax — RATIFIED at G6 (2026-08-12)
+`-> (Y, Z)` landed in grammar v0.4 as POSITIONAL outputs, closed through the
+XPASS ritual on fixture 018, with the revisit trigger honored: ONNX Split is
+in the suite (4/4, axis attribute via node-proto passthrough). Resolved:
+positional-vs-named -> positional (named outputs would re-open only if an
+ecosystem's native semantics are positional-ambiguous). D2 interaction
+resolved without change: a layout edge references one (src, dst) pair; a
+multi-output edge simply admits several pairs. STILL OPEN under D2: parallel
+edges (same src AND same dst twice).
 
 ### Standing (from U4, adopted as-is, still discussable)
 - `viewport` is stored but NON-NORMATIVE — excluded from the golden gate.

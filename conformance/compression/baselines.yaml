@@ -1,8 +1,9 @@
 # compression baselines (agent-maintained; regression = representations
 # silently getting less compact). Rung named per metric.
 date: 2026-08-12
-corpus: {fixtures: 20, bytes: 7326, tokens: 752, productions: 59}
+corpus: {fixtures: 20, bytes: 7492, tokens: 779, productions: 60}
 covering_set: [019-toolchain-render, 007-invariants-operator, 010-actor-policy, 003-equivalence-distributivity, 008-concept-equivalent-under, 005-preservation-contract, 006-model-intent-constraints, 001-profile-ecosystem-onnx, 004-projections]
 interop:
-  - {"case": "add", "native_bytes": 102, "flow_bytes": 129, "flow_tokens": 51, "passthrough_bytes": 137}
-  - {"case": "matmul", "native_bytes": 230, "flow_bytes": 132, "flow_tokens": 51, "passthrough_bytes": 427}
+  - {"case": "add", "native_bytes": 102, "flow_bytes": 129, "flow_tokens": 51, "passthrough_bytes": 186}
+  - {"case": "matmul", "native_bytes": 230, "flow_bytes": 132, "flow_tokens": 51, "passthrough_bytes": 482}
+  - {"case": "split", "native_bytes": 123, "flow_bytes": 138, "flow_tokens": 53, "passthrough_bytes": 222}

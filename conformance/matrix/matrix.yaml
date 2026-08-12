@@ -9,5 +9,5 @@ cells:
     status: pass
     preservation_score: "4/4"
     fields: {tensor_types: true, operator_versions: true, graph_topology: true, constants: true}
-    cases: [add, matmul]
+    cases: [add, matmul, split]
     checked: 2026-08-12

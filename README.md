@@ -17,7 +17,7 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G5 complete / GX (Linux Foundation) terminal**.
+Pre-release, gates **G0–G6 complete / GX (Linux Foundation) terminal**.
 Gate convention: numbered gates keep appending BEFORE the terminal gate GX —
 GX is always last. ONNX is the
 first REGISTERED LF interop; the repo fully self-describes (policy as actors,
@@ -35,6 +35,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G3 | ONNX round-trip preserves its declared contract fields | **done 2026-08-12** — preservation score 4/4, cases {add, matmul} (v0 suite, grows monotonically) |
 | G4 | visual identity projection: golden-render diff = 0 across round-trip | **done 2026-08-12** — grammar v0.3 layout block; first golden = OAAS's own render pipeline (test #0v); D1–D3 open discussions in `conformance/golden-render/README.md` |
 | G5 | vocabulary self-extends from detector findings: ADR-0007 ratified → `domain.numeric` concepts land → corpus fixture added → re-baseline resolves the naming candidate | **done 2026-08-12** — full loop closed (ADR-0007 RATIFIED; fixture 020; TERMS.md born) |
+| G6 | GAP-4 closed with teeth: `-> (Y, Z)` ratified (grammar v0.4) via the XPASS ritual on 018, AND the first ONNX multi-output case (Split, with attribute passthrough) round-trips 4/4 | **done 2026-08-12** |
 | GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree

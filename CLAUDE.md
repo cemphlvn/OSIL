@@ -48,6 +48,6 @@ G0-G4 are done (grammar v0.3; `just test` = check + roundtrip + render;
 `just compress` = compression ladder). Gate convention: numbered gates append
 BEFORE the terminal gate GX (Linux Foundation submission — blocked on
 maintainer calls: name-vs-OAAX, license). G5 (vocabulary self-extension) closed
-2026-08-12: the detector -> proposal -> ratification -> re-baseline loop works. Open gaps: GAP-2 (binding univocity), GAP-4
-(multi-output edges, pinned by corpus 018). G4 working decisions D1-D3 are
+2026-08-12: the detector -> proposal -> ratification -> re-baseline loop works. Open gaps: GAP-2 (binding univocity) only —
+GAP-4 closed at G6 (grammar v0.4, multi-output edges). G4 working decisions D1-D3 are
 open discussions in conformance/golden-render/README.md.

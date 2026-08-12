@@ -78,11 +78,15 @@ def export_flow(model):
         lines.append(f"output {vi.name} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
     lines.append("")
     for node in g.node:
-        if len(node.output) != 1:
-            raise NotImplementedError("v0 harness: single-output nodes only")
         since = op_since_version(node.op_type, opset)
-        lines.append(f"{', '.join(node.input)} -> onnx::{node.op_type}@{since} -> {node.output[0]}")
+        outs = node.output[0] if len(node.output) == 1 \
+            else "(" + ", ".join(node.output) + ")"       # positional, D3/G6
+        lines.append(f"{', '.join(node.input)} -> onnx::{node.op_type}@{since} -> {outs}")
     passthrough = {
+        # full NodeProtos ride the sanctioned opaque passthrough (attributes,
+        # names, domains); the text stays authoritative for the modeled
+        # fields and import cross-checks them against these protos
+        "node_protos": [n.SerializeToString().hex() for n in g.node],
         "ir_version": model.ir_version,
         "producer_name": model.producer_name,
         "producer_version": model.producer_version,
@@ -146,16 +150,24 @@ def read_flow(text):
                 srcs.append(expect("ident").text)
             expect("op", "->")
             ns = expect("ident").text
-            op_name, ver = ns, None
+            op_name = ns
             if toks[i].kind == "op" and toks[i].text == "::":
                 i += 1
                 op_name = expect("ident").text
             if toks[i].kind == "op" and toks[i].text == "@":
                 i += 1
-                ver = int(expect("number").text)
+                expect("number")
             expect("op", "->")
-            dst = expect("ident").text
-            edges.append((srcs, ns if ns != op_name else "onnx", op_name, ver, dst))
+            if toks[i].kind == "op" and toks[i].text == "(":
+                i += 1
+                dsts = [expect("ident").text]
+                while toks[i].kind == "op" and toks[i].text == ",":
+                    i += 1
+                    dsts.append(expect("ident").text)
+                expect("op", ")")
+            else:
+                dsts = [expect("ident").text]
+            edges.append((srcs, op_name, dsts))
     return uses, ios, edges
 
 
@@ -179,8 +191,19 @@ def import_model(text, passthrough):
         assert tp.name == n and list(tp.dims) == d and tp.data_type == TEXT_TO_ELEM[e], \
             f"passthrough/text mismatch for const {n}"
         inits.append(tp)
-    nodes = [helper.make_node(op, srcs, [dst])
-             for (srcs, _ns, op, _v, dst) in edges]
+    nodes = []
+    protos = passthrough.get("node_protos")
+    for idx, (srcs, op, dsts) in enumerate(edges):
+        if protos:
+            np_ = onnx.NodeProto()
+            np_.ParseFromString(bytes.fromhex(protos[idx]))
+            # text is authoritative for modeled fields; passthrough must agree
+            assert np_.op_type == op and list(np_.input) == srcs \
+                and list(np_.output) == dsts, \
+                f"passthrough/text mismatch on node {idx} ({op})"
+            nodes.append(np_)
+        else:
+            nodes.append(helper.make_node(op, srcs, dsts))
     graph = helper.make_graph(nodes, passthrough["graph_name"],
                               inputs, outputs, initializer=inits)
     model = helper.make_model(graph, opset_imports=[

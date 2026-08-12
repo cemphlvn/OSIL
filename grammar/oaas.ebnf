@@ -1,4 +1,4 @@
-(* OAAS grammar — v0.3
+(* OAAS grammar — v0.4
    Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
    .flow = flow document (composition). Kind is selected by file extension.
    Backed by tools/oaas_check.py: every corpus file must parse, every
@@ -11,7 +11,10 @@
    flow documents — the visual identity projection's data. Working decisions
    D1 (coordinates: top-left origin, +y down, abstract px) and D2 (edge layout
    anchors by src -> dst pair) are OPEN DISCUSSIONS: see
-   conformance/golden-render/README.md. *)
+   conformance/golden-render/README.md.
+   v0.4 (G6, ratified 2026-08-12): multi-output edges `-> (Y, Z)` — GAP-4
+   closed via the XPASS ritual on corpus 018; D3 syntax ratified as
+   POSITIONAL outputs. *)
 
 (* ==== document kinds ====================================================== *)
 oaas_document   = { oaas_declaration } ;
@@ -88,7 +91,9 @@ path_ref        = identifier , { "/" , identifier } , [ "/" ] ;
 (* -- flow statements --------------------------------------------------------- *)
 use_decl        = "use" , qualified_id ;
 io_decl         = ( "input" | "const" | "output" ) , identifier , ":" , type ;
-edge_stmt       = id_list , "->" , op_ref , "->" , identifier ;
+edge_stmt       = id_list , "->" , op_ref , "->" , out_spec ;
+out_spec        = identifier
+                | "(" , id_list , ")" ;     (* positional multi-output, D3/G6 *)
 op_ref          = [ identifier , "::" ] , identifier , [ "@" , integer ] ;
 type            = identifier , [ "<" , identifier , ">" ] ,
                   [ "[" , dim_list , "]" ] ;

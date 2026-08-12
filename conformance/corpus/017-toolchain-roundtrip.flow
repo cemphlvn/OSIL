@@ -1,7 +1,9 @@
 // provenance: the repo's own G3 loop (tools/onnx_roundtrip.py) as a flow —
 // self-description P1 (2026-08-12)
 // normalized: ExportFlow's two products (text + passthrough) bundled as one
-// `image` artifact — v0 single-output edges; the honest gap is GAP-4 (see 018)
+// `image` artifact — written pre-G6 when edges were single-output (GAP-4,
+// closed 2026-08-12; see 018 for the ratified multi-output form). Bundled
+// form retained as a valid historical fixture.
 use domain.toolchain
 
 input case : Generator<py>[1]

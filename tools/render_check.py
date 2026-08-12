@@ -164,7 +164,16 @@ def read(text):
             if cur.at_op("@"):
                 cur.next(); cur.next()
             cur.eat_op("->")
-            sem_edges.append((srcs, cur.eat_word().text))
+            if cur.at_op("("):                     # multi-output (D3/G6)
+                cur.next()
+                dsts = [cur.eat_word().text]
+                while cur.at_op(","):
+                    cur.next()
+                    dsts.append(cur.eat_word().text)
+                cur.eat_op(")")
+            else:
+                dsts = [cur.eat_word().text]
+            sem_edges.append((srcs, dsts))
     return ios, sem_edges, layout, viewport
 
 
@@ -261,7 +270,7 @@ def main():
     for p in targets:
         ios, sem_edges, layout, viewport = read(p.read_text())
         universe = set(ios) \
-            | {d for _, d in sem_edges} \
+            | {d for _, dsts in sem_edges for d in dsts} \
             | {s for srcs, _ in sem_edges for s in srcs}
         problems = [f"layout node {n!r} not a semantic identifier"
                     for n in layout["nodes"] if n not in universe]
@@ -270,7 +279,8 @@ def main():
         problems += [
             f"layout edge {e['src']} -> {e['dst']} matches no semantic edge"
             for e in layout["edges"]
-            if not any(d == e["dst"] and e["src"] in srcs for srcs, d in sem_edges)]
+            if not any(e["dst"] in dsts and e["src"] in srcs
+                       for srcs, dsts in sem_edges)]
 
         # identity round-trip: structure -> text -> structure, zero diff
         _, _, relayout, reviewport = read(emit(layout, viewport))

@@ -24,6 +24,17 @@ output Y : Tensor<f32>[N,8]
 
 X, W -> onnx::MatMul@13 -> Y
 ```
+## case split: tensor_types=ok, operator_versions=ok, graph_topology=ok, constants=ok
+projection image (.flow):
+```
+use ecosystem.onnx
+
+input X : Tensor<f32>[N,8]
+output Y1 : Tensor<f32>[N,4]
+output Y2 : Tensor<f32>[N,4]
+
+X -> onnx::Split@13 -> (Y1, Y2)
+```
 ## pins vs observed (drift-watch input, no auto-bump)
 pinned:
 ```
