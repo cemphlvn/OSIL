@@ -1,13 +1,12 @@
 // profiles/domain/agent/repo-policy.oaas
 // ============================================================================
-// CONFORMANCE TEST #0: OAAS must be able to express its own repository's
-// operating policy. "The first architecture OAAS describes is the OAAS repo."
+// CONFORMANCE TEST #0: OAAS expresses its own repository's operating policy.
+// "The first architecture OAAS describes is the OAAS repo."
 //
-// STATUS: EXPECTED-FAIL against grammar/oaas.ebnf v0.
-// The constructs `actor`, `scope`, `verbs`, `ratify` do not exist in the grammar
-// yet. That gap is the gate: closing it (extending the grammar until this file
-// parses) is a falsifiable milestone (G2). If the grammar CANNOT be extended to
-// express this file, that is an expressiveness defect in the spec itself.
+// STATUS: PASSES since grammar v0.2 (gate G2 — GAP-1 closed, ratified by
+// maintainer instruction 2026-08-12). This file carried the expected-fail marker from G0;
+// during the closure sequence the XPASS guard fired and held the build red
+// until this marker flip, exactly as designed (see docs/reports/g2-2026-08-12).
 // ============================================================================
 
 profile domain.agent {

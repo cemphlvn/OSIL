@@ -17,8 +17,9 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G1 complete / G2 (self-description) open**. Two document
-kinds since ADR-0005: `.oaas` (vocabulary) and `.flow` (dataflow composition).
+Pre-release, gates **G0–G2 complete / G3 (ONNX round-trip) and G4 (visual) open,
+parallel**. Two document kinds since ADR-0005: `.oaas` (vocabulary) and `.flow`
+(dataflow composition). Since G2, the repo's own operating policy parses as OAAS.
 This repository currently is the *grounds*: tree, governance, grammar draft,
 seed conformance corpus, and the agent skill layer. Nothing here is normative yet.
 
@@ -26,7 +27,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 |---|---|---|
 | G0 | a fresh agent, given only this repo, can state each subtree's policy | done |
 | G1 | 100% of `conformance/corpus/` parses under `grammar/oaas.ebnf`; every production exemplified | **done 2026-08-12** — `just check`: 9/9 files, 42/42 productions |
-| G2 | the repo's own operating policy is expressible in OAAS (conformance test #0) | open (currently EXPECTED-FAIL, see `profiles/domain/agent/`) |
+| G2 | the repo's own operating policy is expressible in OAAS (conformance test #0) | **done 2026-08-12** — grammar v0.2; XPASS guard verified live |
 | G3 | ONNX round-trip preserves its declared contract fields | open |
 | G4 | visual identity projection: golden-render diff = 0 across round-trip | open |
 | G5 | Linux Foundation submission checklist satisfied | open (pending research U1/U2) |

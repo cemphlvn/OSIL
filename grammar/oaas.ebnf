@@ -1,10 +1,12 @@
-(* OAAS grammar — v0.1 DRAFT
+(* OAAS grammar — v0.2
    Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
    .flow = flow document (composition). Kind is selected by file extension.
-   Backed by tools/oaas_check.py (G1 validator): every corpus file must parse,
-   every production must be exemplified by >=1 corpus file.
-   Known gap (deliberate): no actor/policy constructs — GAP-1 in GAPS.md,
-   conformance test #0 (profiles/domain/agent/repo-policy.oaas) EXPECTED-FAILs. *)
+   Backed by tools/oaas_check.py: every corpus file must parse, every
+   production must be exemplified by >=1 corpus file.
+   v0.2 (G2, ratified 2026-08-12): actor/policy constructs added — GAP-1
+   closed; conformance test #0 (profiles/domain/agent/repo-policy.oaas) now
+   PASSES. Juxtaposition rule ratified in the same change (closes GAP-3):
+   path components and quantity number+unit must be ADJACENT (no whitespace). *)
 
 (* ==== document kinds ====================================================== *)
 oaas_document   = { oaas_declaration } ;
@@ -17,7 +19,8 @@ oaas_declaration = profile_decl
                  | invariant_decl
                  | operator_decl
                  | contract_decl
-                 | concept_decl ;
+                 | concept_decl
+                 | actor_decl ;
 
 flow_statement  = use_decl | io_decl | edge_stmt ;
 
@@ -65,6 +68,18 @@ concept_decl    = "concept" , identifier , "{" ,
                     "to" , "{" , id_list , "}" ,
                   "}" ;
 
+(* -- actors: operating policy as first-class vocabulary (GAP-1, closed at G2) *)
+actor_decl      = "actor" , identifier , "{" , { actor_field } , "}" ;
+actor_field     = scope_block | verbs_block | invariants_block | ratify_block ;
+scope_block     = "scope" , "{" , path_list , "}" ;
+verbs_block     = "verbs" , "{" , id_list , "}" ;
+invariants_block = "invariants" , "{" , id_list , "}" ;
+ratify_block    = "ratify" , "{" , id_list , "}" ;
+path_list       = path_ref , { [ "," ] , path_ref } ;
+path_ref        = identifier , { "/" , identifier } , [ "/" ] ;
+                  (* components ADJACENT (no whitespace); whitespace separates
+                     sibling paths — same juxtaposition rule as quantity *)
+
 (* -- flow statements --------------------------------------------------------- *)
 use_decl        = "use" , qualified_id ;
 io_decl         = ( "input" | "const" | "output" ) , identifier , ":" , type ;
@@ -89,8 +104,8 @@ arg_list        = arg , { "," , arg } ;
 arg             = identifier , [ "=" , literal ] ;
 rel_op          = "<" | "<=" | ">" | ">=" | "=" | "==" ;
 value           = literal | quantity ;
-quantity        = number , identifier ;   (* 20ms, 2GB — same-line juxtaposition;
-                                              boundary rule underspecified: GAP-3 *)
+quantity        = number , identifier ;   (* 20ms, 2GB — number and unit ADJACENT
+                                              (no whitespace); GAP-3 closed at G2 *)
 literal         = number | string | identifier | boolean ;
 boolean         = "true" | "false" ;
 number          = integer | float ;

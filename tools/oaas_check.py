@@ -27,9 +27,10 @@ TOKEN_RE = re.compile(r"""
 
 
 class Tok:
-    __slots__ = ("kind", "text", "line")
-    def __init__(self, kind, text, line):
+    __slots__ = ("kind", "text", "line", "start", "end")
+    def __init__(self, kind, text, line, start, end):
         self.kind, self.text, self.line = kind, text, line
+        self.start, self.end = start, end
     def __repr__(self):
         return f"{self.kind}({self.text!r})@{self.line}"
 
@@ -43,10 +44,10 @@ def tokenize(src: str):
         kind = m.lastgroup
         text = m.group()
         if kind not in ("ws", "comment"):
-            toks.append(Tok(kind, text, line))
+            toks.append(Tok(kind, text, line, m.start(), m.end()))
         line += text.count("\n")
         pos = m.end()
-    toks.append(Tok("eof", "<eof>", line))
+    toks.append(Tok("eof", "<eof>", line, len(src), len(src)))
     return toks
 
 
@@ -88,7 +89,7 @@ class Parser:
         t = self.take()
         if t.kind != "ident":
             raise ParseError(f"line {t.line}: expected identifier, got {t.text!r}")
-        return t.text
+        return t
 
     def fire(self, production):
         self.cov.add(production)
@@ -118,6 +119,7 @@ class Parser:
             "equivalence": self.equivalence_decl, "model": self.model_decl,
             "invariant": self.invariant_decl, "operator": self.operator_decl,
             "preserves": self.contract_decl, "concept": self.concept_decl,
+            "actor": self.actor_decl,
         }
         fn = dispatch.get(t.text)
         if fn is None:
@@ -279,6 +281,70 @@ class Parser:
         self.expect_op("}")
         self.expect_op("}")
 
+    # -- actors: operating policy as vocabulary (GAP-1, closed at G2) ----------
+    def actor_decl(self):
+        self.fire("actor_decl")
+        self.expect_word("actor")
+        self.expect_ident()
+        self.expect_op("{")
+        while not self.at_op("}"):
+            self.actor_field()
+        self.expect_op("}")
+
+    def actor_field(self):
+        self.fire("actor_field")
+        if self.at_word("scope"):
+            self.alt("actor_field:scope")
+            self.scope_block()
+        elif self.at_word("verbs"):
+            self.alt("actor_field:verbs")
+            self.word_id_block("verbs", "verbs_block")
+        elif self.at_word("invariants"):
+            self.alt("actor_field:invariants")
+            self.word_id_block("invariants", "invariants_block")
+        elif self.at_word("ratify"):
+            self.alt("actor_field:ratify")
+            self.word_id_block("ratify", "ratify_block")
+        else:
+            t = self.peek()
+            raise ParseError(f"line {t.line}: bad actor field {t.text!r}")
+
+    def word_id_block(self, word, production):
+        self.fire(production)
+        self.expect_word(word)
+        self.expect_op("{")
+        self.id_list(stop_words={"}"})
+        self.expect_op("}")
+
+    def scope_block(self):
+        self.fire("scope_block")
+        self.expect_word("scope")
+        self.expect_op("{")
+        self.fire("path_list")
+        self.path_ref()
+        while True:
+            if self.at_op(","):
+                self.take()
+                self.path_ref()
+                continue
+            if self.peek().kind == "ident":
+                self.path_ref()
+                continue
+            break
+        self.expect_op("}")
+
+    def path_ref(self):
+        # components ADJACENT (no whitespace); whitespace separates sibling
+        # paths — the juxtaposition rule ratified at G2
+        self.fire("path_ref")
+        last = self.expect_ident()
+        while self.at_op("/") and self.peek().start == last.end:
+            last = self.take()
+            if self.peek().kind == "ident" and self.peek().start == last.end:
+                last = self.take()
+            else:
+                break
+
     # -- .flow statements -----------------------------------------------------
     def flow_statement(self):
         self.fire("flow_statement")
@@ -429,9 +495,10 @@ class Parser:
         if t.kind == "number":
             num = self.take()
             nxt = self.peek()
-            # quantity = number juxtaposed with unit ON THE SAME LINE (GAP-3):
-            # without the line check, `>= 0.997\nmemory` lexes as quantity
-            if nxt.kind == "ident" and nxt.line == num.line:
+            # quantity = number ADJACENT to unit (no whitespace) — juxtaposition
+            # rule ratified at G2, closing GAP-3: `20ms` is a quantity,
+            # `>= 0.997\nmemory` is not
+            if nxt.kind == "ident" and nxt.start == num.end:
                 self.fire("quantity")
                 self.take()
             else:
@@ -470,6 +537,8 @@ ALL_PRODUCTIONS = [
     "expr", "term", "factor", "add_op", "mul_op", "qualified_id", "id_list",
     "arg_list", "arg", "rel_op", "value", "quantity", "literal", "boolean",
     "number",
+    "actor_decl", "actor_field", "scope_block", "verbs_block",
+    "invariants_block", "ratify_block", "path_list", "path_ref",
 ]
 
 
@@ -486,6 +555,7 @@ ALT_EXPECTED = sorted(
         "model_field": ["purpose", "constraints", "ecosystem"],
         "operator_field": ["goal", "preserves", "constraint"],
         "profile_field": ["plain", "string-keyed"],
+        "actor_field": ["scope", "verbs", "invariants", "ratify"],
     }.items() for alt in alt_names
 )
 
@@ -509,7 +579,9 @@ def main():
     coverage, alts, failures, results = set(), set(), [], []
     for path in corpus + extra:
         head = "\n".join(path.read_text().splitlines()[:12])
-        expect_fail = "EXPECTED-FAIL" in head
+        # marker is SYNTACTIC (`// EXPECTED-FAIL: <gap>` at line start), not a
+        # substring — prose that merely mentions the marker must not trigger it
+        expect_fail = re.search(r"^// EXPECTED-FAIL\b", head, re.M) is not None
         try:
             # coverage is a corpus-only claim; profiles/ files parse but don't count
             in_corpus = path in corpus
@@ -562,7 +634,7 @@ def main():
         for f in failures:
             print(f, file=sys.stderr)
         sys.exit(1)
-    print("\nG1 contract satisfied: all corpus files parse; all productions exemplified.")
+    print("\nCorpus contract satisfied: all files parse as expected; all productions exemplified.")
 
 
 if __name__ == "__main__":
