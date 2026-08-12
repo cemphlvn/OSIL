@@ -1,0 +1,5 @@
+// provenance: intake transcript, "ONNX profile" section (captured 2026-08-12)
+profile ecosystem.onnx {
+    ir_version = 11
+    opset "ai.onnx" = 24
+}

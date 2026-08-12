@@ -1,0 +1,15 @@
+// provenance: intake transcript, section 3 + section 9 (captured 2026-08-12)
+// invariants are rewrite-legality guards; operator blocks bind goals to them
+// normalized: `privacy: local_only` -> `privacy = local_only` (see grammar/GAPS.md GAP-2)
+invariant ConstantTime
+invariant NoExternalMemory
+invariant Deterministic
+invariant Associative
+invariant Pure
+
+operator inference {
+    goal: minimize_latency
+    preserves: accuracy >= 0.997
+    memory <= 4GB
+    privacy = local_only
+}

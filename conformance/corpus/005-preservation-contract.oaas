@@ -1,0 +1,13 @@
+// provenance: intake transcript, "Then define preservation contracts" (captured 2026-08-12)
+preserves {
+    operator_identity
+    types
+    graph_topology
+    state_semantics
+    equivalence
+    ontology_annotations
+}
+
+may_lose {
+    visual_layout
+}

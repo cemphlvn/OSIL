@@ -1,0 +1,20 @@
+# Learning path = VIEW over conformance/corpus (ids only; content never copied)
+id: getting-started
+title: Reading OAAS
+steps:
+  - corpus: 001-profile-ecosystem-onnx
+    why: everything begins by pinning an ecosystem's versioned identity
+  - corpus: 002-graph-onnx-matmul
+    why: native identities (onnx::MatMul@13) keep upstream semantics
+  - corpus: 008-concept-equivalent-under
+    why: concepts name computations independently of realizations
+  - corpus: 003-equivalence-distributivity
+    why: equivalences (with guards) are the search substrate
+  - corpus: 004-projections
+    why: each ecosystem is reached by preserving a different dimension
+  - corpus: 005-preservation-contract
+    why: interoperability is measurable, not binary
+  - corpus: 007-invariants-operator
+    why: invariants gate rewrite legality; goals bind to constraints
+  - corpus: 006-model-intent-constraints
+    why: configuration compression — intent expands to infrastructure

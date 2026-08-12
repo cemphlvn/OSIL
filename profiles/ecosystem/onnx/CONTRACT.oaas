@@ -1,0 +1,19 @@
+// machine-readable preservation contract for the ONNX projection
+// provenance: intake transcript "ONNX projection" checklist (2026-08-12)
+// verification status: ALL FIELDS UNVERIFIED until G3 round-trip harness exists
+projection ONNX {
+    from OAAS-CIR
+    preserve computation
+}
+
+preserves {
+    tensor_types
+    operator_versions
+    graph_topology
+    constants
+}
+
+may_lose {
+    ontology_annotations
+    visual_layout
+}

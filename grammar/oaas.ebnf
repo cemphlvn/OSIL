@@ -1,0 +1,92 @@
+(* OAAS grammar — v0 DRAFT
+   Status: hand-drafted to cover conformance/corpus/001-008 exactly.
+   NOT yet backed by a parser: G1 is open until tools/ hosts a validator that
+   proves "100% of corpus parses; every production exemplified".
+   Known gap (deliberate): no actor/policy constructs — see
+   profiles/domain/agent/repo-policy.oaas (conformance test #0, EXPECTED-FAIL). *)
+
+document        = { declaration } ;
+
+declaration     = profile_decl
+                | projection_decl
+                | equivalence_decl
+                | model_decl
+                | invariant_decl
+                | operator_decl
+                | contract_decl
+                | concept_decl
+                | io_decl
+                | edge_stmt ;
+
+(* -- profiles: pin an ecosystem's versioned identity ---------------------- *)
+profile_decl    = "profile" , qualified_id , "{" , { profile_field } , "}" ;
+profile_field   = identifier , "=" , literal
+                | identifier , string , "=" , literal ;        (* opset "ai.onnx" = 24 *)
+
+(* -- projections: transformation into a sovereign ecosystem --------------- *)
+projection_decl = "projection" , identifier , "{" ,
+                    "from" , identifier ,
+                    "preserve" , id_list ,
+                  "}" ;
+
+(* -- equivalences: semantic equality rules (egg-projectable) -------------- *)
+equivalence_decl = "equivalence" , identifier , "{" ,
+                     expr , "<=>" , expr ,
+                     [ guards_block ] ,
+                   "}" ;
+guards_block    = "guards" , "{" , { identifier , "=" , literal } , "}" ;
+
+(* -- models: intention + constraints (configuration compression) ---------- *)
+model_decl      = "model" , identifier , "{" , { model_field } , "}" ;
+model_field     = "purpose" , ":" , identifier
+                | constraints_block
+                | "ecosystem" , identifier ;
+constraints_block = "constraints" , "{" , { constraint } , "}" ;
+constraint      = identifier , rel_op , value ;
+
+(* -- invariants & constrained operators ----------------------------------- *)
+invariant_decl  = "invariant" , identifier ;
+operator_decl   = "operator" , identifier , "{" , { operator_field } , "}" ;
+operator_field  = "goal" , ":" , identifier
+                | "preserves" , ":" , constraint
+                | constraint ;
+
+(* -- preservation contracts ------------------------------------------------ *)
+contract_decl   = preserves_block , [ may_lose_block ] ;
+preserves_block = "preserves" , "{" , id_list , "}" ;
+may_lose_block  = "may_lose" , "{" , id_list , "}" ;
+
+(* -- concepts: semantic identity with equivalence realizations ------------ *)
+concept_decl    = "concept" , identifier , "{" ,
+                    "equivalent_under" , "{" , arg_list , "}" ,
+                    "to" , "{" , id_list , "}" ,
+                  "}" ;
+
+(* -- graph statements ------------------------------------------------------ *)
+io_decl         = ( "input" | "const" | "output" ) , identifier , ":" , type ;
+edge_stmt       = id_list , "->" , op_ref , "->" , identifier ;
+op_ref          = [ identifier , "::" ] , identifier , [ "@" , integer ] ;
+type            = identifier , [ "<" , identifier , ">" ] ,
+                  [ "[" , dim_list , "]" ] ;
+dim_list        = dim , { "," , dim } ;
+dim             = identifier | integer ;
+
+(* -- expressions (v0: enough for algebraic equivalences) ------------------- *)
+expr            = term , { add_op , term } ;
+term            = factor , { mul_op , factor } ;
+factor          = identifier | number | "(" , expr , ")" ;
+add_op          = "+" | "-" ;
+mul_op          = "*" | "/" | "<<" | ">>" ;
+
+(* -- lexical ---------------------------------------------------------------- *)
+qualified_id    = identifier , { "." , identifier } ;
+id_list         = identifier , { [ "," ] , identifier } ;
+arg_list        = arg , { "," , arg } ;
+arg             = identifier , [ "=" , literal ] ;
+rel_op          = "<" | "<=" | ">" | ">=" | "=" | "==" ;
+value           = literal | quantity ;
+quantity        = number , identifier ;                       (* 20ms, 2GB, 4GB *)
+literal         = number | string | identifier | boolean ;
+boolean         = "true" | "false" ;
+number          = integer | float ;
+comment         = "//" , { any_char_to_eol } ;                (* line comments *)

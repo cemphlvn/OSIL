@@ -1,0 +1,6 @@
+// provenance: intake transcript, "ONNX profile" section (captured 2026-08-12)
+// native ecosystem identity: onnx::MatMul@13 keeps ONNX's versioned semantics
+input X : Tensor<f32>[N,D]
+const W : Tensor<f32>[D,H]
+
+X, W -> onnx::MatMul@13 -> Y

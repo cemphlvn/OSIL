@@ -1,0 +1,14 @@
+// provenance: intake transcript, compression-substrate section (captured 2026-08-12)
+// configuration compression: one semantic declaration replaces a config cascade
+model MyModel {
+    purpose: inference
+
+    constraints {
+        latency < 20ms
+        memory < 2GB
+        device = apple_silicon
+        precision >= fp16
+    }
+
+    ecosystem ONNX
+}

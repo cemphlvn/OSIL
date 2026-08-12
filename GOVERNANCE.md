@@ -1,0 +1,57 @@
+# Governance
+
+> For this project, human contributor policy and agent operating policy are the same
+> class of document. This file is the human-readable projection; the machine-hosted
+> form lives (aspirationally) in `profiles/domain/agent/repo-policy.oaas` and the
+> per-skill frontmatter in `improvable/`. A standing loop checks their agreement.
+
+## Ground-truth ownership classes
+
+Every subtree has exactly one ground-truth class, which fixes what agents may do there:
+
+| Class | Meaning | Subtrees | Agent verbs |
+|---|---|---|---|
+| **self** | this project ratifies truth | `spec/`, `grammar/`, `curriculum/`, `profiles/domain/` | draft, refactor; humans ratify normative MUSTs |
+| **shared** | truth negotiated with an ecosystem | `spec/interop/`, `conformance/`, `registry/` | propose (contracts/schemas); add/refresh (corpus, matrix cells, entries) |
+| **foreign** | an external ecosystem owns truth | `profiles/ecosystem/*` | sync, report — **MUST NOT redefine upstream semantics** |
+| **academic** | published artifacts own truth | `profiles/ontology/*` | cite, audit fidelity |
+| **empirical** | measured performance owns truth | `improvable/` | edit bodies freely if evals pass; frontmatter is constitutional (below) |
+
+## The merge gate
+
+A change is legal iff:
+
+1. `diff ⊆ scope(skill)` — every touched path is inside the scope declared by the
+   skill the agent ran under (`improvable/<skill>/SKILL.md` frontmatter);
+2. the target subtree's invariants (stated on its README card) are preserved;
+3. cross-representation consistency holds: a spec change introducing a construct
+   ships its grammar production and ≥1 corpus example in the same change
+   (triple representation: prose ↔ grammar ↔ corpus).
+
+## Constitution vs legislation
+
+Within any `SKILL.md`: the **body** is legislation — improvable freely (evals must
+pass, CHANGELOG entry required). The **frontmatter** (`scope`, `verbs`,
+`invariants`) is constitution — changes are propose-only and require human
+ratification. Automatic narrowing of scope may be permitted; widening never.
+`skill-improver` may never edit its own frontmatter.
+
+## Human ratification points
+
+- Normative MUST/SHOULD changes in `spec/`.
+- Grammar changes (they trigger full-corpus re-validation).
+- Skill frontmatter changes; new skills.
+- Deletions in `conformance/corpus/` (additions are free).
+- Anything under `CHARTER.md`, licensing, or LF process.
+
+## Versioning
+
+Subtrees are independent version streams (see each README card). Real conformance
+is the 3-D matrix in `conformance/matrix/`: spec version × adapter version ×
+upstream version. Matrix cells are agent-maintained and machine-checkable.
+
+## Licensing & foundation status
+
+PENDING: license pairing (research U2) and LF onboarding path (research U1).
+Until a license lands, treat external contributions as blocked. DCO-vs-CLA follows
+U2's finding.

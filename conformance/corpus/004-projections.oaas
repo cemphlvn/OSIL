@@ -1,0 +1,16 @@
+// provenance: intake transcript, "A critical object: projection" (captured 2026-08-12)
+// each projection preserves a different semantic dimension
+projection ONNX {
+    from OAAS-CIR
+    preserve computation
+}
+
+projection EGraph {
+    from OAAS-SIR
+    preserve equivalence
+}
+
+projection MLIR {
+    from OAAS-CIR
+    preserve execution
+}

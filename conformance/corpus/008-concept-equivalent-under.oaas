@@ -1,0 +1,11 @@
+// provenance: intake transcript, section 1 (captured 2026-08-12)
+// normalized: wrapped in an explicit `concept` block; the transcript wrote the
+// identity bare ("this subgraph IS-A Attention" + equivalence set)
+concept Attention {
+    equivalent_under { fp16, causal = true }
+    to {
+        decomposition_A
+        decomposition_B
+        fused_kernel_C
+    }
+}

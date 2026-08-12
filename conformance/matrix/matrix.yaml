@@ -1,0 +1,11 @@
+# Compatibility matrix: spec version x adapter x upstream version.
+# Cells are agent-maintained (matrix-refresh). A cell may reach `pass` only on
+# mechanical round-trip evidence — never by inference.
+dimensions: [spec, adapter, upstream]
+cells:
+  - spec: 0.0.0-draft
+    adapter: onnx@unreleased
+    upstream: "ai.onnx opset 24 / ir 11 (unverified pins)"
+    status: unverified
+    fields: null
+    checked: null

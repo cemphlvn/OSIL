@@ -1,0 +1,3 @@
+# upstream pins (drift-watch reads this; bumps are propose-only)
+ir_version = 11        # ASSUMPTION: inherited from intake transcript, unverified
+opset ai.onnx = 24     # ASSUMPTION: inherited from intake transcript, unverified

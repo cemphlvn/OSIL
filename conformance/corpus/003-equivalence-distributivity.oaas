@@ -1,0 +1,10 @@
+// provenance: intake transcript, "egg / e-graph profile" section (captured 2026-08-12)
+equivalence distributivity {
+    (a * c) + (b * c)
+    <=>
+    (a + b) * c
+
+    guards {
+        numeric_semantics = exact
+    }
+}

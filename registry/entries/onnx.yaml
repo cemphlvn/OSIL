@@ -1,0 +1,11 @@
+# validates against registry/schema/manifest.schema.json (v0)
+name: onnx
+kind: ir
+capabilities: [graph-interchange, versioned-operators, runtime-execution-via-ort]
+requirements: []
+versions:
+  ir_version: 11        # ASSUMPTION: unverified, mirrors profiles/ecosystem/onnx/VERSIONS
+  opset.ai.onnx: 24     # ASSUMPTION: unverified
+targets: [cpu, gpu, coreml, wasm]
+cost_hints: {}
+recipes: []

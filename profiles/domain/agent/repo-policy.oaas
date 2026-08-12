@@ -1,0 +1,44 @@
+// profiles/domain/agent/repo-policy.oaas
+// ============================================================================
+// CONFORMANCE TEST #0: OAAS must be able to express its own repository's
+// operating policy. "The first architecture OAAS describes is the OAAS repo."
+//
+// STATUS: EXPECTED-FAIL against grammar/oaas.ebnf v0.
+// The constructs `actor`, `scope`, `verbs`, `ratify` do not exist in the grammar
+// yet. That gap is the gate: closing it (extending the grammar until this file
+// parses) is a falsifiable milestone (G2). If the grammar CANNOT be extended to
+// express this file, that is an expressiveness defect in the spec itself.
+// ============================================================================
+
+profile domain.agent {
+    version = 0
+}
+
+actor spec-editor {
+    scope { spec/ }
+    verbs { draft refactor }
+    invariants { univocity definitions_aristotelian }
+    ratify { normative_must }              // humans ratify MUST-level changes
+}
+
+actor ecosystem-adapter {
+    scope { profiles/ecosystem/ conformance/matrix/ }
+    verbs { sync report }
+    invariants { never_redefine_upstream }
+}
+
+actor corpus-gardener {
+    scope { conformance/corpus/ }
+    verbs { add refresh }
+    invariants { every_example_parses no_deletion_without_ratification }
+}
+
+actor skill-improver {
+    scope { improvable/ }
+    verbs { edit_body }
+    invariants { evals_pass changelog_logged frontmatter_constitutional }
+}
+
+// The merge gate, as an invariant over rewrites of the repository tree:
+// a diff is legal iff  diff ⊆ scope(actor)  ∧  subtree invariants preserved.
+invariant MergeLegality
