@@ -7,7 +7,7 @@
 ## Orientation (60 seconds)
 
 - This repo is an open spec for **OAAS**, a semantic architecture layer
-  (projections into ONNX/egg/MLIR under preservation contracts). `README.md` has
+  (projections into ONNX/egglog/MLIR under preservation contracts). `README.md` has
   the map; every top-level directory has a README card stating its ground-truth
   owner, cadence, loops, and invariants.
 - **Your diff is a proposed rewrite.** It is legal only if (1) every touched path

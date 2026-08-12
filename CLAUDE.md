@@ -45,13 +45,19 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 
 ## Current gate
 
-G0-G4 are done (grammar v0.3; `just test` = check + roundtrip + render;
-`just compress` = compression ladder; `just test` includes the policy
-agreement loop — actors in repo-policy.oaas must match skill frontmatter). Gate convention: numbered gates append
-BEFORE the terminal gate GX (Linux Foundation submission — blocked on
-maintainer calls: name-vs-OAAX, license). G5 (vocabulary self-extension) closed
-2026-08-12: the detector -> proposal -> ratification -> re-baseline loop works. NO open gaps — the ledger is fully closed
-(GAP-2 closed at G11 via ADR-0008: `:` roles / `=` equality; pin 021
-promoted to rejection R006); GAP-4 closed at G6. Negative fixtures:
-gap-pins in corpus/, permanent rejections in conformance/rejections/ (G7). G4 working decisions D1-D3 are
-open discussions in conformance/golden-render/README.md.
+G0–G15 are done (grammar v0.6; `just test` = check + roundtrip + egraph +
+render + policy + resolve + stages). Standing agreement loops inside the
+gatekeeper: policy (repo-policy.oaas actors == skill frontmatter, G8) and
+stages (justfile `test:` line == corpus 023 stage declarations, 1:1). Gate
+convention: numbered gates append BEFORE the terminal gate GX (Linux
+Foundation submission — blocked on maintainer calls: name-vs-OAAX, license).
+Recent: G14 = equivalence preservation contract on egglog (ADR-0009;
+realizability defined in core.md; adapter self-suite ES001–003); G15 =
+stage composition (`then`, ADR-0010; the pipeline's pair matrix is gated;
+ES004 pins the matrix_yaml write collision with XPASS-alarm). NO open gaps
+— the ledger is fully closed (GAP-2 at G11/ADR-0008; GAP-4 at G6).
+Negative fixtures: gap-pins in corpus/, permanent rejections R001–R008 in
+conformance/rejections/, resolution refusals RS001–006, equivalence
+pins/refusals ES001–004 in conformance/equivalence/. G4 working decisions
+D1–D3 remain open discussions in conformance/golden-render/README.md.
+Advisory tools outside the gate: `just derive`, `just compress`.
