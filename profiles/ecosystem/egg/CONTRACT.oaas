@@ -1,0 +1,22 @@
+// machine-readable preservation contract for the EGraph projection
+// provenance: spec/interop/egraph.md draft-0 + G13 report honesty note 3
+// ("realization sets are vocabulary, not machinery") — staged for G14
+// verification status: UNVERIFIED — all `preserves` fields pending the G14
+// round-trip harness (OAAS-SIR -> e-graph -> saturation -> extraction ->
+// OAAS-SIR); engine target pending research U5 (egg vs egglog)
+projection EGraph {
+    from OAAS-SIR
+    preserve equivalence
+}
+
+preserves {
+    rule_identity
+    equivalence
+    guard_selectivity
+    term_extraction
+}
+
+may_lose {
+    ontology_annotations
+    visual_layout
+}
