@@ -1,0 +1,16 @@
+# Learning path = VIEW over conformance/corpus (ids only; content never copied)
+id: self-hosting
+title: OAAS describes itself
+steps:
+  - corpus: 010-actor-policy
+    why: policy as vocabulary — who may rewrite what, under which invariants
+  - corpus: 012-operator-render
+    why: the renderer's own constraints as an operator block
+  - corpus: 016-toolchain-check
+    why: the validator that checks this very file, described as a flow
+  - corpus: 017-toolchain-roundtrip
+    why: the interop harness as a flow; goldens appear as constants
+  - corpus: 018-multi-output-edge
+    why: an honest gap, pinned — expected-fail as governance
+  - corpus: 019-toolchain-render
+    why: the render pipeline carrying its own diagram (test #0v)

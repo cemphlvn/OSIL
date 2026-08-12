@@ -11,8 +11,8 @@ and `AGENTS.md` are projections of this index — if they disagree, this file wi
 | `corpus-gardener` | corpus growth & integrity (G1) | `conformance/corpus/`, `grammar/GAPS.md`, `curriculum/paths/` (read) | add, refresh, report | per-PR + on-demand | active |
 | `univocity-lint` | spec coherence & definition audit | `spec/` (read), `docs/reports/` (write), `spec/TERMS.md` | report, propose | per-spec-PR | active |
 | `drift-watch` | upstream release tracking | `profiles/ecosystem/<eco>/`, `conformance/matrix/` | sync, report | scheduled | template |
-| `matrix-refresh` | compatibility matrix cells | `conformance/matrix/` | refresh | scheduled | stub (needs G3 adapters) |
-| `render-verify` | visual golden-render diffing | `conformance/golden-render/` | add, verify | per-PR | stub (needs G4 renderer) |
+| `matrix-refresh` | compatibility matrix cells | `conformance/matrix/` | refresh | scheduled | active (G3) |
+| `render-verify` | visual golden-render diffing | `conformance/golden-render/` | add, verify | per-PR | active (G4) |
 
 ## Skill file contract
 

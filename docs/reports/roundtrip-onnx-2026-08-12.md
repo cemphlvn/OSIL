@@ -28,7 +28,10 @@ X, W -> onnx::MatMul@13 -> Y
 pinned:
 ```
 # upstream pins (drift-watch reads this; bumps are propose-only)
-ir_version = 11        # ASSUMPTION: inherited from intake transcript, unverified
-opset ai.onnx = 24     # ASSUMPTION: inherited from intake transcript, unverified
+# 2026-08-12: transcript-inherited ASSUMPTION pins (ir 11 / opset 24) were
+# mechanically falsified by the first G3 run and corrected to observed values.
+# Evidence: docs/reports/roundtrip-onnx-2026-08-12.md
+ir_version = 13        # observed: onnx 1.22.0
+opset ai.onnx = 27     # observed: onnx.defs.onnx_opset_version(), onnx 1.22.0
 ```
 observed: IR 13, lib opset 27

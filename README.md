@@ -17,9 +17,10 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G3 complete / G4 (visual) open**. ONNX is the first
-REGISTERED LF interop (LF AI & Data graduated project): `just test` runs the
-grammar/corpus contract plus the round-trip suite and its preservation score. Two document kinds since ADR-0005: `.oaas` (vocabulary) and `.flow`
+Pre-release, gates **G0–G4 complete / G5 (Linux Foundation) open**. ONNX is the
+first REGISTERED LF interop; the repo fully self-describes (policy as actors,
+pipelines as flows, its own diagram as the first visual golden). `just test` =
+grammar/corpus contract + round-trip preservation score + golden render. Two document kinds since ADR-0005: `.oaas` (vocabulary) and `.flow`
 (dataflow composition). Since G2, the repo's own operating policy parses as OAAS.
 This repository currently is the *grounds*: tree, governance, grammar draft,
 seed conformance corpus, and the agent skill layer. Nothing here is normative yet.
@@ -30,7 +31,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G1 | 100% of `conformance/corpus/` parses under `grammar/oaas.ebnf`; every production exemplified | **done 2026-08-12** — `just check`: 9/9 files, 42/42 productions |
 | G2 | the repo's own operating policy is expressible in OAAS (conformance test #0) | **done 2026-08-12** — grammar v0.2; XPASS guard verified live |
 | G3 | ONNX round-trip preserves its declared contract fields | **done 2026-08-12** — preservation score 4/4, cases {add, matmul} (v0 suite, grows monotonically) |
-| G4 | visual identity projection: golden-render diff = 0 across round-trip | open |
+| G4 | visual identity projection: golden-render diff = 0 across round-trip | **done 2026-08-12** — grammar v0.3 layout block; first golden = OAAS's own render pipeline (test #0v); D1–D3 open discussions in `conformance/golden-render/README.md` |
 | G5 | Linux Foundation submission checklist satisfied | open (pending research U1/U2) |
 
 ## The tree

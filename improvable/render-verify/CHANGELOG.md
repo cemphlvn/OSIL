@@ -5,3 +5,6 @@
 
 ## 2026-08-12 (2)
 - Body: diff strategy resolved from pending-U4 to structural-primary/SVG-advisory/pixel-never. Signal: research U4 delivered its recommendation. Evals: n/a (fixture set still empty at bootstrap).
+
+## 2026-08-12 (3)
+- Body status: ACTIVATED at G4 — tools/render_check.py implements the procedure (data gate, SVG advisory, pixels never). Signal: G4 green. Evals: n/a.

@@ -1,4 +1,4 @@
-(* OAAS grammar — v0.2
+(* OAAS grammar — v0.3
    Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
    .flow = flow document (composition). Kind is selected by file extension.
    Backed by tools/oaas_check.py: every corpus file must parse, every
@@ -6,7 +6,12 @@
    v0.2 (G2, ratified 2026-08-12): actor/policy constructs added — GAP-1
    closed; conformance test #0 (profiles/domain/agent/repo-policy.oaas) now
    PASSES. Juxtaposition rule ratified in the same change (closes GAP-3):
-   path components and quantity number+unit must be ADJACENT (no whitespace). *)
+   path components and quantity number+unit must be ADJACENT (no whitespace).
+   v0.3 (G4, working decisions delegated 2026-08-12): layout block added to
+   flow documents — the visual identity projection's data. Working decisions
+   D1 (coordinates: top-left origin, +y down, abstract px) and D2 (edge layout
+   anchors by src -> dst pair) are OPEN DISCUSSIONS: see
+   conformance/golden-render/README.md. *)
 
 (* ==== document kinds ====================================================== *)
 oaas_document   = { oaas_declaration } ;
@@ -22,7 +27,7 @@ oaas_declaration = profile_decl
                  | concept_decl
                  | actor_decl ;
 
-flow_statement  = use_decl | io_decl | edge_stmt ;
+flow_statement  = use_decl | io_decl | edge_stmt | layout_block ;
 
 (* -- vocabulary: pin an ecosystem's versioned identity --------------------- *)
 profile_decl    = "profile" , qualified_id , "{" , { profile_field } , "}" ;
@@ -89,6 +94,23 @@ type            = identifier , [ "<" , identifier , ">" ] ,
                   [ "[" , dim_list , "]" ] ;
 dim_list        = dim , { "," , dim } ;
 dim             = identifier | integer ;
+
+(* -- layout: the visual identity projection's data (v0.3, gate G4) ----------
+   Embedded in the SAME document as the semantics (BPMNDI lesson: separable,
+   never decoupled) and in the SAME artifact class as the rest of the grammar
+   (U4 rec 8). Anchoring is by stable identifier, never by position/order. *)
+layout_block    = "layout" , "{" , { layout_stmt } , "}" ;
+layout_stmt     = node_layout | edge_layout | label_layout | viewport_stmt ;
+node_layout     = "node" , identifier , bounds ,
+                  [ "collapsed" , "=" , boolean ] , [ "z" , "=" , integer ] ;
+edge_layout     = "edge" , identifier , "->" , identifier ,
+                  "waypoints" , "[" , point , { point } , "]" ;
+label_layout    = "label" , identifier , bounds ;
+viewport_stmt   = "viewport" , "[" , coord , "," , coord , "," , number , "]" ;
+                  (* stored but NON-NORMATIVE: excluded from the golden gate *)
+bounds          = "[" , coord , "," , coord , "," , number , "," , number , "]" ;
+point           = "(" , coord , "," , coord , ")" ;
+coord           = [ "-" ] , number ;
 
 (* -- expressions (v0: enough for algebraic equivalences) -------------------- *)
 expr            = term , { add_op , term } ;

@@ -352,8 +352,120 @@ class Parser:
             self.use_decl()
         elif self.at_word("input", "const", "output"):
             self.io_decl()
+        elif self.at_word("layout") and self.peek(1).kind == "op" \
+                and self.peek(1).text == "{":
+            self.layout_block()
         else:
             self.edge_stmt()
+
+    # -- layout: the visual identity projection's data (v0.3, G4) --------------
+    def layout_block(self):
+        self.fire("layout_block")
+        self.expect_word("layout")
+        self.expect_op("{")
+        while not self.at_op("}"):
+            self.layout_stmt()
+        self.expect_op("}")
+
+    def layout_stmt(self):
+        self.fire("layout_stmt")
+        if self.at_word("node"):
+            self.node_layout()
+        elif self.at_word("edge"):
+            self.edge_layout()
+        elif self.at_word("label"):
+            self.label_layout()
+        elif self.at_word("viewport"):
+            self.viewport_stmt()
+        else:
+            t = self.peek()
+            raise ParseError(f"line {t.line}: bad layout statement {t.text!r}")
+
+    def node_layout(self):
+        self.fire("node_layout")
+        self.expect_word("node")
+        self.expect_ident()
+        self.bounds()
+        if self.at_word("collapsed"):
+            self.alt("node_layout:collapsed")
+            self.take()
+            self.expect_op("=")
+            t = self.take()
+            if not (t.kind == "ident" and t.text in ("true", "false")):
+                raise ParseError(f"line {t.line}: collapsed must be a boolean")
+        if self.at_word("z"):
+            self.alt("node_layout:z")
+            self.take()
+            self.expect_op("=")
+            t = self.take()
+            if t.kind != "number" or "." in t.text:
+                raise ParseError(f"line {t.line}: z must be an integer")
+
+    def edge_layout(self):
+        # anchors by src -> dst pair (working decision D2; discussion open in
+        # conformance/golden-render/README.md)
+        self.fire("edge_layout")
+        self.expect_word("edge")
+        self.expect_ident()
+        self.expect_op("->")
+        self.expect_ident()
+        self.expect_word("waypoints")
+        self.expect_op("[")
+        self.point()
+        while self.at_op("("):
+            self.point()
+        self.expect_op("]")
+
+    def label_layout(self):
+        self.fire("label_layout")
+        self.expect_word("label")
+        self.expect_ident()
+        self.bounds()
+
+    def viewport_stmt(self):
+        # stored but NON-NORMATIVE: excluded from the golden gate
+        self.fire("viewport_stmt")
+        self.expect_word("viewport")
+        self.expect_op("[")
+        self.coord()
+        self.expect_op(",")
+        self.coord()
+        self.expect_op(",")
+        t = self.take()
+        if t.kind != "number":
+            raise ParseError(f"line {t.line}: zoom must be a number")
+        self.expect_op("]")
+
+    def bounds(self):
+        self.fire("bounds")
+        self.expect_op("[")
+        self.coord()
+        self.expect_op(",")
+        self.coord()
+        self.expect_op(",")
+        for last in (False, True):
+            t = self.take()
+            if t.kind != "number":
+                raise ParseError(f"line {t.line}: width/height must be numbers")
+            if not last:
+                self.expect_op(",")
+        self.expect_op("]")
+
+    def point(self):
+        self.fire("point")
+        self.expect_op("(")
+        self.coord()
+        self.expect_op(",")
+        self.coord()
+        self.expect_op(")")
+
+    def coord(self):
+        self.fire("coord")
+        if self.at_op("-"):
+            self.take()
+        t = self.take()
+        if t.kind != "number":
+            raise ParseError(f"line {t.line}: coordinate must be a number")
 
     def use_decl(self):
         self.fire("use_decl")
@@ -539,6 +651,8 @@ ALL_PRODUCTIONS = [
     "number",
     "actor_decl", "actor_field", "scope_block", "verbs_block",
     "invariants_block", "ratify_block", "path_list", "path_ref",
+    "layout_block", "layout_stmt", "node_layout", "edge_layout",
+    "label_layout", "viewport_stmt", "bounds", "point", "coord",
 ]
 
 
@@ -556,6 +670,7 @@ ALT_EXPECTED = sorted(
         "operator_field": ["goal", "preserves", "constraint"],
         "profile_field": ["plain", "string-keyed"],
         "actor_field": ["scope", "verbs", "invariants", "ratify"],
+        "node_layout": ["collapsed", "z"],
     }.items() for alt in alt_names
 )
 

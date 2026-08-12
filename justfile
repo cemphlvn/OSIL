@@ -8,8 +8,16 @@ check:
 roundtrip:
     uv run --with onnx python3 tools/onnx_roundtrip.py
 
-# full gatekeeper: grammar/corpus contract + interop round-trip
-test: check roundtrip
+# G4 golden-render loop: layout data gate + SVG advisory
+render:
+    python3 tools/render_check.py
+
+# bless goldens (RATIFICATION ACT - record who/why in the PR)
+render-bless:
+    python3 tools/render_check.py --bless
+
+# full gatekeeper: grammar/corpus contract + interop round-trip + golden render
+test: check roundtrip render
 
 # show corpus inventory with document kinds
 corpus:

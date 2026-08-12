@@ -1,0 +1,144 @@
+{
+ "edges": [
+  {
+   "dst": "layout_data",
+   "src": "flowdoc",
+   "waypoints": [
+    [
+     150.0,
+     52.0
+    ],
+    [
+     230.0,
+     52.0
+    ]
+   ]
+  },
+  {
+   "dst": "verdict",
+   "src": "golden",
+   "waypoints": [
+    [
+     150.0,
+     148.0
+    ],
+    [
+     440.0,
+     148.0
+    ],
+    [
+     440.0,
+     100.0
+    ],
+    [
+     480.0,
+     100.0
+    ]
+   ]
+  },
+  {
+   "dst": "svg",
+   "src": "layout_data",
+   "waypoints": [
+    [
+     400.0,
+     52.0
+    ],
+    [
+     440.0,
+     52.0
+    ],
+    [
+     440.0,
+     20.0
+    ],
+    [
+     480.0,
+     20.0
+    ]
+   ]
+  },
+  {
+   "dst": "verdict",
+   "src": "layout_data",
+   "waypoints": [
+    [
+     400.0,
+     52.0
+    ],
+    [
+     440.0,
+     52.0
+    ],
+    [
+     440.0,
+     100.0
+    ],
+    [
+     480.0,
+     100.0
+    ]
+   ]
+  }
+ ],
+ "labels": {
+  "flowdoc": [
+   0.0,
+   8.0,
+   90.0,
+   16.0
+  ]
+ },
+ "nodes": {
+  "flowdoc": {
+   "bounds": [
+    0.0,
+    32.0,
+    150.0,
+    40.0
+   ],
+   "collapsed": null,
+   "z": null
+  },
+  "golden": {
+   "bounds": [
+    0.0,
+    128.0,
+    150.0,
+    40.0
+   ],
+   "collapsed": null,
+   "z": null
+  },
+  "layout_data": {
+   "bounds": [
+    230.0,
+    32.0,
+    170.0,
+    40.0
+   ],
+   "collapsed": false,
+   "z": 1
+  },
+  "svg": {
+   "bounds": [
+    480.0,
+    0.0,
+    140.0,
+    40.0
+   ],
+   "collapsed": null,
+   "z": null
+  },
+  "verdict": {
+   "bounds": [
+    480.0,
+    80.0,
+    140.0,
+    40.0
+   ],
+   "collapsed": null,
+   "z": null
+  }
+ }
+}

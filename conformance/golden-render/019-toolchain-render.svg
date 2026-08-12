@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 660 208" font-family="monospace" font-size="13">
+<title>019-toolchain-render</title>
+<rect x="0" y="32" width="150" height="40" fill="none" stroke="#000"/>
+<text x="8" y="56" textLength="56">flowdoc</text>
+<rect x="0" y="128" width="150" height="40" fill="none" stroke="#000"/>
+<text x="8" y="152" textLength="48">golden</text>
+<rect x="480" y="0" width="140" height="40" fill="none" stroke="#000"/>
+<text x="488" y="24" textLength="24">svg</text>
+<rect x="480" y="80" width="140" height="40" fill="none" stroke="#000"/>
+<text x="488" y="104" textLength="56">verdict</text>
+<rect x="230" y="32" width="170" height="40" fill="none" stroke="#000"/>
+<text x="238" y="56" textLength="88">layout_data</text>
+<polyline points="150,52 230,52" fill="none" stroke="#000"/>
+<polyline points="150,148 440,148 440,100 480,100" fill="none" stroke="#000"/>
+<polyline points="400,52 440,52 440,20 480,20" fill="none" stroke="#000"/>
+<polyline points="400,52 440,52 440,100 480,100" fill="none" stroke="#000"/>
+<text x="0" y="20" textLength="56">flowdoc</text>
+</svg>

@@ -1,0 +1,26 @@
+// provenance: the repo's own G4 loop as a flow, WITH its own layout — the
+// first visual golden is a diagram of OAAS's render pipeline (test #0v).
+// self-description P2/P3 (2026-08-12)
+use domain.toolchain
+
+input flowdoc : Document<flow>[1]
+const golden : Layout<data>[1]
+output verdict : Verdict<bool_>[1]
+
+flowdoc -> toolchain::ParseLayout@1 -> layout_data
+layout_data, golden -> toolchain::DataDiff@1 -> verdict
+layout_data -> toolchain::RenderSVG@1 -> svg
+
+layout {
+    node flowdoc [0, 32, 150, 40]
+    node golden [0, 128, 150, 40]
+    node layout_data [230, 32, 170, 40] collapsed = false z = 1
+    node verdict [480, 80, 140, 40]
+    node svg [480, 0, 140, 40]
+    edge flowdoc -> layout_data waypoints [(150,52) (230,52)]
+    edge layout_data -> verdict waypoints [(400,52) (440,52) (440,100) (480,100)]
+    edge golden -> verdict waypoints [(150,148) (440,148) (440,100) (480,100)]
+    edge layout_data -> svg waypoints [(400,52) (440,52) (440,20) (480,20)]
+    label flowdoc [0, 8, 90, 16]
+    viewport [0, -16, 1.0]
+}
