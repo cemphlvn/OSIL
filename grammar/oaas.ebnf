@@ -1,4 +1,4 @@
-(* OAAS grammar — v0.4
+(* OAAS grammar — v0.5
    Two document kinds (ADR-0005): .oaas = architecture document (vocabulary),
    .flow = flow document (composition). Kind is selected by file extension.
    Backed by tools/oaas_check.py: every corpus file must parse, every
@@ -14,7 +14,10 @@
    conformance/golden-render/README.md.
    v0.4 (G6, ratified 2026-08-12): multi-output edges `-> (Y, Z)` — GAP-4
    closed via the XPASS ritual on corpus 018; D3 syntax ratified as
-   POSITIONAL outputs. *)
+   POSITIONAL outputs.
+   v0.5 (G9, ratified 2026-08-12): dotted path components (spec/TERMS.md) —
+   GAP-5 closed via the ritual on corpus 022; actor scopes may be
+   file-granular, and the self-hosted policy narrows to what skills declare. *)
 
 (* ==== document kinds ====================================================== *)
 oaas_document   = { oaas_declaration } ;
@@ -84,9 +87,11 @@ verbs_block     = "verbs" , "{" , id_list , "}" ;
 invariants_block = "invariants" , "{" , id_list , "}" ;
 ratify_block    = "ratify" , "{" , id_list , "}" ;
 path_list       = path_ref , { [ "," ] , path_ref } ;
-path_ref        = identifier , { "/" , identifier } , [ "/" ] ;
-                  (* components ADJACENT (no whitespace); whitespace separates
-                     sibling paths — same juxtaposition rule as quantity *)
+path_ref        = path_component , { "/" , path_component } , [ "/" ] ;
+path_component  = identifier , { "." , identifier } ;
+                  (* everything ADJACENT (no whitespace); whitespace separates
+                     sibling paths — same juxtaposition rule as quantity.
+                     Dotted components (TERMS.md) since v0.5 / G9. *)
 
 (* -- flow statements --------------------------------------------------------- *)
 use_decl        = "use" , qualified_id ;

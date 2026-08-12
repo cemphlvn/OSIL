@@ -1,8 +1,8 @@
-// EXPECTED-FAIL: GAP-5 — path_ref cannot express file-granular scopes:
-// dotted components (TERMS.md, GAPS.md) are not in the grammar. Discovered
-// while self-describing the full policy at G8; until ratified, actor scopes
-// are directory-granular. Closing this pin = extending path_ref with
-// adjacency-checked dotted components through the XPASS ritual.
+// provenance: pinned GAP-5 at G8 via the expected-fail marker; GAP-5 CLOSED
+// at G9 (grammar v0.5, ratified by maintainer instruction 2026-08-12) through
+// the XPASS ritual — third performance. Path components may be dotted:
+// file-granular actor scopes are expressible, and the self-hosted policy
+// narrowed to what the skills actually declare.
 actor univocity-lint {
     scope { spec/TERMS.md }
     verbs { report }

@@ -6,13 +6,13 @@
 // STATUS: PASSES since grammar v0.2 (G2). Extended at G8 to cover every
 // deployed skill 1:1 — tools/policy_check.py mechanically verifies agreement
 // between these actors and improvable/*/SKILL.md frontmatter (the standing
-// loop GOVERNANCE.md promised). Scope granularity note: file-level scopes
-// (grammar/GAPS.md, spec/TERMS.md) are modeled at directory granularity
-// pending GAP-5 (dotted path components — pinned by corpus 022).
+// loop GOVERNANCE.md promised). Since G9 (grammar v0.5, GAP-5 closed) scopes
+// are FILE-GRANULAR where the skills declare them — narrowed from directory
+// granularity, the constitutionally permitted automatic direction.
 // ============================================================================
 
 profile domain.agent {
-    version = 1
+    version = 2
 }
 
 // -- human role (no skill counterpart; policy_check exempts it) --------------
@@ -25,13 +25,13 @@ actor spec-editor {
 
 // -- skill-bound actors: 1:1 with improvable/, frontmatter must agree --------
 actor corpus-gardener {
-    scope { conformance/corpus/ grammar/ curriculum/paths/ }
+    scope { conformance/corpus/ grammar/GAPS.md curriculum/paths/ }
     verbs { add refresh report }
     invariants { every_example_parses no_deletion_without_ratification }
 }
 
 actor univocity-lint {
-    scope { spec/ docs/reports/ }
+    scope { spec/TERMS.md docs/reports/ }
     verbs { report propose }
     invariants { read_only_on_spec_prose findings_cite_line }
 }

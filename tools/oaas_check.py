@@ -334,16 +334,31 @@ class Parser:
         self.expect_op("}")
 
     def path_ref(self):
-        # components ADJACENT (no whitespace); whitespace separates sibling
+        # everything ADJACENT (no whitespace); whitespace separates sibling
         # paths — the juxtaposition rule ratified at G2
         self.fire("path_ref")
-        last = self.expect_ident()
+        last = self.path_component()
         while self.at_op("/") and self.peek().start == last.end:
             last = self.take()
             if self.peek().kind == "ident" and self.peek().start == last.end:
-                last = self.take()
+                last = self.path_component()
             else:
                 break
+
+    def path_component(self):
+        # dotted components (file-granular: TERMS.md) since v0.5 / G9
+        self.fire("path_component")
+        last = self.expect_ident()
+        dotted = False
+        while self.at_op(".") and self.peek().start == last.end:
+            dot = self.take()
+            if self.peek().kind == "ident" and self.peek().start == dot.end:
+                dotted = True
+                last = self.take()
+            else:
+                raise ParseError(f"line {dot.line}: dangling '.' in path component")
+        self.alt("path_component:dotted" if dotted else "path_component:plain")
+        return last
 
     # -- .flow statements -----------------------------------------------------
     def flow_statement(self):
@@ -665,7 +680,7 @@ ALL_PRODUCTIONS = [
     "invariants_block", "ratify_block", "path_list", "path_ref",
     "layout_block", "layout_stmt", "node_layout", "edge_layout",
     "label_layout", "viewport_stmt", "bounds", "point", "coord",
-    "out_spec",
+    "out_spec", "path_component",
 ]
 
 
@@ -685,6 +700,7 @@ ALT_EXPECTED = sorted(
         "actor_field": ["scope", "verbs", "invariants", "ratify"],
         "node_layout": ["collapsed", "z"],
         "out_spec": ["single", "multi"],
+        "path_component": ["plain", "dotted"],
     }.items() for alt in alt_names
 )
 

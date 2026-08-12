@@ -9,8 +9,8 @@ policy is checked as the language, not as prose) and compares:
   1:1     every skill has an actor of the same name (human roles exempt);
           every non-exempt actor has a skill.
   scope   every skill scope path is covered by an actor scope path
-          (prefix cover; file-granular paths covered by their directory —
-          GAP-5, pinned by corpus 022, will tighten this).
+          (prefix cover; file-granular since grammar v0.5 / G9 — GAP-5
+          closed, scopes narrowed to what skills declare).
   verbs   skill verbs == actor verbs, as sets.
 
 Exit nonzero on any disagreement. Wired into `just test`.
@@ -55,10 +55,10 @@ def parse_actors(path):
                                 if cur:
                                     items.append(cur[0])
                                 cur = (t.text, t.end)
-                        elif t.kind == "op" and t.text == "/":
+                        elif t.kind == "op" and t.text in ("/", "."):
                             if cur is not None and t.start == cur[1]:
-                                cur = (cur[0] + "/", t.end)
-                            # non-adjacent slash cannot occur (R003 rejects it)
+                                cur = (cur[0] + t.text, t.end)
+                            # non-adjacent separators cannot occur (R003)
                         elif t.kind == "op" and t.text == ",":
                             if cur:
                                 items.append(cur[0])
@@ -92,8 +92,7 @@ def parse_frontmatter(path):
 
 
 def covered(skill_path, actor_paths):
-    # prefix cover; file-granular skill paths covered by their directory
-    # (GAP-5: policy scopes are directory-granular until dotted path_ref lands)
+    # prefix cover; exact file-granular matches since v0.5 (GAP-5 closed)
     for a in actor_paths:
         if skill_path == a or skill_path.startswith(a):
             return True

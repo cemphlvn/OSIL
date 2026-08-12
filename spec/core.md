@@ -69,7 +69,8 @@ semantics the flow's native identities resolve against (differentia). Corpus: `0
 may modify (scope), the operations it may perform (verbs), the invariants it
 must preserve, and the change classes requiring human ratification
 (differentia). Introduced at G2; the repo's own policy is conformance test #0.
-Corpus: `010`. Scope paths are directory-granular pending GAP-5.
+Corpus: `010`, `022`. Scope paths may be file-granular (dotted components,
+grammar v0.5 / G9).
 
 **regime** — a validity domain (genus) whose carriers are the concrete
 arithmetics realizing it (differentia). Declared as concepts in
