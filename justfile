@@ -35,6 +35,10 @@ resolve:
 # full gatekeeper: contract + round-trips + render + policy + resolution
 test: check roundtrip egraph render policy resolve
 
+# derivation scan (ADVISORY): what the declared equivalences jointly entail
+derive:
+    uv run --with 'egglog==13.2.0' python3 tools/egraph_derive.py
+
 # compression ladder scan: covering set, naming candidates, interop ratios
 compress:
     uv run --with onnx python3 tools/compression_scan.py
