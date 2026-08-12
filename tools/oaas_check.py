@@ -56,8 +56,8 @@ class ParseError(Exception):
 
 # ------------------------------------------------------------------ parser
 class Parser:
-    def __init__(self, toks, coverage: set):
-        self.toks, self.i, self.cov = toks, 0, coverage
+    def __init__(self, toks, coverage: set, alts: set):
+        self.toks, self.i, self.cov, self.alts = toks, 0, coverage, alts
 
     # -- helpers ----------------------------------------------------------
     def peek(self, k=0):
@@ -92,6 +92,9 @@ class Parser:
 
     def fire(self, production):
         self.cov.add(production)
+
+    def alt(self, name):
+        self.alts.add(name)
 
     # -- entry points ------------------------------------------------------
     def parse_oaas_document(self):
@@ -135,7 +138,10 @@ class Parser:
         self.fire("profile_field")
         self.expect_ident()
         if self.peek().kind == "string":
+            self.alt("profile_field:string-keyed")
             self.take()
+        else:
+            self.alt("profile_field:plain")
         self.expect_op("=")
         self.literal()
 
@@ -184,12 +190,15 @@ class Parser:
     def model_field(self):
         self.fire("model_field")
         if self.at_word("purpose"):
+            self.alt("model_field:purpose")
             self.take()
             self.expect_op(":")
             self.expect_ident()
         elif self.at_word("constraints"):
+            self.alt("model_field:constraints")
             self.constraints_block()
         elif self.at_word("ecosystem"):
+            self.alt("model_field:ecosystem")
             self.take()
             self.expect_ident()
         else:
@@ -227,15 +236,18 @@ class Parser:
     def operator_field(self):
         self.fire("operator_field")
         if self.at_word("goal"):
+            self.alt("operator_field:goal")
             self.take()
             self.expect_op(":")
             self.expect_ident()
         elif self.at_word("preserves") and self.peek(1).kind == "op" \
                 and self.peek(1).text == ":":
+            self.alt("operator_field:preserves")
             self.take()
             self.expect_op(":")
             self.constraint()
         else:
+            self.alt("operator_field:constraint")
             self.constraint()
 
     def contract_decl(self):
@@ -284,7 +296,8 @@ class Parser:
 
     def io_decl(self):
         self.fire("io_decl")
-        self.take()  # input | const | output (checked by caller)
+        kw = self.take()  # input | const | output (checked by caller)
+        self.alt(f"io_decl:{kw.text}")
         self.expect_ident()
         self.expect_op(":")
         self.type_ref()
@@ -337,7 +350,7 @@ class Parser:
         self.term()
         while self.at_op("+", "-"):
             self.fire("add_op")
-            self.take()
+            self.alt("add_op:" + self.take().text)
             self.term()
 
     def term(self):
@@ -345,17 +358,19 @@ class Parser:
         self.factor()
         while self.at_op("*", "/", "<<", ">>"):
             self.fire("mul_op")
-            self.take()
+            self.alt("mul_op:" + self.take().text)
             self.factor()
 
     def factor(self):
         self.fire("factor")
         t = self.peek()
         if t.kind == "op" and t.text == "(":
+            self.alt("factor:paren")
             self.take()
             self.expr()
             self.expect_op(")")
         elif t.kind in ("ident", "number"):
+            self.alt("factor:identifier" if t.kind == "ident" else "factor:number")
             self.take()
         else:
             raise ParseError(f"line {t.line}: bad factor {t.text!r}")
@@ -406,6 +421,7 @@ class Parser:
         t = self.take()
         if not (t.kind == "op" and t.text in ("<", "<=", ">", ">=", "=", "==")):
             raise ParseError(f"line {t.line}: expected relational op, got {t.text!r}")
+        self.alt("rel_op:" + t.text)
 
     def value(self):
         self.fire("value")
@@ -428,10 +444,14 @@ class Parser:
         t = self.take()
         if t.kind == "ident" and t.text in ("true", "false"):
             self.fire("boolean")
+            self.alt("literal:boolean")
         elif t.kind == "number":
             self.fire("number")
-        elif t.kind in ("ident", "string"):
-            pass
+            self.alt("literal:number")
+        elif t.kind == "ident":
+            self.alt("literal:identifier")
+        elif t.kind == "string":
+            self.alt("literal:string")
         else:
             raise ParseError(f"line {t.line}: bad literal {t.text!r}")
 
@@ -453,9 +473,26 @@ ALL_PRODUCTIONS = [
 ]
 
 
-def parse_file(path: Path, coverage: set):
+# Alternative-level coverage is INFORMATIONAL: G1's gate is production-level.
+# These are the alternatives inside productions where a gap is meaningful.
+ALT_EXPECTED = sorted(
+    f"{prod}:{alt}" for prod, alt_names in {
+        "io_decl": ["input", "const", "output"],
+        "add_op": ["+", "-"],
+        "mul_op": ["*", "/", "<<", ">>"],
+        "rel_op": ["<", "<=", ">", ">=", "=", "=="],
+        "factor": ["identifier", "number", "paren"],
+        "literal": ["identifier", "number", "string", "boolean"],
+        "model_field": ["purpose", "constraints", "ecosystem"],
+        "operator_field": ["goal", "preserves", "constraint"],
+        "profile_field": ["plain", "string-keyed"],
+    }.items() for alt in alt_names
+)
+
+
+def parse_file(path: Path, coverage: set, alts: set):
     src = path.read_text()
-    p = Parser(tokenize(src), coverage)
+    p = Parser(tokenize(src), coverage, alts)
     if path.suffix == ".flow":
         p.parse_flow_document()
     else:
@@ -469,13 +506,15 @@ def main():
     extra = sorted((root / "profiles").rglob("*.oaas")) + \
             sorted((root / "profiles").rglob("*.flow"))
 
-    coverage, failures, results = set(), [], []
+    coverage, alts, failures, results = set(), set(), [], []
     for path in corpus + extra:
         head = "\n".join(path.read_text().splitlines()[:12])
         expect_fail = "EXPECTED-FAIL" in head
         try:
             # coverage is a corpus-only claim; profiles/ files parse but don't count
-            parse_file(path, coverage if path in corpus else set())
+            in_corpus = path in corpus
+            parse_file(path, coverage if in_corpus else set(),
+                       alts if in_corpus else set())
             if expect_fail:
                 failures.append(f"XPASS {path.relative_to(root)} — expected to fail "
                                 f"(a GAP closed without ratification?)")
@@ -492,10 +531,32 @@ def main():
     for status, path in results:
         print(f"{status:6} {path.relative_to(root)}")
 
+    # The denominator is derived from the EBNF itself, never self-asserted:
+    # the validator's instrumented inventory must equal the grammar's rule set.
+    ebnf = (root / "grammar" / "oaas.ebnf").read_text()
+    declared = set(re.findall(r"^([a-z_]+)\s*=", ebnf, re.M)) - {"comment"}
+    inventory = set(ALL_PRODUCTIONS)
+    if declared != inventory:
+        failures.append(
+            "grammar<->validator inventory mismatch: "
+            f"only-in-ebnf={sorted(declared - inventory)} "
+            f"only-in-validator={sorted(inventory - declared)}")
+
     uncovered = [p for p in ALL_PRODUCTIONS if p not in coverage]
-    print(f"\ncoverage: {len(ALL_PRODUCTIONS) - len(uncovered)}/{len(ALL_PRODUCTIONS)} productions fired")
+    print(f"\ninventory: {len(declared)} productions declared in oaas.ebnf, "
+          f"{len(inventory)} instrumented in validator "
+          + ("[MISMATCH]" if declared != inventory else "[match]"))
+    print(f"coverage (GATE, production level): "
+          f"{len(ALL_PRODUCTIONS) - len(uncovered)}/{len(ALL_PRODUCTIONS)} fired")
     if uncovered:
         print("uncovered:", ", ".join(uncovered))
+    missing_alts = [a for a in ALT_EXPECTED if a not in alts]
+    print(f"coverage (informational, alternative level): "
+          f"{len(ALT_EXPECTED) - len(missing_alts)}/{len(ALT_EXPECTED)} exemplified")
+    if missing_alts:
+        print("alternative gaps (corpus wishlist; do NOT fail the gate):")
+        for a in missing_alts:
+            print(f"  - {a}")
 
     if failures or uncovered:
         for f in failures:
