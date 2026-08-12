@@ -45,6 +45,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G11 | GAP-2 closed: binding univocity ratified (ADR-0008 — `:` roles, `=` equality; grammar unchanged); pin 021 PROMOTED to R006 — the lifecycle's third exit, first performance | **done 2026-08-12** — no open gaps remain |
 | G12 | the resolver (rungs 1–2): resolution rate 1.00 over all flows; namespace binding normative; registry oracle live; pin-consistency; refusals RS001–004 REJECT | **done 2026-08-12** |
 | G13 | stratification closure: SIR/CIR/NATIVE + realization defined (constitutional equation); every projection.from resolves; source-stratum legality is a DISTINCT check (RS005/RS006); corpus unchanged; grammar productions added = 0 | **done 2026-08-12** |
+| G14 | e-graph contract: U5 decides egg-vs-egglog, then the equivalence projection gets a tested preservation contract (the search-ecosystem analog of G3) | **open — next session**; U5 research dispatched 2026-08-12 |
 | GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree
