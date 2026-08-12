@@ -19,8 +19,9 @@ serialization (identity projection) preserves visual_layout totally.
 
 1. For each corpus item carrying layout data: render deterministically (pinned
    fonts, pinned renderer version, no time/randomness inputs).
-2. Compare against the golden render (structural/SVG diff preferred over pixel
-   diff -- pending research U4's recommendation).
+2. Compare against the golden render (structural diff of the layout-as-data model: primary, zero-tolerance;
+   deterministic SVG/DOM diff: secondary advisory; pixel diff never gates —
+   per docs/research/U4).
 3. Round-trip check: serialize -> parse -> render again; diff must be zero.
 4. Intentional visual changes update goldens ONLY via human-ratified PR.
 5. Report to docs/reports/render-<date>.md.

@@ -60,7 +60,11 @@ oaas/
 │     loops: every corpus item reachable from ≥1 path; every path step resolves & parses
 │     policy: agents author freely; pedagogy review by humans
 │
-├─ tools/                       P1: self-owned          P3: fastest; earliest fission candidate
+├─ improvable/                  P1: EMPIRICAL (measured) P3: feedback-speed — fastest stream
+│  └─ agent skills (SKILL.md + evals/ + CHANGELOG) — the deployment units of loops;
+│     added post-synthesis, see docs/design/improvable-skill-layer.md
+│
+├─ tools/                       P1: self-owned          P3: fastest code; earliest fission candidate
 │  └─ (later) cli / oaas-add wizard / renderer
 │
 └─ docs/

@@ -10,7 +10,10 @@ external ecosystems (ONNX, egg/e-graphs, MLIR, WASM) remain sovereign, reached
 through **projections** governed by **preservation contracts**.
 
 > Name note: "OAAS" is currently a proper name; its expansion is an open naming
-> decision (see `docs/decisions/`, pending trademark research U1).
+> decision. Research U1 found a live collision risk: **OAAX** (Open AI Accelerator
+> eXchange), an existing LF AI & Data project one letter away in an adjacent
+> domain — resolve the name before any LF-facing announcement
+> (`docs/research/U1-lf-onboarding.md`).
 
 ## Status
 
