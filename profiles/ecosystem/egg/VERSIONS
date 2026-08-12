@@ -1,2 +1,8 @@
 # upstream pins (drift-watch reads this; bumps are propose-only)
-# no pins yet — U5 decides the target
+# 2026-08-12: pinned at G14 per research U5 §5. The PyPI wheel vendors the
+# Rust core at an exact git rev; crates.io egglog (2.0.0) numbering is
+# provably DECOUPLED from PyPI egglog (13.2.0) — never cross-check the two.
+# Evidence: docs/research/U5-egg-vs-egglog.md
+egglog pypi = 13.2.0            # harness dependency (just egraph); published 2026-06-03
+egglog core git rev = 2e5657b   # vendored inside the 13.2.0 wheel; opaque/transitive
+egg crates.io = 0.11.0          # citation/foreign-witness reference only — never executed

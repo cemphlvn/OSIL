@@ -3,7 +3,7 @@
 // ("realization sets are vocabulary, not machinery") — staged for G14
 // verification status: UNVERIFIED — all `preserves` fields pending the G14
 // round-trip harness (OAAS-SIR -> e-graph -> saturation -> extraction ->
-// OAAS-SIR); engine target pending research U5 (egg vs egglog)
+// OAAS-SIR); engine: egglog per ADR-0009 (research U5, 2026-08-12)
 projection EGraph {
     from OAAS-SIR
     preserve equivalence
