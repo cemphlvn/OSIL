@@ -28,6 +28,11 @@ extraction image (re-lexed by reference lexer): `x`
 declared: `(x * 2) <=> (x << 1)` · guards: numeric_semantics = integer · realized rule: `<=>`
 extraction image (re-lexed by reference lexer): `(x * 2)`
 
+## adapter self-suite (conformance/equivalence/ — tests the tester)
+- ES001-both-sides-unbound.oaas: **REFUSE** — unrelated_sides: no realizable direction (vars ['a', 'b'] vs ['c', 'd']) — untranslatable
+- ES002-bare-var-both-sides.oaas: **REFUSE** — rename_only: no realizable direction (vars ['x'] vs ['y']) — untranslatable
+- ES003-regime-expansion-pin.oaas: **XFAIL-HOLDS** — no merge without the literal guard fact
+
 ## pins vs observed (drift-watch input, no auto-bump)
 pinned:
 ```

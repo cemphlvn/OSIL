@@ -211,17 +211,16 @@ def repr_to_ast(text):
 
 
 # --------------------------------------------------------------- lanes
-def lane(fx, with_guard):
-    eg = EGraph()
-    facts = [rel_for(k, v) for k, v in fx.guards]
-    if with_guard:
-        for f in facts:
-            eg.register(f())
+def translate(fx):
+    """Declared equivalence -> native rule. The REALIZABILITY rule
+    (spec/core.md) lives here, once, for every tool that computes over
+    declared equivalences. Sets fx.direction; raises on no realizable
+    direction — refusal, never a silent drop."""
     pvs = dict(zip(fx.vars, vars_(" ".join(fx.vars), Num)))
     lp = build(fx.lhs, pvs.__getitem__)
     rp = build(fx.rhs, pvs.__getitem__)
     lv, rv = walk_vars(fx.lhs), walk_vars(fx.rhs)
-    conds = [f() for f in facts]
+    conds = [rel_for(k, v)() for k, v in fx.guards]
     # a direction is realizable iff its match side binds every variable the
     # other side needs AND is not a bare variable (a lone-var pattern matches
     # every e-class — egglog rejects it as ungrounded)
@@ -236,7 +235,18 @@ def lane(fx, with_guard):
     else:
         raise ValueError(f"{fx.name}: no realizable direction "
                          f"(vars {sorted(lv)} vs {sorted(rv)}) — untranslatable")
-    eg.register(rule)
+    return rule
+
+
+def lane(fx, asserted_pairs):
+    """Build one e-graph lane. The rule's CONDITIONS always come from the
+    fixture's declared guards; `asserted_pairs` is what actually gets asserted
+    as facts — the positive lane passes fx.guards, the negative lane passes
+    [], and the regime-expansion pin passes a DIFFERENT fact on purpose."""
+    eg = EGraph()
+    for k, v in asserted_pairs:
+        eg.register(rel_for(k, v)())
+    eg.register(translate(fx))
     lhs = eg.let(f"lhs_{fx.name}", build(fx.lhs, Num.var))
     rhs = build(fx.rhs, Num.var)
     return eg, lhs, rhs
@@ -253,14 +263,14 @@ def holds(eg, a, b):
 def run_fixture(fx):
     r = {}
     # positive lane: guard asserted -> merge must be EARNED across saturation
-    eg, lhs, rhs = lane(fx, with_guard=True)
+    eg, lhs, rhs = lane(fx, fx.guards)
     pre_distinct = not holds(eg, lhs, rhs)
     eg.run(SATURATION_STEPS)
     r["equivalence"] = pre_distinct and holds(eg, lhs, rhs)
 
     # negative lane: guard absent -> the same rule must NOT merge
     if fx.guards:
-        eg2, lhs2, rhs2 = lane(fx, with_guard=False)
+        eg2, lhs2, rhs2 = lane(fx, [])
         eg2.run(SATURATION_STEPS)
         r["guard_selectivity"] = not holds(eg2, lhs2, rhs2)
     else:  # unguarded equivalence: lane vacuous — flagged, never silent
@@ -276,6 +286,60 @@ def run_fixture(fx):
     r["term_extraction"] = j == len(retoks) and holds(eg, rebuilt, lhs)
     r["image"] = image
     return r
+
+
+# ----------------------------------------- adapter self-suite (refusals/pins)
+def read_directives(path):
+    """`//` header directives, corpus EXPECTED-FAIL style: what this fixture
+    expects OF THE ADAPTER (not of the grammar)."""
+    expects, pin_assert = None, []
+    for line in path.read_text().splitlines():
+        if not line.startswith("//"):
+            break
+        body = line[2:].strip()
+        if body.startswith("EXPECTED-UNTRANSLATABLE"):
+            expects = "untranslatable"
+        elif body.startswith("EXPECTED-FAIL"):
+            expects = "fail"
+        elif body.startswith("PIN-ASSERT:"):
+            k, v = body.split(":", 1)[1].split("=")
+            pin_assert.append((k.strip(), v.strip()))
+    return expects, pin_assert
+
+
+def run_adapter_suite():
+    """The suite that tests the TESTER: refusal fixtures prove the adapter's
+    realizability classification refuses what it must; the regime-expansion
+    pin proves guard facts stay literal. An XPASS here is an ALARM (pin
+    lifecycle, G10): capability arrived unratified — the run fails."""
+    verdicts = []
+    for path in sorted((ROOT / "conformance" / "equivalence").glob("*.oaas")):
+        expects, pin_assert = read_directives(path)
+        fxs = read_equivalences(path)
+        if expects is None or len(fxs) != 1:
+            verdicts.append((path.name, "MALFORMED", False,
+                             "need exactly one equivalence + an EXPECTED- header"))
+            continue
+        fx = fxs[0]
+        if expects == "untranslatable":
+            try:
+                lane(fx, fx.guards)
+                verdicts.append((path.name, "XPASS-ALARM", False,
+                                 f"translated as {fx.direction!r} — refusal expected; "
+                                 "RATIFY before accepting"))
+            except ValueError as e:
+                verdicts.append((path.name, "REFUSE", True, str(e)))
+        else:  # expected-fail pin: assert ONLY the pin facts, expect NO merge
+            eg, lhs, rhs = lane(fx, pin_assert)
+            eg.run(SATURATION_STEPS)
+            if holds(eg, lhs, rhs):
+                verdicts.append((path.name, "XPASS-ALARM", False,
+                                 "merge observed under pin-asserted facts — expansion "
+                                 "machinery arrived; STOP and ratify (ADR-0007)"))
+            else:
+                verdicts.append((path.name, "XFAIL-HOLDS", True,
+                                 "no merge without the literal guard fact"))
+    return verdicts
 
 
 # --------------------------------------------------------------- reporting
@@ -322,7 +386,9 @@ def main():
 
     verified = sum(all_field[f] for f in PRESERVES)
     score = verified / len(PRESERVES)
-    status = "pass" if score == 1.0 else "fail"
+    adapter = run_adapter_suite()
+    adapter_ok = all(ok for _, _, ok, _ in adapter)
+    status = "pass" if score == 1.0 and adapter_ok else "fail"
     today = datetime.date.today().isoformat()
 
     observed = pkg_version("egglog")
@@ -351,14 +417,24 @@ def main():
         if "selectivity_note" in results:
             report.append(f"NOTE: {results['selectivity_note']}")
         report.append("")
+    report.append("## adapter self-suite (conformance/equivalence/ — tests the tester)")
+    for fname, verdict, ok, detail in adapter:
+        report.append(f"- {fname}: **{verdict}** — {detail}")
+    report.append("")
     report.append("## pins vs observed (drift-watch input, no auto-bump)")
     report.append("pinned:\n```\n" + pins + "```")
     report.append(f"observed: egglog {observed} (PyPI)")
     (ROOT / "docs" / "reports" / f"roundtrip-egraph-{today}.md").write_text(
         "\n".join(report) + "\n")
 
-    print(f"preservation score: {verified}/{len(PRESERVES)} ({status.upper()}) "
+    print(f"preservation score: {verified}/{len(PRESERVES)} "
+          f"({'PASS' if score == 1.0 else 'FAIL'}) "
           f"over cases: {', '.join(sorted(per_case))}")
+    for fname, verdict, ok, _ in adapter:
+        print(f"{verdict:12s} {fname}")
+    held = sum(ok for _, _, ok, _ in adapter)
+    print(f"adapter self-suite: {held}/{len(adapter)} hold"
+          + ("" if adapter_ok else "  << XPASS ALARM — ratification required"))
     print(f"matrix cell written; report: docs/reports/roundtrip-egraph-{today}.md")
     sys.exit(0 if status == "pass" else 1)
 

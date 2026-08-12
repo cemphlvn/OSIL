@@ -1,0 +1,17 @@
+// EXPECTED-FAIL — regime-expansion pin. ADR-0007 declares the expansion
+// regime = ExactArithmetic == numeric_semantics = exact, but G14 guard facts
+// are LITERAL: the engine holds no expansion reasoning. Under the asserted
+// fact below this rule's own guard is NOT satisfied, so the merge MUST NOT
+// happen. XPASS (merge observed) means expansion machinery arrived — STOP
+// and ratify before accepting (pin lifecycle, G10).
+// PIN-ASSERT: regime = ExactArithmetic
+// provenance: G14 adapter self-suite (2026-08-12); rule body mirrors corpus 003
+equivalence distributivity_under_regime_name {
+    (a * c) + (b * c)
+    <=>
+    (a + b) * c
+
+    guards {
+        numeric_semantics = exact
+    }
+}

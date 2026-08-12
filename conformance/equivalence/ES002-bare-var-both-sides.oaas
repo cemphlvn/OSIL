@@ -1,0 +1,9 @@
+// EXPECTED-UNTRANSLATABLE — both sides are bare variables: neither side can
+// anchor a match (a lone-variable pattern matches every e-class; egglog
+// rejects it as ungrounded, and the variables are mutually unbound besides).
+// provenance: G14 adapter self-suite (2026-08-12)
+equivalence rename_only {
+    x
+    <=>
+    y
+}

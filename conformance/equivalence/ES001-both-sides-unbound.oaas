@@ -1,0 +1,14 @@
+// EXPECTED-UNTRANSLATABLE — no realizable direction: each side needs a
+// variable the other cannot bind ({a,b} vs {c,d}). The adapter MUST refuse
+// loudly (spec/core.md: realizability); registration in either direction is
+// an XPASS alarm demanding ratification.
+// provenance: G14 adapter self-suite (2026-08-12)
+equivalence unrelated_sides {
+    a + b
+    <=>
+    c + d
+
+    guards {
+        numeric_semantics = exact
+    }
+}
