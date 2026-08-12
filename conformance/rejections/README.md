@@ -14,6 +14,8 @@ boundaries that carry policy weight:
   boundary; agents scoped to flows structurally cannot mint vocabulary)
 - R003 — adjacency/juxtaposition (G2 ratification, ex-GAP-3)
 - R004 — output arity (G6, out_spec)
+- R005 — dangling dot in a path component (G9 boundary, discharged at G10-A
+  under the boundary obligation)
 
 Taxonomy (spec/conformance.md §2): temporal pins (`EXPECTED-FAIL: GAP-n`,
 closable via the XPASS ritual) live in corpus/; permanent rejections

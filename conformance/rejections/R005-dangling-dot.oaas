@@ -1,0 +1,8 @@
+// MUST-FAIL: path-component boundary — a dotted component may not end in a
+// dangling dot (grammar v0.5 / G9). This rejection discharges the BOUNDARY
+// OBLIGATION (G10-B) that G9's ritual left owed: the refusal was enforced in
+// the parser but unproven in conformance until this fixture.
+actor sloppy {
+    scope { spec/TERMS. }
+    verbs { report }
+}
