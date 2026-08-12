@@ -17,7 +17,9 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G4 complete / G5 (Linux Foundation) open**. ONNX is the
+Pre-release, gates **G0–G4 complete / G5 open / GX (Linux Foundation) terminal**.
+Gate convention: numbered gates keep appending BEFORE the terminal gate GX —
+GX is always last. ONNX is the
 first REGISTERED LF interop; the repo fully self-describes (policy as actors,
 pipelines as flows, its own diagram as the first visual golden). `just test` =
 grammar/corpus contract + round-trip preservation score + golden render. Two document kinds since ADR-0005: `.oaas` (vocabulary) and `.flow`
@@ -32,7 +34,8 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G2 | the repo's own operating policy is expressible in OAAS (conformance test #0) | **done 2026-08-12** — grammar v0.2; XPASS guard verified live |
 | G3 | ONNX round-trip preserves its declared contract fields | **done 2026-08-12** — preservation score 4/4, cases {add, matmul} (v0 suite, grows monotonically) |
 | G4 | visual identity projection: golden-render diff = 0 across round-trip | **done 2026-08-12** — grammar v0.3 layout block; first golden = OAAS's own render pipeline (test #0v); D1–D3 open discussions in `conformance/golden-render/README.md` |
-| G5 | Linux Foundation submission checklist satisfied | open (pending research U1/U2) |
+| G5 | vocabulary self-extends from detector findings: ADR-0007 ratified → `domain.numeric` concepts land → corpus fixture added → re-baseline resolves the naming candidate | open — proposal staged (`docs/decisions/ADR-0007-numeric-regime-concepts.md`) |
+| GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree
 
