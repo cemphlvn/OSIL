@@ -26,7 +26,10 @@ A change is legal iff:
 2. the target subtree's invariants (stated on its README card) are preserved;
 3. cross-representation consistency holds: a spec change introducing a construct
    ships its grammar production and ≥1 corpus example in the same change
-   (triple representation: prose ↔ grammar ↔ corpus).
+   (triple representation: prose ↔ grammar ↔ corpus);
+4. grammar enlargements discharge the **boundary obligation**: the same change
+   ships a `conformance/rejections/` fixture for each new construct's boundary,
+   or declares "no new boundary" with justification (spec/conformance.md §2).
 
 ## Constitution vs legislation
 

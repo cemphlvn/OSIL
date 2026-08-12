@@ -39,7 +39,14 @@ list exercised, and a check timestamp (differentia). Lifecycle:
     by a `// EXPECTED-FAIL: <gap-id>` header (syntactic marker at line start;
     prose mentions do not trigger). Parsing success fails the build (XPASS)
     until the marker is removed by ratified change — the XPASS ritual. Pins
-    make the *future* falsifiable.
+    make the *future* falsifiable. A pin's lifecycle has THREE ratified exits:
+    **flip** (the XPASS ritual — the construct becomes accepted), **delete**
+    (the pinned idea is abandoned), or **promote** — the pin migrates to
+    `conformance/rejections/` as a MUST-FAIL when the decision makes the
+    construct a permanent refusal. Promotion preserves the boundary that
+    deletion would erase (anticipated case: 021/GAP-2 under an `=`-only
+    ratification — the colon form would become a univocity refusal, not a
+    forgotten experiment).
   - **Permanent rejections** — normative refusals, pinned in
     `conformance/rejections/` by a `// MUST-FAIL: <rule>` header. These NEVER
     flip: an XPASS is always a parser/spec regression. Rejections make the
@@ -47,6 +54,19 @@ list exercised, and a check timestamp (differentia). Lifecycle:
     would pass the positive suite. Selection principle: one fixture per
     normative refusal, anchored to its rule/ADR; arbitrary syntax errors are
     noise, not rejections.
+  - **Boundary obligation** (G10): an XPASS ritual that ENLARGES the grammar
+    must ship, in the same ratified change, at least one MUST-FAIL rejection
+    pinning the new construct's boundary — or an explicit "no new boundary"
+    declaration with justification. That declaration is legitimate only for
+    restriction-removals whose edges are already pinned, or for
+    implementation-defect flips where the language itself did not change.
+    Rationale: a ritual moves the ACCEPTANCE frontier; rejections re-survey
+    the REFUSAL frontier; a language change is complete only when both
+    frontiers are re-mapped.
+  - **Ritual-XPASS vs alarm-XPASS**: an XPASS inside a ratified closure is a
+    ritual step. An XPASS anywhere else — a rejection fixture parsing, a pin
+    parsing outside a ratified change — is a regression alarm and is never
+    legitimate.
 
 ## 3. Suite organization
 
