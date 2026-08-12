@@ -3,9 +3,11 @@
 # mechanical round-trip evidence — never by inference.
 dimensions: [spec, adapter, upstream]
 cells:
-  - spec: 0.0.0-draft
-    adapter: onnx@unreleased
-    upstream: "ai.onnx opset 24 / ir 11 (unverified pins)"
-    status: unverified
-    fields: null
-    checked: null
+  - spec: "0.0.0-draft (grammar v0.2)"
+    adapter: "onnx-roundtrip v0 (tools/onnx_roundtrip.py)"
+    upstream: "onnx 1.22.0, IR 13, lib opset 27 (cases pinned at opset 13)"
+    status: pass
+    preservation_score: "4/4"
+    fields: {tensor_types: true, operator_versions: true, graph_topology: true, constants: true}
+    cases: [add, matmul]
+    checked: 2026-08-12

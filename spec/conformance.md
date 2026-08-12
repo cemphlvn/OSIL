@@ -1,0 +1,65 @@
+# Conformance & Testing
+
+Status: draft-0. Defines the system's own testing metric and suite organization.
+The metric is not borrowed from generic testing practice — it is derived from the
+spec's own vocabulary: preservation contracts (spec/interop/ecosystem-contract.md).
+
+## 1. Definitions
+
+**round-trip test** — a test (genus) that carries a native ecosystem artifact
+through a projection into OAAS and back, then compares original and
+reconstruction field-by-field against the projection's preservation contract
+(differentia).
+
+**preservation score** — a ratio (genus): the number of a contract's `preserves`
+fields mechanically verified on a round trip, divided by the number declared
+(differentia). `may_lose` fields are excluded by definition — sacrificing them
+costs nothing, which is what declaring them means. A field may count as verified
+ONLY on mechanical evidence; inference or inspection-by-eye never counts.
+
+**opaque passthrough** — the transport (genus) by which native data the OAAS
+text does not model survives a round trip as annotations attached to the
+projection image (differentia). Passthrough survival is contract-honest: the
+contract requires fields to *survive*, not to be re-expressed in OAAS syntax.
+
+**matrix cell** — a record (genus) binding one (spec version, adapter, upstream
+version) triple to a status, a preservation score, per-field results, the case
+list exercised, and a check timestamp (differentia). Lifecycle:
+`unverified → (stale ↔) pass | fail`. Only a round-trip run may move a cell to
+`pass`; only drift-watch or a failing run may move it to `stale`/`fail`.
+
+## 2. Gate semantics
+
+- **G3-class gates** (per ecosystem): preservation score = 1.0 over the
+  ecosystem's suite, with the suite's scope stated in the gate record. A perfect
+  score over a narrow suite is a narrow claim — suites grow monotonically, and
+  the score is always reported together with the case count.
+- **Expected-fail pinning**: deliberately-open gaps are pinned by fixtures whose
+  header carries `// EXPECTED-FAIL: <gap-id>` at line start (syntactic marker;
+  prose mentions do not trigger). Parsing success of a pinned fixture fails the
+  build (XPASS) until the marker is removed by ratified change.
+
+## 3. Suite organization
+
+One case per file, as **generator code**, not stored binaries — adopting the
+pattern research U3 verified in ONNX itself (`onnx/backend/test/case/node/`,
+one generator per operator):
+
+```
+conformance/interop/<ecosystem>/
+  README.md          suite card (scope, how to run, LF registration pointer)
+  cases/<case>.py    def make_model() -> native artifact (deterministic)
+```
+
+Rationale: generators are diffable, reviewable, and deterministic; binaries are
+none of those. The harness (`tools/onnx_roundtrip.py` for ONNX) builds each
+case, round-trips it, verifies per-contract-field, writes the matrix cell and a
+report under `docs/reports/`.
+
+## 4. Registration
+
+An ecosystem is a REGISTERED interop when its `registry/entries/<eco>.yaml`
+carries an `interop` binding naming its suite and its machine-readable contract.
+Registration is what turns a described ecosystem into a tested one — the
+registry stops being descriptive data and becomes the index of enforceable
+claims.

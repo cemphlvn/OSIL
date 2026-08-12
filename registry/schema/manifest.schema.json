@@ -3,18 +3,80 @@
   "$id": "oaas/registry/manifest/v0",
   "title": "OAAS ecosystem manifest (v0 draft)",
   "type": "object",
-  "required": ["name", "kind", "versions"],
+  "required": [
+    "name",
+    "kind",
+    "versions"
+  ],
   "properties": {
-    "name": { "type": "string" },
-    "kind": { "enum": ["ir", "search", "compiler", "runtime", "target"] },
-    "capabilities": { "type": "array", "items": { "type": "string" } },
-    "requirements": { "type": "array", "items": { "type": "string" } },
-    "operators": { "type": "array", "items": { "type": "string" } },
-    "versions": { "type": "object" },
-    "targets": { "type": "array", "items": { "type": "string" } },
-    "constraints": { "type": "object" },
-    "cost_hints": { "type": "object" },
-    "recipes": { "type": "array", "items": { "type": "string" } }
+    "name": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "ir",
+        "search",
+        "compiler",
+        "runtime",
+        "target"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "operators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "versions": {
+      "type": "object"
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "cost_hints": {
+      "type": "object"
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "interop": {
+      "type": "object",
+      "description": "Registration binding: what turns a described ecosystem into a tested one (spec/conformance.md section 4)",
+      "required": [
+        "suite",
+        "contract"
+      ],
+      "properties": {
+        "suite": {
+          "type": "string"
+        },
+        "contract": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }

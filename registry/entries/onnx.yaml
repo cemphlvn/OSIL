@@ -9,3 +9,6 @@ versions:
 targets: [cpu, gpu, coreml, wasm]
 cost_hints: {}
 recipes: []
+interop:                    # REGISTERED (G3): described -> tested ecosystem
+  suite: conformance/interop/onnx
+  contract: profiles/ecosystem/onnx/CONTRACT.oaas
