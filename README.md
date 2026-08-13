@@ -17,7 +17,7 @@ through **projections** governed by **preservation contracts**.
 
 ## Status
 
-Pre-release, gates **G0–G15 complete / GX (Linux Foundation) terminal**.
+Pre-release, gates **G0–G16 complete / GX (Linux Foundation) terminal**.
 The GAPS ledger is fully closed; references resolve (`just resolve`).
 Gate convention: numbered gates keep appending BEFORE the terminal gate GX —
 GX is always last. ONNX is the
@@ -47,7 +47,7 @@ seed conformance corpus, and the agent skill layer. Nothing here is normative ye
 | G13 | stratification closure: SIR/CIR/NATIVE + realization defined (constitutional equation); every projection.from resolves; source-stratum legality is a DISTINCT check (RS005/RS006); corpus unchanged; grammar productions added = 0 | **done 2026-08-12** |
 | G14 | e-graph contract: U5 decides egg-vs-egglog, then the equivalence projection gets a tested preservation contract (the search-ecosystem analog of G3) | **done 2026-08-12** — egglog (ADR-0009); score 4/4 over the 6 corpus equivalences (`just egraph`); realizability discovered: 3 of 6 declared `<=>` realize as directed rules; egg/-vs-egglog dir naming held open |
 | G15 | architecture as test object: a stage-composition term language (ONE new construct — triple representation due: prose + grammar production + corpus example) with commutation equivalences guarded by write-set disjointness; the repo's own pipeline is the suite — render∘policy must DERIVE as commuting, roundtrip∘egraph must be pinned NON-commuting (shared matrix.yaml write, the G14 wart made normative) | **done 2026-08-13** — grammar v0.6 (`then` contextual keyword; stage/resource/compose, 64/64); pair matrix 15/15 as declared (`just stages`); ES004 pins the matrix_yaml collision with XPASS-alarm; first COMPUTED guard (writes_disjoint from declarations) |
-| G16 | governed vocabulary views: a deterministic renderer derives layout-as-data for cross-document views (projection map, stage commutation) from the SAME declarations the harnesses read; zero-diff data gate vs blessed goldens, SVG advisory (G4 three-tier reused); lie-detection witnessed mechanically (a perturbed declaration must change the view data); ZERO grammar growth | **open — staged 2026-08-13** |
+| G16 | governed vocabulary views: a deterministic renderer derives layout-as-data for cross-document views (projection map, stage commutation) from the SAME declarations the harnesses read; zero-diff data gate vs blessed goldens, SVG advisory (G4 three-tier reused); lie-detection witnessed mechanically (a perturbed declaration must change the view data); ZERO grammar growth | **done 2026-08-13** — `just views` 4/4 VIEW-OK, witnesses 2/2 (determinism + lie-detect); agreement 8/8, matrix 28/28; surfaced: Identity contract declared-but-unverified |
 | GX | Linux Foundation submission checklist satisfied | open, TERMINAL (blocked on maintainer calls: name-vs-OAAX, license) |
 
 ## The tree
