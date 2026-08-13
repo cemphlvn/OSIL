@@ -1,0 +1,87 @@
+{
+ "commuting": 27,
+ "pairs_total": 28,
+ "stages": {
+  "check": {
+   "reads": [
+    "conformance.corpus",
+    "grammar.oaas_ebnf",
+    "profiles"
+   ],
+   "writes": []
+  },
+  "egraph": {
+   "reads": [
+    "conformance.corpus",
+    "conformance.equivalence",
+    "conformance.matrix.matrix_yaml",
+    "profiles.ecosystem.egglog.VERSIONS"
+   ],
+   "writes": [
+    "conformance.matrix.matrix_yaml",
+    "docs.reports.roundtrip_egraph_dated"
+   ]
+  },
+  "policy": {
+   "reads": [
+    "improvable",
+    "profiles.domain.agent.repo-policy"
+   ],
+   "writes": []
+  },
+  "render": {
+   "reads": [
+    "conformance.corpus",
+    "conformance.golden-render"
+   ],
+   "writes": []
+  },
+  "resolve": {
+   "reads": [
+    "conformance.corpus",
+    "conformance.resolution",
+    "profiles"
+   ],
+   "writes": []
+  },
+  "roundtrip": {
+   "reads": [
+    "conformance.interop.onnx.cases",
+    "profiles.ecosystem.onnx.VERSIONS"
+   ],
+   "writes": [
+    "conformance.matrix.matrix_yaml",
+    "docs.reports.roundtrip_onnx_dated"
+   ]
+  },
+  "stages": {
+   "reads": [
+    "conformance.corpus",
+    "conformance.equivalence",
+    "justfile"
+   ],
+   "writes": [
+    "docs.reports.stage_commute_dated"
+   ]
+  },
+  "views": {
+   "reads": [
+    "conformance.corpus",
+    "conformance.golden-render.views",
+    "conformance.matrix.matrix_yaml",
+    "profiles"
+   ],
+   "writes": []
+  }
+ },
+ "view": "stage-commutation",
+ "withheld": [
+  {
+   "a": "egraph",
+   "b": "roundtrip",
+   "collision": [
+    "conformance.matrix.matrix_yaml"
+   ]
+  }
+ ]
+}

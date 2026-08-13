@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 260" font-family="monospace" font-size="13">
+<title>stage-commutation</title>
+<rect x="20" y="30" width="180" height="40" fill="none" stroke="#000"/>
+<text x="34" y="55">check</text>
+<rect x="235" y="30" width="180" height="40" fill="none" stroke="#000"/>
+<text x="249" y="55">egraph</text>
+<rect x="450" y="30" width="180" height="40" fill="none" stroke="#000"/>
+<text x="464" y="55">policy</text>
+<rect x="665" y="30" width="180" height="40" fill="none" stroke="#000"/>
+<text x="679" y="55">render</text>
+<rect x="20" y="110" width="180" height="40" fill="none" stroke="#000"/>
+<text x="34" y="135">resolve</text>
+<rect x="235" y="110" width="180" height="40" fill="none" stroke="#000"/>
+<text x="249" y="135">roundtrip</text>
+<rect x="450" y="110" width="180" height="40" fill="none" stroke="#000"/>
+<text x="464" y="135">stages</text>
+<rect x="665" y="110" width="180" height="40" fill="none" stroke="#000"/>
+<text x="679" y="135">views</text>
+<polyline points="325,50 325,130" fill="none" stroke="#000" stroke-dasharray="3 3"/>
+<text x="325" y="84" font-size="11">conformance.matrix.matrix_yaml</text>
+<text x="20" y="244" font-size="11">27/28 pairs commute; only constraints drawn (dashed = shared write)</text>
+</svg>

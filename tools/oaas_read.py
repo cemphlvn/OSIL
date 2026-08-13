@@ -120,6 +120,64 @@ def read_flow(text):
     return out
 
 
+def read_stage_decls(text):
+    """Stage declarations (G15): {name: {"reads": set, "writes": set}}."""
+    toks, i = _toks(text), 0
+    out = {}
+
+    def qualified(j):
+        parts = [toks[j].text]
+        j += 1
+        while j < len(toks) and toks[j].kind == "op" and toks[j].text == ".":
+            parts.append(toks[j + 1].text)
+            j += 2
+        return ".".join(parts), j
+
+    while i < len(toks):
+        t = toks[i]
+        if t.kind == "ident" and t.text == "stage" and i + 2 < len(toks) \
+                and toks[i + 1].kind == "ident" and toks[i + 2].text == "{":
+            name, i = toks[i + 1].text, i + 3
+            rw = {"reads": set(), "writes": set()}
+            while toks[i].text != "}":
+                word = toks[i].text
+                if word == "runs":
+                    _, i = qualified(i + 2)
+                elif word in rw:
+                    i += 2
+                    while toks[i].text != "}":
+                        res, i = qualified(i)
+                        rw[word].add(res)
+                    i += 1
+                else:
+                    raise SyntaxError(f"unexpected {word!r} in stage {name}")
+            i += 1
+            out[name] = rw
+        else:
+            i += 1
+    return out
+
+
+def read_contract_fields(text):
+    """Top-level preserves{}/may_lose{} id lists (the CONTRACT.oaas shape):
+    {"preserves": [...], "may_lose": [...]}. Role-bound `preserves:` inside
+    operator blocks is NOT matched (no following brace)."""
+    toks, i = _toks(text), 0
+    out = {"preserves": [], "may_lose": []}
+    while i < len(toks):
+        t = toks[i]
+        if t.kind == "ident" and t.text in out and i + 1 < len(toks) \
+                and toks[i + 1].kind == "op" and toks[i + 1].text == "{":
+            key, i = t.text, i + 2
+            while toks[i].text != "}":
+                out[key].append(toks[i].text)
+                i += 1
+            i += 1
+        else:
+            i += 1
+    return out
+
+
 def read_vocab(text):
     """Vocabulary reader for .oaas files: profile ids (+ pins), operator /
     concept / invariant names. Other declarations are brace-skipped."""

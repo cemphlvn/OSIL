@@ -32,12 +32,20 @@ policy:
 resolve:
     python3 tools/oaas_resolve.py
 
-# full gatekeeper: contract + round-trips + render + policy + resolution + stages
-test: check roundtrip egraph render policy resolve stages
+# full gatekeeper: contract + round-trips + render + policy + resolution + stages + views
+test: check roundtrip egraph render policy resolve stages views
 
 # G15 stage commutation: the pipeline tests itself (uv supplies egglog)
 stages:
     uv run --with 'egglog==13.2.0' python3 tools/stage_commute.py
+
+# G16 governed views: vocabulary diagrams as conformance artifacts
+views:
+    python3 tools/view_render.py
+
+# bless view goldens (RATIFICATION ACT — record who/why in the PR)
+views-bless:
+    python3 tools/view_render.py --bless
 
 # derivation scan (ADVISORY): what the declared equivalences jointly entail
 derive:

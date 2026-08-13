@@ -1,0 +1,91 @@
+{
+ "projections": [
+  {
+   "declared_in": [
+    "conformance/corpus/004-projections.oaas",
+    "profiles/ecosystem/egglog/CONTRACT.oaas"
+   ],
+   "ecosystem": "egglog",
+   "from": "OAAS-SIR",
+   "may_lose": [
+    "ontology_annotations",
+    "visual_layout"
+   ],
+   "preserve": [
+    "equivalence"
+   ],
+   "preserves": [
+    "equivalence",
+    "guard_selectivity",
+    "rule_identity",
+    "term_extraction"
+   ],
+   "projection": "EGraph",
+   "score": "4/4",
+   "status": "pass"
+  },
+  {
+   "declared_in": [
+    "profiles/domain/agent/toolchain.oaas"
+   ],
+   "ecosystem": "native",
+   "from": "OAAS-NATIVE",
+   "may_lose": [],
+   "preserve": [
+    "everything"
+   ],
+   "preserves": [
+    "semantics",
+    "visual_layout"
+   ],
+   "projection": "Identity",
+   "score": null,
+   "status": "uncontracted"
+  },
+  {
+   "declared_in": [
+    "conformance/corpus/004-projections.oaas"
+   ],
+   "ecosystem": "mlir",
+   "from": "OAAS-CIR",
+   "may_lose": [],
+   "preserve": [
+    "execution"
+   ],
+   "preserves": [],
+   "projection": "MLIR",
+   "score": null,
+   "status": "uncontracted"
+  },
+  {
+   "declared_in": [
+    "conformance/corpus/004-projections.oaas",
+    "profiles/ecosystem/onnx/CONTRACT.oaas"
+   ],
+   "ecosystem": "onnx",
+   "from": "OAAS-CIR",
+   "may_lose": [
+    "ontology_annotations",
+    "visual_layout"
+   ],
+   "preserve": [
+    "computation"
+   ],
+   "preserves": [
+    "constants",
+    "graph_topology",
+    "operator_versions",
+    "tensor_types"
+   ],
+   "projection": "ONNX",
+   "score": "4/4",
+   "status": "pass"
+  }
+ ],
+ "strata": [
+  "OAAS-SIR",
+  "OAAS-CIR",
+  "OAAS-NATIVE"
+ ],
+ "view": "projection-map"
+}

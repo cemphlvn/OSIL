@@ -46,6 +46,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from egraph_roundtrip import holds, read_directives
 from oaas_check import tokenize
+from oaas_read import read_stage_decls
 
 SATURATION_STEPS = 5
 
@@ -61,41 +62,10 @@ writes_disjoint = relation("writes_disjoint", Stage, Stage)
 
 # ------------------------------------------------------------- corpus readers
 def read_stages():
-    """stage blocks from corpus (reference lexer — dogfood)."""
+    """stage blocks from corpus, via the shared reader (anti-fifth-reader)."""
     stages = {}
     for path in sorted((ROOT / "conformance" / "corpus").glob("*.oaas")):
-        toks = [t for t in tokenize(path.read_text()) if t.kind != "eof"]
-        i = 0
-        while i < len(toks):
-            if toks[i].kind == "ident" and toks[i].text == "stage" \
-                    and i + 2 < len(toks) and toks[i + 1].kind == "ident" \
-                    and toks[i + 2].text == "{":
-                name, i = toks[i + 1].text, i + 3
-                rw = {"reads": set(), "writes": set()}
-                def qualified(j):
-                    parts = [toks[j].text]
-                    j += 1
-                    while toks[j].kind == "op" and toks[j].text == ".":
-                        parts.append(toks[j + 1].text)
-                        j += 2
-                    return ".".join(parts), j
-
-                while toks[i].text != "}":
-                    word = toks[i].text
-                    if word == "runs":
-                        _, i = qualified(i + 2)  # skip 'runs' '=' qualified_id
-                    elif word in rw:
-                        i += 2  # reads|writes {
-                        while toks[i].text != "}":
-                            res, i = qualified(i)
-                            rw[word].add(res)
-                        i += 1  # }
-                    else:
-                        raise SyntaxError(f"{path.name}: unexpected {word!r} in stage {name}")
-                i += 1
-                stages[name] = rw
-            else:
-                i += 1
+        stages.update(read_stage_decls(path.read_text()))
     return stages
 
 

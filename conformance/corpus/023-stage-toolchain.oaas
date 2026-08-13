@@ -41,3 +41,11 @@ stage stages {
     reads { conformance.corpus  conformance.equivalence  justfile }
     writes { docs.reports.stage_commute_dated }
 }
+
+// governed views (G16, ADR-0011): read-only on gate runs; blessing writes,
+// and blessing is a ratification act outside the pipeline
+stage views {
+    runs = tools.view_render
+    reads { conformance.corpus  profiles  conformance.matrix.matrix_yaml
+            conformance.golden-render.views }
+}
