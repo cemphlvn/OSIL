@@ -25,7 +25,7 @@ Frontmatter fields: `name`, `description`, `scope` (paths the runner may touch),
 `verbs`, `cadence`, `invariants`, `evals`. Frontmatter is CONSTITUTIONAL
 (propose-only; human ratification; see GOVERNANCE.md). Bodies are legislation.
 
-Frontmatter must stay in agreement with `profiles/domain/agent/repo-policy.oaas`
+Frontmatter must stay in agreement with `profiles/domain/agent/repo-policy.osil`
 (the self-hosted policy). Checking that agreement is a standing loop — currently
 manual, mechanical once G2 lands.
 

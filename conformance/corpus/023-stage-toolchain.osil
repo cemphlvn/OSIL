@@ -2,8 +2,8 @@
 // vocabulary. Write-sets are FILE-granular resource ids; declarations are
 // self-class truth (fidelity to tool source is declared, not yet extracted).
 stage check {
-    runs = tools.oaas_check
-    reads { conformance.corpus  profiles  grammar.oaas_ebnf }
+    runs = tools.osil_check
+    reads { conformance.corpus  profiles  grammar.osil_ebnf }
 }
 
 stage roundtrip {
@@ -30,7 +30,7 @@ stage policy {
 }
 
 stage resolve {
-    runs = tools.oaas_resolve
+    runs = tools.osil_resolve
     reads { conformance.corpus  conformance.resolution  profiles }
 }
 

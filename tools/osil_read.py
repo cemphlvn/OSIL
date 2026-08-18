@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Shared OAAS readers (G12) — the anti-fifth-reader module.
+"""Shared OSIL readers (G12) — the anti-fifth-reader module.
 
 Built for the resolver, designed for reuse: these are the symbol-table
 readers a future LSP needs (g12-resolver-plan.md, perspective 2). Migration
-target for the four older inline readers (oaas_check fire-only excepted —
+target for the four older inline readers (osil_check fire-only excepted —
 it is the reference parser; roundtrip/render/policy readers are follow-ups).
 Reuses the reference lexer; never forks tokenization.
 """
@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize
+from osil_check import tokenize
 
 
 def _toks(text):
@@ -159,7 +159,7 @@ def read_stage_decls(text):
 
 
 def read_contract_fields(text):
-    """Top-level preserves{}/may_lose{} id lists (the CONTRACT.oaas shape):
+    """Top-level preserves{}/may_lose{} id lists (the CONTRACT.osil shape):
     {"preserves": [...], "may_lose": [...]}. Role-bound `preserves:` inside
     operator blocks is NOT matched (no following brace)."""
     toks, i = _toks(text), 0
@@ -179,7 +179,7 @@ def read_contract_fields(text):
 
 
 def read_vocab(text):
-    """Vocabulary reader for .oaas files: profile ids (+ pins), operator /
+    """Vocabulary reader for .osil files: profile ids (+ pins), operator /
     concept / invariant names. Other declarations are brace-skipped."""
     toks, i = _toks(text), 0
     out = {"profiles": [], "operators": [], "concepts": [], "invariants": [],

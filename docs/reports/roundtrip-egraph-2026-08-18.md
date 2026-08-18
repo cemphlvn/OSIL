@@ -1,37 +1,37 @@
 # EGraph round-trip report — 2026-08-18
 Metric: preservation score = 4/4 -> PASS
 Upstream actually tested: egglog 13.2.0 (PyPI)
-Loop: OAAS-SIR -> egglog -> saturate(5) -> extract -> OAAS-SIR
+Loop: OSIL-SIR -> egglog -> saturate(5) -> extract -> OSIL-SIR
 Suite: 6 equivalence declarations (corpus IS the rule set)
 
-## case add_associativity (020-equivalence-associativity.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case add_associativity (020-equivalence-associativity.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `((a + b) + c) <=> (a + (b + c))` · guards: regime = ExactArithmetic · realized rule: `<=>`
 extraction image (re-lexed by reference lexer): `((a + b) + c)`
 
-## case distributivity (003-equivalence-distributivity.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case distributivity (003-equivalence-distributivity.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `((a * c) + (b * c)) <=> ((a + b) * c)` · guards: numeric_semantics = exact · realized rule: `<=>`
 extraction image (re-lexed by reference lexer): `((a + b) * c)`
 
-## case identity_div (014-equivalence-identity-div.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case identity_div (014-equivalence-identity-div.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `(x / 1) <=> x` · guards: numeric_semantics = exact · realized rule: `->`
 extraction image (re-lexed by reference lexer): `x`
 
-## case inverse_add (013-equivalence-inverse-add.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case inverse_add (013-equivalence-inverse-add.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `((a + b) - b) <=> a` · guards: numeric_semantics = exact · realized rule: `->`
 extraction image (re-lexed by reference lexer): `a`
 
-## case shift_zero (015-equivalence-shift-zero.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case shift_zero (015-equivalence-shift-zero.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `(x >> 0) <=> x` · guards: numeric_semantics = integer · realized rule: `->`
 extraction image (re-lexed by reference lexer): `x`
 
-## case strength_reduction (009-equivalence-strength-reduction.oaas): equivalence=ok, guard_selectivity=ok, term_extraction=ok
+## case strength_reduction (009-equivalence-strength-reduction.osil): equivalence=ok, guard_selectivity=ok, term_extraction=ok
 declared: `(x * 2) <=> (x << 1)` · guards: numeric_semantics = integer · realized rule: `<=>`
 extraction image (re-lexed by reference lexer): `(x * 2)`
 
 ## adapter self-suite (conformance/equivalence/ — tests the tester)
-- ES001-both-sides-unbound.oaas: **REFUSE** — unrelated_sides: no realizable direction (vars ['a', 'b'] vs ['c', 'd']) — untranslatable
-- ES002-bare-var-both-sides.oaas: **REFUSE** — rename_only: no realizable direction (vars ['x'] vs ['y']) — untranslatable
-- ES003-regime-expansion-pin.oaas: **XFAIL-HOLDS** — no merge without the literal guard fact
+- ES001-both-sides-unbound.osil: **REFUSE** — unrelated_sides: no realizable direction (vars ['a', 'b'] vs ['c', 'd']) — untranslatable
+- ES002-bare-var-both-sides.osil: **REFUSE** — rename_only: no realizable direction (vars ['x'] vs ['y']) — untranslatable
+- ES003-regime-expansion-pin.osil: **XFAIL-HOLDS** — no merge without the literal guard fact
 
 ## pins vs observed (drift-watch input, no auto-bump)
 pinned:

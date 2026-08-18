@@ -12,7 +12,7 @@ evals: evals/
 
 STATUS: stub until G4 lands a deterministic renderer in tools/.
 
-Guards the founding requirement: OAAS is a VISUAL DSL, and the native
+Guards the founding requirement: OSIL is a VISUAL DSL, and the native
 serialization (identity projection) preserves visual_layout totally.
 
 ## Procedure (activates at G4)

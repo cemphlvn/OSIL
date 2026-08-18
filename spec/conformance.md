@@ -7,7 +7,7 @@ spec's own vocabulary: preservation contracts (spec/interop/ecosystem-contract.m
 ## 1. Definitions
 
 **round-trip test** — a test (genus) that carries a native ecosystem artifact
-through a projection into OAAS and back, then compares original and
+through a projection into OSIL and back, then compares original and
 reconstruction field-by-field against the projection's preservation contract
 (differentia).
 
@@ -17,10 +17,10 @@ fields mechanically verified on a round trip, divided by the number declared
 costs nothing, which is what declaring them means. A field may count as verified
 ONLY on mechanical evidence; inference or inspection-by-eye never counts.
 
-**opaque passthrough** — the transport (genus) by which native data the OAAS
+**opaque passthrough** — the transport (genus) by which native data the OSIL
 text does not model survives a round trip as annotations attached to the
 projection image (differentia). Passthrough survival is contract-honest: the
-contract requires fields to *survive*, not to be re-expressed in OAAS syntax.
+contract requires fields to *survive*, not to be re-expressed in OSIL syntax.
 
 **matrix cell** — a record (genus) binding one (spec version, adapter, upstream
 version) triple to a status, a preservation score, per-field results, the case

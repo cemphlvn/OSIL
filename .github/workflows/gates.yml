@@ -8,11 +8,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - name: corpus contract (grammar/coverage/pins/rejections)
-        run: python3 tools/oaas_check.py
+        run: python3 tools/osil_check.py
       - name: policy agreement (actors vs skills)
         run: python3 tools/policy_check.py
       - name: resolution (references find their universals)
-        run: python3 tools/oaas_resolve.py
+        run: python3 tools/osil_resolve.py
       - name: golden render (data gate, svg advisory)
         run: python3 tools/render_check.py
       - name: ONNX round-trip (preservation score)

@@ -2,8 +2,8 @@
 """Policy agreement loop (G8): the self-hosted policy vs the skill layer.
 
 GOVERNANCE.md declares that improvable/*/SKILL.md frontmatter must agree with
-profiles/domain/agent/repo-policy.oaas — "a standing loop, mechanical once G2
-lands." This is that loop. It parses the actors OUT OF THE OAAS TEXT (the
+profiles/domain/agent/repo-policy.osil — "a standing loop, mechanical once G2
+lands." This is that loop. It parses the actors OUT OF THE OSIL TEXT (the
 policy is checked as the language, not as prose) and compares:
 
   1:1     every skill has an actor of the same name (human roles exempt);
@@ -21,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize
+from osil_check import tokenize
 
 HUMAN_ROLES = {"spec-editor"}   # policy roles with no skill counterpart
 
@@ -100,7 +100,7 @@ def covered(skill_path, actor_paths):
 
 
 def main():
-    actors = parse_actors(ROOT / "profiles" / "domain" / "agent" / "repo-policy.oaas")
+    actors = parse_actors(ROOT / "profiles" / "domain" / "agent" / "repo-policy.osil")
     skills = {}
     for sk in sorted((ROOT / "improvable").iterdir()):
         f = sk / "SKILL.md"
@@ -110,7 +110,7 @@ def main():
     problems = []
     for name, fm in skills.items():
         if name not in actors:
-            problems.append(f"skill {name!r} has NO actor in repo-policy.oaas")
+            problems.append(f"skill {name!r} has NO actor in repo-policy.osil")
             continue
         act = actors[name]
         for p in fm.get("scope", []):

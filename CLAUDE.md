@@ -1,4 +1,4 @@
-# OAAS — project instructions (Claude Code main-loop projection)
+# OSIL — project instructions (Claude Code main-loop projection)
 
 > This file is a PROJECTION of canonical sources: `GOVERNANCE.md` (policy) and
 > `improvable/INDEX.md` (skill routing). If it disagrees with them, they win and
@@ -7,7 +7,7 @@
 
 ## What this repo is
 
-An open specification for OAAS, a semantic architecture layer. Core concepts:
+An open specification for OSIL, a semantic architecture layer. Core concepts:
 semantic optimization space, projection, preservation contract, identity
 projection, invariants-as-rewrite-guards. Read `README.md` first; deep context in
 `docs/intake/` (three-pass analysis) and `docs/design/`.
@@ -22,7 +22,7 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 3. **Triple representation**: any spec change that adds/renames a language
    construct must ship a grammar production + ≥1 corpus example in the same change.
 4. **Corpus discipline**: one construct per file, `//` provenance header, ids are
-   stable (`NNN-slug.oaas` vocabulary / `NNN-slug.flow` flows — ADR-0005). Never
+   stable (`NNN-slug.osil` vocabulary / `NNN-slug.flow` flows — ADR-0005). Never
    delete without human ratification.
 5. **Mark, don't resolve**: unverified claims get `ASSUMPTION:`; decisions get an
    ADR in `docs/decisions/`; research lands in `docs/research/U#-slug.md`.
@@ -47,7 +47,7 @@ projection, invariants-as-rewrite-guards. Read `README.md` first; deep context i
 
 G0–G15 are done (grammar v0.6; `just test` = check + roundtrip + egraph +
 render + policy + resolve + stages). Standing agreement loops inside the
-gatekeeper: policy (repo-policy.oaas actors == skill frontmatter, G8) and
+gatekeeper: policy (repo-policy.osil actors == skill frontmatter, G8) and
 stages (justfile `test:` line == corpus 023 stage declarations, 1:1). Gate
 convention: numbered gates append BEFORE the terminal gate GX (Linux
 Foundation submission — blocked on maintainer calls: name-vs-OAAX, license).

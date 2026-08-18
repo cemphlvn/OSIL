@@ -1,5 +1,5 @@
 // provenance: the repo's own G4 loop as a flow, WITH its own layout — the
-// first visual golden is a diagram of OAAS's render pipeline (test #0v).
+// first visual golden is a diagram of OSIL's render pipeline (test #0v).
 // self-description P2/P3 (2026-08-12)
 use domain.toolchain
 

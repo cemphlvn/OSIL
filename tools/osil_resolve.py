@@ -2,7 +2,7 @@
 """G12 resolver: rungs 1-2 of the G1-enablement ladder.
 
 Rung 1 — name resolution (the linker perspective): every `use` binds a
-declared profile from the universe (profiles/**/*.oaas); a use binds the
+declared profile from the universe (profiles/**/*.osil); a use binds the
 profile id's TERMINAL SEGMENT as the flow's namespace (ecosystem.onnx ->
 onnx::). Namespace collisions are index-time errors — the language-level
 analog of dependency confusion (security control, not convenience).
@@ -12,7 +12,7 @@ declared outputs are produced.
 Rung 2 — oracles: ecosystem namespaces check ops (name@version) against
 registry/entries/<eco>.yaml operators; domain namespaces check ops against
 operator/concept declarations in the profile's own directory. Pin
-consistency: profile.oaas pins == VERSIONS pins.
+consistency: profile.osil pins == VERSIONS pins.
 
 Rung 3 (types/shapes) is OUT of scope, deliberately (ONNX precedent:
 checker vs shape inference are separate).
@@ -31,17 +31,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_read import read_flow, read_vocab
+from osil_read import read_flow, read_vocab
 
 MARKER = re.compile(r"^// MUST-FAIL-RESOLUTION\b", re.M)
 XMARK = re.compile(r"^// EXPECTED-FAIL\b", re.M)
 
 # G13 (design A): strata are core-defined metamodel symbols — a normative
-# core universe, never redeclared inside .oaas documents.
-CORE_STRATA = {"OAAS-SIR", "OAAS-CIR", "OAAS-NATIVE"}
+# core universe, never redeclared inside .osil documents.
+CORE_STRATA = {"OSIL-SIR", "OSIL-CIR", "OSIL-NATIVE"}
 # stratum legality derives from the preserved dimension (spec/core.md)
-DIM_STRATUM = {"equivalence": "OAAS-SIR", "computation": "OAAS-CIR",
-               "execution": "OAAS-CIR", "everything": "OAAS-NATIVE"}
+DIM_STRATUM = {"equivalence": "OSIL-SIR", "computation": "OSIL-CIR",
+               "execution": "OSIL-CIR", "everything": "OSIL-NATIVE"}
 
 
 def check_projections(vocab):
@@ -72,7 +72,7 @@ def check_projections(vocab):
 
 def build_universe():
     profiles, ns_map, dir_vocab, errors = {}, {}, {}, []
-    for f in sorted(ROOT.glob("profiles/**/*.oaas")):
+    for f in sorted(ROOT.glob("profiles/**/*.osil")):
         v = read_vocab(f.read_text())
         d = str(f.parent.relative_to(ROOT))
         dv = dir_vocab.setdefault(d, {"operators": set(), "concepts": set()})
@@ -203,10 +203,10 @@ def main():
         failures += [f"{f.name}: {e}" for e in errs]
 
     # G13: stratum resolution + legality over every projection declaration
-    # in the universe (profiles/**) AND the corpus's .oaas fixtures
+    # in the universe (profiles/**) AND the corpus's .osil fixtures
     s_total = s_resolved = 0
-    proj_files = sorted(ROOT.glob("profiles/**/*.oaas")) + \
-        sorted((ROOT / "conformance" / "corpus").glob("*.oaas"))
+    proj_files = sorted(ROOT.glob("profiles/**/*.osil")) + \
+        sorted((ROOT / "conformance" / "corpus").glob("*.osil"))
     for f in proj_files:
         text = f.read_text()
         if XMARK.search("\n".join(text.splitlines()[:12])):
@@ -222,8 +222,8 @@ def main():
               + "".join(f"\n         - {e}" for e in errs))
         failures += [f"{f.name}: {e}" for e in errs]
 
-    # pin consistency: profile.oaas is canonical; VERSIONS must mirror it
-    for pf in sorted(ROOT.glob("profiles/ecosystem/*/profile.oaas")):
+    # pin consistency: profile.osil is canonical; VERSIONS must mirror it
+    for pf in sorted(ROOT.glob("profiles/ecosystem/*/profile.osil")):
         vf = pf.parent / "VERSIONS"
         if not vf.exists():
             continue
@@ -232,14 +232,14 @@ def main():
         for k, v in ppins.items():
             if vpins.get(k) != v:
                 failures.append(f"PIN-DRIFT {pf.parent.name}: {k} = {v} "
-                                f"(profile.oaas) vs {vpins.get(k)} (VERSIONS)")
+                                f"(profile.osil) vs {vpins.get(k)} (VERSIONS)")
         print(f"PINS-OK  {pf.relative_to(ROOT)} == VERSIONS"
               if not any(k for k, v in ppins.items() if vpins.get(k) != v)
               else f"PINDRIFT {pf.relative_to(ROOT)}")
 
     # resolution refusals: must parse, MUST fail resolution
     rej = ROOT / "conformance" / "resolution"
-    for f in sorted(rej.glob("*.flow")) + sorted(rej.glob("*.oaas")):
+    for f in sorted(rej.glob("*.flow")) + sorted(rej.glob("*.osil")):
         text = f.read_text()
         if not MARKER.search("\n".join(text.splitlines()[:12])):
             failures.append(f"{f.name}: refusal fixture lacks "

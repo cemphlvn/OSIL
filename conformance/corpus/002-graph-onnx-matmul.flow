@@ -1,5 +1,5 @@
 // provenance: intake transcript, "ONNX profile" section (captured 2026-08-12)
-// normalized: extension .oaas -> .flow (ADR-0005, id stable); added `use` header
+// normalized: extension .osil -> .flow (ADR-0005, id stable); added `use` header
 // so the flow names the profile its native identities resolve against
 // native ecosystem identity: onnx::MatMul@13 keeps ONNX's versioned semantics
 use ecosystem.onnx

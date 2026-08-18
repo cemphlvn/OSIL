@@ -2,11 +2,11 @@
  "projections": [
   {
    "declared_in": [
-    "conformance/corpus/004-projections.oaas",
-    "profiles/ecosystem/egglog/CONTRACT.oaas"
+    "conformance/corpus/004-projections.osil",
+    "profiles/ecosystem/egglog/CONTRACT.osil"
    ],
    "ecosystem": "egglog",
-   "from": "OAAS-SIR",
+   "from": "OSIL-SIR",
    "may_lose": [
     "ontology_annotations",
     "visual_layout"
@@ -26,10 +26,10 @@
   },
   {
    "declared_in": [
-    "profiles/domain/agent/toolchain.oaas"
+    "profiles/domain/agent/toolchain.osil"
    ],
    "ecosystem": "native",
-   "from": "OAAS-NATIVE",
+   "from": "OSIL-NATIVE",
    "may_lose": [],
    "preserve": [
     "everything"
@@ -44,10 +44,10 @@
   },
   {
    "declared_in": [
-    "conformance/corpus/004-projections.oaas"
+    "conformance/corpus/004-projections.osil"
    ],
    "ecosystem": "mlir",
-   "from": "OAAS-CIR",
+   "from": "OSIL-CIR",
    "may_lose": [],
    "preserve": [
     "execution"
@@ -59,11 +59,11 @@
   },
   {
    "declared_in": [
-    "conformance/corpus/004-projections.oaas",
-    "profiles/ecosystem/onnx/CONTRACT.oaas"
+    "conformance/corpus/004-projections.osil",
+    "profiles/ecosystem/onnx/CONTRACT.osil"
    ],
    "ecosystem": "onnx",
-   "from": "OAAS-CIR",
+   "from": "OSIL-CIR",
    "may_lose": [
     "ontology_annotations",
     "visual_layout"
@@ -83,9 +83,9 @@
   }
  ],
  "strata": [
-  "OAAS-SIR",
-  "OAAS-CIR",
-  "OAAS-NATIVE"
+  "OSIL-SIR",
+  "OSIL-CIR",
+  "OSIL-NATIVE"
  ],
  "view": "projection-map"
 }

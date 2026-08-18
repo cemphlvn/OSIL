@@ -25,7 +25,7 @@ Foreign ground truth moves on its own schedule. This skill runs per ecosystem
    b. Summarize what changed upstream (breaking? additive? relevant to our
       contract fields?) with source links.
    c. Draft a pin-bump proposal (VERSIONS diff + expected contract impact).
-      NEVER apply the bump and NEVER touch CONTRACT.oaas semantics yourself.
+      NEVER apply the bump and NEVER touch CONTRACT.osil semantics yourself.
 5. Report to docs/reports/drift-<eco>-<date>.md.
 
 ## Harness notes

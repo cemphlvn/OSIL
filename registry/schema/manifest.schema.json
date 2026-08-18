@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "oaas/registry/manifest/v0",
-  "title": "OAAS ecosystem manifest (v0 draft)",
+  "title": "OSIL ecosystem manifest (v0 draft)",
   "type": "object",
   "required": [
     "name",

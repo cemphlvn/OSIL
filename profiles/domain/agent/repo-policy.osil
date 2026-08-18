@@ -1,7 +1,7 @@
-// profiles/domain/agent/repo-policy.oaas
+// profiles/domain/agent/repo-policy.osil
 // ============================================================================
-// CONFORMANCE TEST #0: OAAS expresses its own repository's operating policy.
-// "The first architecture OAAS describes is the OAAS repo."
+// CONFORMANCE TEST #0: OSIL expresses its own repository's operating policy.
+// "The first architecture OSIL describes is the OSIL repo."
 //
 // STATUS: PASSES since grammar v0.2 (G2). Extended at G8 to cover every
 // deployed skill 1:1 — tools/policy_check.py mechanically verifies agreement

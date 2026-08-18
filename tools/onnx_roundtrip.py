@@ -2,13 +2,13 @@
 """ONNX round-trip harness (G3): computes the system's own testing metric.
 
 Metric — PRESERVATION SCORE (spec/conformance.md): the fraction of the ONNX
-projection's CONTRACT.oaas `preserves` fields mechanically verified on a round
+projection's CONTRACT.osil `preserves` fields mechanically verified on a round
 trip  .onnx -> .flow text -> .onnx  over every case in
 conformance/interop/onnx/cases/. Gate G3 requires score = 1.0 (scope = the
 suite's case list, reported alongside).
 
-The projection image is real OAAS text, lexed back with the reference lexer
-from oaas_check (dogfooding). Native data the text does not model (initializer
+The projection image is real OSIL text, lexed back with the reference lexer
+from osil_check (dogfooding). Native data the text does not model (initializer
 values, ir_version, producer) survives via OPAQUE PASSTHROUGH, the mechanism
 spec/interop/ecosystem-contract.md §3 sanctions. may_lose fields
 (ontology_annotations, visual_layout) are excluded from the score by definition.
@@ -27,7 +27,7 @@ from onnx import helper, numpy_helper, TensorProto
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize  # reference lexer — dogfood, do not fork
+from osil_check import tokenize  # reference lexer — dogfood, do not fork
 
 ELEM_TO_TEXT = {TensorProto.FLOAT: "f32", TensorProto.FLOAT16: "f16",
                 TensorProto.BFLOAT16: "bf16", TensorProto.DOUBLE: "f64",
@@ -59,7 +59,7 @@ def main_opset(model):
 
 # --------------------------------------------------- projection: model -> text
 def export_flow(model):
-    """ModelProto -> (.flow text, passthrough). Text carries what OAAS models;
+    """ModelProto -> (.flow text, passthrough). Text carries what OSIL models;
     passthrough carries the rest, opaquely."""
     g = model.graph
     opset = main_opset(model)

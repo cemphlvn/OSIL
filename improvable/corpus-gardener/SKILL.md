@@ -24,12 +24,12 @@ paths. This skill keeps it growing and honest.
 
 ## Procedure
 
-1. **Normalize**: one construct per file. File name `NNN-slug.oaas` (vocabulary)
+1. **Normalize**: one construct per file. File name `NNN-slug.osil` (vocabulary)
    or `NNN-slug.flow` (flow documents — ADR-0005). (NNN =
    next free id, ids are stable forever). Header comment:
    `// provenance: <where this came from, with date>` plus
    `// normalized: <what you changed>` if you adapted the raw source.
-2. **Parse-check**: run `just check` (tools/oaas_check.py) — mechanical since G1.
+2. **Parse-check**: run `just check` (tools/osil_check.py) — mechanical since G1.
    It also verifies production coverage and that EXPECTED-FAIL files still fail.
    - Parses → done.
    - Doesn't parse → DO NOT edit the grammar. File the gap in `grammar/GAPS.md`

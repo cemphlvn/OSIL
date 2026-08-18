@@ -35,7 +35,7 @@ Agreement: justfile `test:` == corpus stage decls, 8/8 1:1 (the observer is in i
 | `stages then views` | COMMUTE | writes disjoint |
 
 ## pins
-- ES004-matrix-write-collision-pin.oaas: **XFAIL-HOLDS** — no commutation without disjoint writes
+- ES004-matrix-write-collision-pin.osil: **XFAIL-HOLDS** — no commutation without disjoint writes
 
 ## honest notes
 - Write-sets are DECLARED (self-class truth); mechanical extraction from tool source is future work (ADR-0010).

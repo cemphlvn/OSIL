@@ -5,7 +5,7 @@
   "check": {
    "reads": [
     "conformance.corpus",
-    "grammar.oaas_ebnf",
+    "grammar.osil_ebnf",
     "profiles"
    ],
    "writes": []

@@ -8,6 +8,6 @@ regression (alarm), never a ritual. One fixture per refusal:
   RS004 broken wiring · RS005 dangling stratum (G13) · RS006 illegal source
   stratum (G13 — resolves but illegal: the pair RS005/RS006 pins resolution
   and stratum-legality apart)
-Scanned by tools/oaas_resolve.py only (parse-level rejections live in
+Scanned by tools/osil_resolve.py only (parse-level rejections live in
 conformance/rejections/).
 invariants: marker-required · never-flipped · one-fixture-per-rule

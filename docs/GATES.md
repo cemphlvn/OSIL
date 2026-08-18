@@ -1,5 +1,9 @@
 # Gate Ledger
 
+> Naming note: the project was renamed OAAS -> OSIL on 2026-08-18 (ADR-0012,
+> gate G17). Ledger rows are dated history and retain the names used at the
+> time.
+
 Development proceeds through **falsifiable gates**: each gate is a claim someone
 could prove false, closed only when machinery demonstrates it. Numbered gates
 append before the terminal gate **GX** (Linux Foundation submission), which is
@@ -26,7 +30,8 @@ Quick status: `just gates`.
 | G14 | e-graph contract: U5 decides egg-vs-egglog, then the equivalence projection gets a tested preservation contract (the search-ecosystem analog of G3) | **done 2026-08-12** — egglog (ADR-0009); score 4/4 over the 6 corpus equivalences (`just egraph`); realizability discovered: 3 of 6 declared `<=>` realize as directed rules; egg/-vs-egglog dir naming held open |
 | G15 | architecture as test object: a stage-composition term language (ONE new construct — triple representation due: prose + grammar production + corpus example) with commutation equivalences guarded by write-set disjointness; the repo's own pipeline is the suite — render∘policy must DERIVE as commuting, roundtrip∘egraph must be pinned NON-commuting (shared matrix.yaml write, the G14 wart made normative) | **done 2026-08-13** — grammar v0.6 (`then` contextual keyword; stage/resource/compose, 64/64); pair matrix 15/15 as declared (`just stages`); ES004 pins the matrix_yaml collision with XPASS-alarm; first COMPUTED guard (writes_disjoint from declarations) |
 | G16 | governed vocabulary views: a deterministic renderer derives layout-as-data for cross-document views (projection map, stage commutation) from the SAME declarations the harnesses read; zero-diff data gate vs blessed goldens, SVG advisory (G4 three-tier reused); lie-detection witnessed mechanically (a perturbed declaration must change the view data); ZERO grammar growth | **done 2026-08-13** — `just views` 4/4 VIEW-OK, witnesses 2/2 (determinism + lie-detect); agreement 8/8, matrix 28/28; surfaced: Identity contract declared-but-unverified |
-| GX | Linux Foundation submission checklist satisfied | open, TERMINAL — license RATIFIED (Apache-2.0 + DCO, 2026-08-18); remaining blocker: the rename (OAAX collision) before submission |
+| G17 | the rename: OSIL everywhere living (repo, brand, extensions, strata tokens, tools), history frozen under docs/, full suite green under the new name, zero grammar growth | **done 2026-08-18** — ADR-0012; 38 files git-mv'd, 64 swept; first-run green |
+| GX | Linux Foundation submission checklist satisfied | open, TERMINAL — license RATIFIED (Apache-2.0 + DCO); naming RESOLVED (OSIL, ADR-0012). No maintainer blockers remain; submission prep is the gate |
 
 Dated gate reports with sequences, evidence, and honesty notes live in
 `docs/reports/`; the decisions behind them in `docs/decisions/` (ADRs).

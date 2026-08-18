@@ -12,6 +12,6 @@ cost_hints: {}
 recipes: []
 interop:                    # REGISTERED (G3): described -> tested ecosystem
   suite: conformance/interop/onnx
-  contract: profiles/ecosystem/onnx/CONTRACT.oaas
+  contract: profiles/ecosystem/onnx/CONTRACT.osil
   profile: profiles/ecosystem/onnx        # triad linked (G8): the registry
                                           # entry is the ecosystem's index

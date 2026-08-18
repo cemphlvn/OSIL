@@ -3,7 +3,7 @@
 
 A view is a DETERMINISTIC FUNCTION of declarations — never an authored
 drawing. This tool reads the same ground truth the harnesses read (shared
-readers, tools/oaas_read.py), computes canonical view DATA, renders an
+readers, tools/osil_read.py), computes canonical view DATA, renders an
 austere advisory SVG, and gates with the G4 three-tier verdict: data
 zero-diff GATES against blessed goldens, SVG byte-diff ADVISES, pixels
 never. Blessing (`just views-bless`) is a ratification act.
@@ -33,7 +33,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_read import read_contract_fields, read_stage_decls, read_vocab
+from osil_read import read_contract_fields, read_stage_decls, read_vocab
 
 VIEWS = ROOT / "conformance" / "golden-render" / "views"
 
@@ -41,13 +41,13 @@ VIEWS = ROOT / "conformance" / "golden-render" / "views"
 ECOSYSTEM_OF = {"EGraph": "egglog", "ONNX": "onnx", "MLIR": "mlir",
                 "Identity": "native"}
 ADAPTER_OF = {"EGraph": "egglog-roundtrip", "ONNX": "onnx-roundtrip"}
-STRATA_ORDER = ["OAAS-SIR", "OAAS-CIR", "OAAS-NATIVE"]
+STRATA_ORDER = ["OSIL-SIR", "OSIL-CIR", "OSIL-NATIVE"]
 
 
 # ------------------------------------------------------------- ground truth
 def scan():
-    files = sorted((ROOT / "conformance" / "corpus").glob("*.oaas")) + \
-            sorted((ROOT / "profiles").rglob("*.oaas"))
+    files = sorted((ROOT / "conformance" / "corpus").glob("*.osil")) + \
+            sorted((ROOT / "profiles").rglob("*.osil"))
     projections, stages = {}, {}
     for path in files:
         text = path.read_text()
@@ -61,7 +61,7 @@ def scan():
                 raise SystemExit(f"FAIL: projection {name} disagrees across "
                                  f"declarations ({rel})")
             row["declared_in"].append(rel)
-            if len(vocab["projections"]) == 1:  # the CONTRACT.oaas shape
+            if len(vocab["projections"]) == 1:  # the CONTRACT.osil shape
                 fields = read_contract_fields(text)
                 row["preserves"] = sorted(set(fields["preserves"]))
                 row["may_lose"] = sorted(set(fields["may_lose"]))

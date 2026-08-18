@@ -14,7 +14,7 @@ Adopted to unblock G4; each stays open with its revisit trigger stated.
 
 ### D1 — coordinate convention
 ADOPTED: top-left origin, +y down, abstract px-like units (CSS/SVG-aligned).
-Every format research U4 studied is silent on this (BPMN DI included); OAAS
+Every format research U4 studied is silent on this (BPMN DI included); OSIL
 chooses to be explicit. OPEN: unit semantics for zoom-independent export; and
 whether a device-independent unit declaration belongs in `viewport`.
 REVISIT WHEN: a second renderer appears, or an import from a y-up coordinate

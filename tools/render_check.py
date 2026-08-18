@@ -27,7 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize  # reference lexer — dogfood, do not fork
+from osil_check import tokenize  # reference lexer — dogfood, do not fork
 
 GOLD = ROOT / "conformance" / "golden-render"
 CHAR_W = 8  # fixed text metrics: no font measurement anywhere

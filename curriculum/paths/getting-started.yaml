@@ -1,6 +1,6 @@
 # Learning path = VIEW over conformance/corpus (ids only; content never copied)
 id: getting-started
-title: Reading OAAS
+title: Reading OSIL
 steps:
   - corpus: 001-profile-ecosystem-onnx
     why: everything begins by pinning an ecosystem's versioned identity

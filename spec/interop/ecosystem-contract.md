@@ -7,7 +7,7 @@ Status: draft-0. This document defines what EVERY ecosystem profile
 
 An ecosystem profile references native identities (`onnx::MatMul@13`,
 `egglog::RewriteSet@name`, `mlir::linalg.matmul`) and MUST NOT redefine their
-semantics. OAAS supplies architectural context around them; the upstream
+semantics. OSIL supplies architectural context around them; the upstream
 specification remains the sole normative source.
 
 ## 2. Required artifacts per ecosystem profile
@@ -16,7 +16,7 @@ specification remains the sole normative source.
 |---|---|---|
 | `PROFILE.md` | prose: what the ecosystem contributes (IR? search? execution?) | univocity-lint |
 | `VERSIONS` | pinned upstream versions (e.g. `ir_version=11`, `opset ai.onnx=24`) | drift-watch |
-| `CONTRACT.oaas` | machine-readable preservation contract for the projection | matrix-refresh / round-trip evals |
+| `CONTRACT.osil` | machine-readable preservation contract for the projection | matrix-refresh / round-trip evals |
 
 ## 3. Preservation contracts
 
@@ -32,7 +32,7 @@ Rules:
   (`conformance/matrix/`) records verification per (spec, adapter, upstream) cell.
 - **Opaque passthrough**: fields the adapter does not understand MUST survive
   round-trip as opaque namespaced annotations — never deleted.
-- The **identity projection** (OAAS native serialization) is the unique projection
+- The **identity projection** (OSIL native serialization) is the unique projection
   with an empty `may_lose` set. `visual_layout` is preservable there and only
   optional elsewhere.
 
@@ -43,10 +43,10 @@ differ in kind, not just in format:
 
 | Ecosystem | Contributes | Projection preserves | Source stratum (G13) |
 |---|---|---|---|
-| ONNX | executable graph interchange | computation | OAAS-CIR |
-| egglog / e-graphs | equivalence-space search | equivalence (guards included) | OAAS-SIR |
-| MLIR | lowering toward hardware | execution | OAAS-CIR |
-| (identity) | OAAS native | everything, incl. visual layout | OAAS-NATIVE |
+| ONNX | executable graph interchange | computation | OSIL-CIR |
+| egglog / e-graphs | equivalence-space search | equivalence (guards included) | OSIL-SIR |
+| MLIR | lowering toward hardware | execution | OSIL-CIR |
+| (identity) | OSIL native | everything, incl. visual layout | OSIL-NATIVE |
 
 Source-stratum legality derives from the preserved dimension (spec/core.md);
 it is checked SEPARATELY from stratum name resolution.

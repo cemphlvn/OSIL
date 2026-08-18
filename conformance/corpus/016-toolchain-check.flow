@@ -1,4 +1,4 @@
-// provenance: the repo's own G1 loop (tools/oaas_check.py) as a flow —
+// provenance: the repo's own G1 loop (tools/osil_check.py) as a flow —
 // self-description P1 (2026-08-12). Note: the type production, born for
 // Tensor<f32>[N,D], expresses Files<oaas>[N] unchanged.
 use domain.toolchain

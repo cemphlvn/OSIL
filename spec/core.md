@@ -1,4 +1,4 @@
-# OAAS Core Specification
+# OSIL Core Specification
 
 Status: **draft-0, non-normative.** Every definition below follows the repo's
 ontology rules: univocity, Aristotelian form (an A is a B which Cs), essential
@@ -7,7 +7,7 @@ features, no circularity. Terminology inventory: `spec/TERMS.md` (to be created 
 
 ## 1. Purpose
 
-OAAS is a semantic architecture layer: it records what a computation is *for* —
+OSIL is a semantic architecture layer: it records what a computation is *for* —
 intent, semantic role, equivalence, constraints, invariants, ontological identity,
 security requirements — so that toolchains can optimize, substitute, verify, and
 explain against meaning rather than against syntax alone.
@@ -16,7 +16,7 @@ explain against meaning rather than against syntax alone.
 
 **semantic optimization space** — the space of program realizations (genus) whose
 members are semantically valid realizations of one declared intention
-(differentia). The central object of OAAS: compilation selects from this space
+(differentia). The central object of OSIL: compilation selects from this space
 under constraints and cost, rather than rewriting a single fixed program.
 Given technical teeth at G13 by the constitutional equation under
 *realization* below.
@@ -24,23 +24,23 @@ Given technical teeth at G13 by the constitutional equation under
 **stratum** — a metamodel level (genus) at which an architecture document's
 content stands — a level OF the language, never a thing described IN it
 (differentia). Strata are CORE-DEFINED symbols (design A, G13): the normative
-core universe is `{OAAS-SIR, OAAS-CIR, OAAS-NATIVE}`; profiles MAY later
-declare compatible strata, but no `.oaas` document redeclares the metamodel.
+core universe is `{OSIL-SIR, OSIL-CIR, OSIL-NATIVE}`; profiles MAY later
+declare compatible strata, but no `.osil` document redeclares the metamodel.
 
-**OAAS-SIR** — the stratum (genus) at which an architecture states what it
+**OSIL-SIR** — the stratum (genus) at which an architecture states what it
 IS: semantic identity, intention, constraints, invariants — independent of
 computational form (differentia).
 
-**OAAS-CIR** — the stratum (genus) at which an architecture states HOW it is
+**OSIL-CIR** — the stratum (genus) at which an architecture states HOW it is
 computed: explicit operators and dataflow structure (differentia).
 
-**OAAS-NATIVE** — the stratum (genus) comprising the total native document —
+**OSIL-NATIVE** — the stratum (genus) comprising the total native document —
 both strata plus visual layout — from which only the identity projection
 departs (differentia).
 
 **realization** — a semantics-preserving commitment (genus) from an abstract
-semantic architecture (OAAS-SIR) to one computationally explicit architecture
-(OAAS-CIR) that satisfies the declared intention, constraints, and invariants
+semantic architecture (OSIL-SIR) to one computationally explicit architecture
+(OSIL-CIR) that satisfies the declared intention, constraints, and invariants
 (differentia). Defined by what it preserves and satisfies — never merely by
 its endpoints. One-to-many: an SIR has a realization SET, which yields the
 constitutional equation:
@@ -48,8 +48,8 @@ constitutional equation:
 > **semantic optimization space = valid realizations(SIR, constraints, invariants)**
 
 Projection-source legality derives from the preserved dimension: equivalence
-originates at OAAS-SIR; computation and execution at OAAS-CIR; everything at
-OAAS-NATIVE. Name resolution ("does the stratum exist?") and stratum legality
+originates at OSIL-SIR; computation and execution at OSIL-CIR; everything at
+OSIL-NATIVE. Name resolution ("does the stratum exist?") and stratum legality
 ("may this projection originate there?") are DISTINCT checks — the fixture
 pair RS005/RS006 pins them apart.
 
@@ -58,30 +58,30 @@ any particular realization and enumerates its equivalence conditions (differenti
 Example: `Attention`, equivalent under `{fp16, causal=true}` to a set of
 decompositions and fused kernels.
 
-**projection** — a transformation (genus) that maps an OAAS graph into an external
+**projection** — a transformation (genus) that maps an OSIL graph into an external
 ecosystem's native representation while preserving a declared semantic dimension
 (differentia). "Lowering" is the special case whose preserved dimension is
-execution. Corpus: `004-projections.oaas`.
+execution. Corpus: `004-projections.osil`.
 
 **preservation contract** — a declaration (genus) that enumerates, for one
 projection, the semantic properties preserved and those that may be lost
 (differentia). Contracts make interoperability measurable rather than binary.
-Corpus: `005-preservation-contract.oaas`.
+Corpus: `005-preservation-contract.osil`.
 
 **identity projection** — the projection (genus) whose preservation contract is
 total: every property, *including visual layout*, is preserved (differentia). The
-OAAS native serialization is defined as the identity projection; this is what makes
+OSIL native serialization is defined as the identity projection; this is what makes
 the visual dimension normative content rather than disposable metadata. See
 `spec/visual.md`.
 
 **invariant** — a semantic property (genus) whose preservation is a necessary
 condition for the legality of a rewrite (differentia). Invariants turn optimization
 into constrained search: maximize performance subject to semantic preservation +
-architecture constraints + security invariants. Corpus: `007-invariants.oaas`.
+architecture constraints + security invariants. Corpus: `007-invariants.osil`.
 
 **equivalence** — a declared bidirectional rewrite (genus) valid only under its
-guard conditions (differentia). Equivalences are the OAAS-side input to
-equality-saturation ecosystems. Corpus: `003-equivalence-distributivity.oaas`.
+guard conditions (differentia). Equivalences are the OSIL-side input to
+equality-saturation ecosystems. Corpus: `003-equivalence-distributivity.osil`.
 
 **realizability** — a property of one direction of an equivalence (genus): the
 direction is realizable iff its match side both binds every variable the
@@ -96,12 +96,12 @@ by maintainer instruction 2026-08-12.
 **stage** — a named toolchain step (genus) declared by what it runs and the
 resources it reads and writes (differentia). Stages make the pipeline itself
 vocabulary: architecture the machinery can compute over. Corpus:
-`023-stage-toolchain.oaas`. ADR-0010.
+`023-stage-toolchain.osil`. ADR-0010.
 
 **composition** (`then`) — the sequential compound of two stages (genus)
 whose meaning is the left stage's effect followed by the right's
 (differentia). `then` is a contextual keyword; operands are stage terms
-only — sorts do not mix (R008). Corpus: `024-equivalence-stage-commute.oaas`.
+only — sorts do not mix (R008). Corpus: `024-equivalence-stage-commute.osil`.
 
 **writes_disjoint** (guard) — a guard predicate over a composition (genus)
 holding iff the composed stages' declared write-sets do not intersect
@@ -109,10 +109,10 @@ holding iff the composed stages' declared write-sets do not intersect
 declarations, both orders, never by hand. ADR-0010.
 
 **profile** — a named set of declarations (genus) that pins the versioned identity
-and semantics of one ecosystem, ontology, or domain for use inside OAAS graphs
-(differentia). Corpus: `001-profile-ecosystem-onnx.oaas`.
+and semantics of one ecosystem, ontology, or domain for use inside OSIL graphs
+(differentia). Corpus: `001-profile-ecosystem-onnx.osil`.
 
-**architecture document** (`.oaas`) — a document (genus) that declares vocabulary:
+**architecture document** (`.osil`) — a document (genus) that declares vocabulary:
 the general — profiles, concepts, equivalences, invariants, operators, contracts,
 models (differentia). ADR-0005.
 
@@ -152,9 +152,9 @@ blocks (differentia). One meaning spec-wide. ADR-0008.
 
 ## 3. The sovereignty principle (normative once ratified)
 
-OAAS MUST NOT redefine the normative semantics of an external ecosystem when a
+OSIL MUST NOT redefine the normative semantics of an external ecosystem when a
 native specification already exists. `onnx::MatMul@13` means what ONNX says it
-means, at that version, always. OAAS contributes shared architectural context —
+means, at that version, always. OSIL contributes shared architectural context —
 never substitute semantics. Full contract: `spec/interop/ecosystem-contract.md`.
 
 ## 4. Security invariants (heritage section)

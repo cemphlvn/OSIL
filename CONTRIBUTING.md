@@ -1,6 +1,6 @@
-# Contributing to OAAS
+# Contributing to OSIL
 
-Thanks for your interest. OAAS is an open specification for a semantic
+Thanks for your interest. OSIL is an open specification for a semantic
 architecture layer — start with `README.md` for what it is and the gate table
 for where it stands.
 
@@ -54,6 +54,6 @@ The rules that will actually affect your PR:
 
 ## Naming note
 
-"OAAS" carries a known collision risk with an existing LF AI & Data project
-(OAAX); a rename is expected before any foundation submission. Build against
-the repo, not the name.
+OSIL (Open Semantic Interoperability Layer) is the project's name as of
+2026-08-18, formerly OAAS (renamed to resolve the OAAX collision, ADR-0012).
+Historical documents under docs/ retain the old name.

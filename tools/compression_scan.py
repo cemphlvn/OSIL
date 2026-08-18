@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize, Parser, ALL_PRODUCTIONS
+from osil_check import tokenize, Parser, ALL_PRODUCTIONS
 
 MARKER = re.compile(r"^// EXPECTED-FAIL\b", re.M)
 
@@ -37,7 +37,7 @@ MARKER = re.compile(r"^// EXPECTED-FAIL\b", re.M)
 def fixture_stats():
     rows = []
     for p in sorted((ROOT / "conformance" / "corpus").iterdir()):
-        if p.suffix not in (".oaas", ".flow"):
+        if p.suffix not in (".osil", ".flow"):
             continue
         src = p.read_text()
         if MARKER.search("\n".join(src.splitlines()[:12])):
@@ -47,7 +47,7 @@ def fixture_stats():
         cov = set()
         parser = Parser(tokenize(src), cov, set())
         (parser.parse_flow_document if p.suffix == ".flow"
-         else parser.parse_oaas_document)()
+         else parser.parse_osil_document)()
         rows.append((p.stem, p.suffix, len(src.encode()), len(toks), cov))
     return rows
 
@@ -167,7 +167,7 @@ def main():
             rid = m.group(1)
             referenced.add(rid)
             corp = ROOT / "conformance" / "corpus"
-            if not ((corp / f"{rid}.oaas").exists() or (corp / f"{rid}.flow").exists()):
+            if not ((corp / f"{rid}.osil").exists() or (corp / f"{rid}.flow").exists()):
                 broken.append(f"{py.name}: {rid}")
     unreachable = sorted({r[0] for r in rows} - referenced)
 
@@ -217,7 +217,7 @@ def main():
                 f"(text+passthrough)/native = "
                 f"{(r['flow_bytes'] + r['passthrough_bytes']) / r['native_bytes']:.2f}")
         lines += ["",
-                  "Reading (rung honesty): the identity-bearing text is what OAAS",
+                  "Reading (rung honesty): the identity-bearing text is what OSIL",
                   "owns; constants ride the sanctioned passthrough, so tiny graphs",
                   "pay a byte-rung premium. The representational claim lives at the",
                   "concept rung (naming subgraphs), exactly as the founding text's",

@@ -1,4 +1,4 @@
-# OAAS — agent instructions (subagent / cross-harness projection)
+# OSIL — agent instructions (subagent / cross-harness projection)
 
 > You may be a Claude subagent, a Codex/Cursor/other agent, or a scheduled job.
 > This file is a PROJECTION of `GOVERNANCE.md` + `improvable/INDEX.md`; those are
@@ -6,7 +6,7 @@
 
 ## Orientation (60 seconds)
 
-- This repo is an open spec for **OAAS**, a semantic architecture layer
+- This repo is an open spec for **OSIL**, a semantic architecture layer
   (projections into ONNX/egglog/MLIR under preservation contracts). `README.md` has
   the map; every top-level directory has a README card stating its ground-truth
   owner, cadence, loops, and invariants.
@@ -36,7 +36,7 @@ if they don't apply to you.
 
 - `profiles/ecosystem/*`: NEVER redefine upstream semantics; you sync and report.
 - `conformance/corpus/`: additions free; deletions require human ratification.
-  Two document kinds (ADR-0005): `.oaas` = vocabulary, `.flow` = dataflow
+  Two document kinds (ADR-0005): `.osil` = vocabulary, `.flow` = dataflow
   composition; the validator selects the grammar's start symbol by extension.
 - `improvable/*/SKILL.md`: bodies may be improved if evals pass + CHANGELOG entry;
   frontmatter (`scope`/`verbs`/`invariants`) is constitutional — propose only.

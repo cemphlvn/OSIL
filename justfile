@@ -1,8 +1,8 @@
-# OAAS command menu (`just` lists these)
+# OSIL command menu (`just` lists these)
 
 # G1 validator: parse corpus + profiles, check production coverage
 check:
-    python3 tools/oaas_check.py
+    python3 tools/osil_check.py
 
 # G3 ONNX round-trip suite: preservation score + matrix cell (uv supplies onnx)
 roundtrip:
@@ -30,7 +30,7 @@ policy:
 
 # G12 resolver: references find their universals; refusals REJECT
 resolve:
-    python3 tools/oaas_resolve.py
+    python3 tools/osil_resolve.py
 
 # full gatekeeper: contract + round-trips + render + policy + resolution + stages + views
 test: check roundtrip egraph render policy resolve stages views

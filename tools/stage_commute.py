@@ -45,8 +45,8 @@ from egglog import EGraph, Expr, StringLike, birewrite, relation, vars_
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from egraph_roundtrip import holds, read_directives
-from oaas_check import tokenize
-from oaas_read import read_stage_decls
+from osil_check import tokenize
+from osil_read import read_stage_decls
 
 SATURATION_STEPS = 5
 
@@ -64,7 +64,7 @@ writes_disjoint = relation("writes_disjoint", Stage, Stage)
 def read_stages():
     """stage blocks from corpus, via the shared reader (anti-fifth-reader)."""
     stages = {}
-    for path in sorted((ROOT / "conformance" / "corpus").glob("*.oaas")):
+    for path in sorted((ROOT / "conformance" / "corpus").glob("*.osil")):
         stages.update(read_stage_decls(path.read_text()))
     return stages
 
@@ -72,7 +72,7 @@ def read_stages():
 def read_compose_equivalences(root_dir):
     """compose-shaped equivalences: (name, lhs_ids, rhs_ids, guards, path)."""
     out = []
-    for path in sorted(root_dir.glob("*.oaas")):
+    for path in sorted(root_dir.glob("*.osil")):
         toks = [t for t in tokenize(path.read_text()) if t.kind != "eof"]
         i = 0
         while i < len(toks):
@@ -197,7 +197,7 @@ def main():
 
     # pins (SUITE: stages) — instance fixtures with governance semantics
     pin_rows, pin_ok = [], True
-    for path in sorted((ROOT / "conformance" / "equivalence").glob("*.oaas")):
+    for path in sorted((ROOT / "conformance" / "equivalence").glob("*.osil")):
         expects, _, suite = read_directives(path)
         if suite != "stages":
             continue

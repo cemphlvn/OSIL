@@ -1,8 +1,9 @@
-# OAAS
+# OSIL
 
-**A semantic interoperability architecture layer.**
+**Open Semantic Interoperability Layer.** An open specification for
+describing computation by its declared meaning.
 
-[![gates](https://github.com/cemphlvn/oaas/actions/workflows/gates.yml/badge.svg)](https://github.com/cemphlvn/oaas/actions/workflows/gates.yml)
+[![gates](https://github.com/cemphlvn/osil/actions/workflows/gates.yml/badge.svg)](https://github.com/cemphlvn/osil/actions/workflows/gates.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: draft-0](https://img.shields.io/badge/spec-draft--0-orange.svg)](docs/GATES.md)
 
@@ -16,10 +17,10 @@
 
 ## The two layers
 
-OAAS is built on one separation. Every architecture is described at two
+OSIL is built on one separation. Every architecture is described at two
 levels, kept strictly apart:
 
-**OAAS-SIR, the semantic layer: what it is.**
+**OSIL-SIR, the semantic layer: what it is.**
 
 ```
 concept Attention {
@@ -36,7 +37,7 @@ Read it as: Attention is one identity with three interchangeable ways of
 being computed, together with the exact conditions under which they count as
 the same. Nothing here says how anything runs.
 
-**OAAS-CIR, the computational layer: how it is computed.**
+**OSIL-CIR, the computational layer: how it is computed.**
 
 ```
 use ecosystem.onnx
@@ -93,25 +94,25 @@ cared about: an intention, a safety requirement, even the layout of a diagram
 someone drew. Today those losses are invisible, because nobody writes them
 down.
 
-Beyond the two-layer separation above, OAAS takes two further positions:
+Beyond the two-layer separation above, OSIL takes two further positions:
 
-- **Promises are written down and checked.** Every bridge from OAAS to another
+- **Promises are written down and checked.** Every bridge from OSIL to another
   tool comes with a *preservation contract*: a short, machine-readable list of
   what survives the crossing and what may be lost. A test suite then scores
   whether the promise actually holds.
-- **Other tools keep their own dictionaries.** OAAS never redefines what
+- **Other tools keep their own dictionaries.** OSIL never redefines what
   another system's operations mean. `onnx::MatMul@13` means exactly what ONNX
-  says it means, at exactly that version. OAAS adds shared context around
+  says it means, at exactly that version. OSIL adds shared context around
   native names; it never replaces them.
 
 And one more stance, unusual enough to state up front: **diagrams are
-content**. OAAS's native file format is contractually required to preserve
+content**. OSIL's native file format is contractually required to preserve
 everything, including the visual layout people draw. Nothing is "just
 cosmetic."
 
 ## The language, two more fragments
 
-OAAS files come in two kinds: `.oaas` files declare vocabulary (the general),
+OSIL files come in two kinds: `.osil` files declare vocabulary (the general),
 and `.flow` files compose actual dataflow (the particular). You have already
 seen one of each above. Two more constructs carry the honesty:
 
@@ -137,7 +138,7 @@ A preservation contract, in full:
 
 ```
 projection ONNX {
-    from OAAS-CIR
+    from OSIL-CIR
     preserve computation
 }
 
@@ -178,7 +179,7 @@ and CI runs the same suite on every push:
 | Pipeline commutation analysis (the toolchain tests itself) | `just stages` |
 | Visual rendering with an exact layout-preservation gate | `just render` · `just draw FILE` |
 | Diagrams derived from the same declarations the tests read | `just views` |
-| Policy check: the repo's own rules, written in OAAS, verified mechanically | `just policy` |
+| Policy check: the repo's own rules, written in OSIL, verified mechanically | `just policy` |
 | Size and compression metrics | `just compress` |
 
 `just test` runs the full suite. Expected tail of a healthy run:
@@ -196,7 +197,7 @@ Resolution contract satisfied: every reference finds its universal.
 the interop suites).
 
 ```sh
-git clone https://github.com/cemphlvn/oaas.git
+git clone https://github.com/cemphlvn/osil.git
 cd oaas
 just            # list all commands
 just check      # validate grammar + corpus (no dependencies needed)
@@ -235,7 +236,7 @@ The habits that keep it honest:
   permanent test fixtures, so the language's boundaries are as tested as its
   features;
 - any change that grows the grammar must also ship the new boundary it creates;
-- the repository's own operating rules are written in OAAS itself, parsed, and
+- the repository's own operating rules are written in OSIL itself, parsed, and
   verified, so the project is its own first user;
 - no claim of completeness is accepted on the word of a single reader,
   human or machine (witness diversity, in [`GOVERNANCE.md`](GOVERNANCE.md)).
@@ -254,7 +255,7 @@ implementations but helps choose, compress, search, and bind them:
   your machine, get a concrete working setup expanded for you;
 - **compiler search** across the many valid recipes for one declared dish;
 - an **ABI and component boundary** (studying the Wasm Component Model first),
-  kept as its own separately tested pillar. OAAS claims *interchange*
+  kept as its own separately tested pillar. OSIL claims *interchange*
   compatibility today, never binary compatibility;
 - **ontology federation** across BFO, DOLCE, and UFO commitments.
 
@@ -271,9 +272,11 @@ explains the house rules that CI enforces. Community standards:
 
 ## A note on the name
 
-"OAAS" is a working name with a known collision risk (OAAX, an existing
-LF AI & Data project). A rename is planned before any foundation submission.
-Build against the repo, not the acronym.
+OSIL (Open Semantic Interoperability Layer) is this project's name as of
+2026-08-18. It was developed under the working name OAAS; the rename resolved
+a collision risk with OAAX, an existing LF AI & Data project (ADR-0012).
+Historical documents under `docs/` retain the old name, faithfully. The old
+GitHub URL redirects.
 
 ## License
 

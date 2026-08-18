@@ -11,7 +11,7 @@ Worlds are FACT ASSERTIONS, not domain truths: the `exact+expansion-applied`
 world asserts both `numeric_semantics__exact` and `regime__ExactArithmetic`
 BY HAND — it demonstrates what ADR-0007's declared expansion would buy as
 machinery, without pretending the machinery exists (ES003 pins that it
-doesn't). Scope: .oaas equivalence declarations only; .flow files carry no
+doesn't). Scope: .osil equivalence declarations only; .flow files carry no
 declared equivalences yet, so flows are OUT of this scan's reach by
 construction — composition-level equivalence needs its own declared term
 language before anything can compute over it.
@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from egraph_roundtrip import (Num, build, holds, parse_expr, read_equivalences,
                               rel_for, to_text, translate)
-from oaas_check import tokenize
+from osil_check import tokenize
 
 STEPS = 8  # deeper than the gate's 5: chains need headroom
 
@@ -71,7 +71,7 @@ def term(text):
 
 def main():
     fixtures = []
-    for path in sorted((ROOT / "conformance" / "corpus").glob("*.oaas")):
+    for path in sorted((ROOT / "conformance" / "corpus").glob("*.osil")):
         fixtures.extend(read_equivalences(path))
 
     today = datetime.date.today().isoformat()

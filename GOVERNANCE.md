@@ -2,7 +2,7 @@
 
 > For this project, human contributor policy and agent operating policy are the same
 > class of document. This file is the human-readable projection; the machine-hosted
-> form lives (aspirationally) in `profiles/domain/agent/repo-policy.oaas` and the
+> form lives (aspirationally) in `profiles/domain/agent/repo-policy.osil` and the
 > per-skill frontmatter in `improvable/`. A standing loop checks their agreement.
 
 ## Ground-truth ownership classes
@@ -67,5 +67,6 @@ upstream version. Matrix cells are agent-maintained and machine-checkable.
 
 RATIFIED 2026-08-18: Apache-2.0 repo-wide + DCO sign-off (see LICENSING.md).
 Contributions are open (CONTRIBUTING.md). LF onboarding path per research U1:
-Community-Spec-template-free phase now, LF AI & Data Sandbox at GX; the OAAX
-naming collision is resolved by rename BEFORE any foundation submission.
+Community-Spec-template-free phase now, LF AI & Data Sandbox at GX. The OAAX
+naming collision was resolved 2026-08-18 by the rename to OSIL (ADR-0012);
+no naming blocker remains before submission.

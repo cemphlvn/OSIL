@@ -4,7 +4,7 @@
 // (2026-08-12, preservation score 4/4 over cases {add, matmul} — scope note:
 // suite is v0-narrow; see docs/reports/roundtrip-onnx-2026-08-12.md)
 projection ONNX {
-    from OAAS-CIR
+    from OSIL-CIR
     preserve computation
 }
 

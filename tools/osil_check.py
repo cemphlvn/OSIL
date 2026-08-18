@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""G1 validator: parse the conformance corpus (and all .oaas/.flow files in
-profiles/) against grammar/oaas.ebnf v0.1, tracking production coverage.
+"""G1 validator: parse the conformance corpus (and all .osil/.flow files in
+profiles/) against grammar/osil.ebnf v0.1, tracking production coverage.
 
 Contract (gate G1): every corpus file parses; every grammar production fired
 by >=1 corpus file. Files whose header contains EXPECTED-FAIL must NOT parse
@@ -98,19 +98,19 @@ class Parser:
         self.alts.add(name)
 
     # -- entry points ------------------------------------------------------
-    def parse_oaas_document(self):
-        self.fire("oaas_document")
+    def parse_osil_document(self):
+        self.fire("osil_document")
         while self.peek().kind != "eof":
-            self.oaas_declaration()
+            self.osil_declaration()
 
     def parse_flow_document(self):
         self.fire("flow_document")
         while self.peek().kind != "eof":
             self.flow_statement()
 
-    # -- .oaas declarations -------------------------------------------------
-    def oaas_declaration(self):
-        self.fire("oaas_declaration")
+    # -- .osil declarations -------------------------------------------------
+    def osil_declaration(self):
+        self.fire("osil_declaration")
         t = self.peek()
         if t.kind != "ident":
             raise ParseError(f"line {t.line}: expected declaration, got {t.text!r}")
@@ -124,7 +124,7 @@ class Parser:
         fn = dispatch.get(t.text)
         if fn is None:
             raise ParseError(
-                f"line {t.line}: {t.text!r} does not start any .oaas declaration")
+                f"line {t.line}: {t.text!r} does not start any .osil declaration")
         fn()
 
     def profile_decl(self):
@@ -712,7 +712,7 @@ class Parser:
 
 
 ALL_PRODUCTIONS = [
-    "oaas_document", "flow_document", "oaas_declaration", "flow_statement",
+    "osil_document", "flow_document", "osil_declaration", "flow_statement",
     "profile_decl", "profile_field", "projection_decl", "equivalence_decl",
     "guards_block", "model_decl", "model_field", "constraints_block",
     "constraint", "invariant_decl", "operator_decl", "operator_field",
@@ -759,14 +759,14 @@ def parse_file(path: Path, coverage: set, alts: set):
     if path.suffix == ".flow":
         p.parse_flow_document()
     else:
-        p.parse_oaas_document()
+        p.parse_osil_document()
 
 
 def main():
     root = Path(__file__).resolve().parent.parent
-    corpus = sorted((root / "conformance" / "corpus").glob("*.oaas")) + \
+    corpus = sorted((root / "conformance" / "corpus").glob("*.osil")) + \
              sorted((root / "conformance" / "corpus").glob("*.flow"))
-    extra = sorted((root / "profiles").rglob("*.oaas")) + \
+    extra = sorted((root / "profiles").rglob("*.osil")) + \
             sorted((root / "profiles").rglob("*.flow"))
 
     coverage, alts, failures, results = set(), set(), [], []
@@ -797,7 +797,7 @@ def main():
     # Unlike corpus gap-pins, MUST-FAIL markers never flip — an XPASS here is
     # always a parser/spec regression, not a ritual step.
     rej_dir = root / "conformance" / "rejections"
-    for path in sorted(rej_dir.glob("*.oaas")) + sorted(rej_dir.glob("*.flow")):
+    for path in sorted(rej_dir.glob("*.osil")) + sorted(rej_dir.glob("*.flow")):
         head = "\n".join(path.read_text().splitlines()[:12])
         if not re.search(r"^// MUST-FAIL\b", head, re.M):
             failures.append(f"{path.relative_to(root)}: rejection fixture "
@@ -818,7 +818,7 @@ def main():
 
     # The denominator is derived from the EBNF itself, never self-asserted:
     # the validator's instrumented inventory must equal the grammar's rule set.
-    ebnf = (root / "grammar" / "oaas.ebnf").read_text()
+    ebnf = (root / "grammar" / "osil.ebnf").read_text()
     declared = set(re.findall(r"^([a-z_]+)\s*=", ebnf, re.M)) - {"comment"}
     inventory = set(ALL_PRODUCTIONS)
     if declared != inventory:
@@ -828,7 +828,7 @@ def main():
             f"only-in-validator={sorted(inventory - declared)}")
 
     uncovered = [p for p in ALL_PRODUCTIONS if p not in coverage]
-    print(f"\ninventory: {len(declared)} productions declared in oaas.ebnf, "
+    print(f"\ninventory: {len(declared)} productions declared in osil.ebnf, "
           f"{len(inventory)} instrumented in validator "
           + ("[MISMATCH]" if declared != inventory else "[match]"))
     print(f"coverage (GATE, production level): "

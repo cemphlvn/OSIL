@@ -8,7 +8,7 @@
 // Adapter realizability rule: a declared <=> realizes as a DIRECTED native
 // rule when only one direction is groundable (3 of 6 current fixtures).
 projection EGraph {
-    from OAAS-SIR
+    from OSIL-SIR
     preserve equivalence
 }
 

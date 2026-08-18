@@ -2,14 +2,14 @@
 """EGraph round-trip harness (G14): the search-ecosystem analog of G3.
 
 Metric — PRESERVATION SCORE (spec/conformance.md): the fraction of the EGraph
-projection's CONTRACT.oaas `preserves` fields mechanically verified on the
-round trip  OAAS-SIR -> e-graph -> equality saturation -> extraction ->
-OAAS-SIR  over every `equivalence` declaration in conformance/corpus/.
+projection's CONTRACT.osil `preserves` fields mechanically verified on the
+round trip  OSIL-SIR -> e-graph -> equality saturation -> extraction ->
+OSIL-SIR  over every `equivalence` declaration in conformance/corpus/.
 Gate G14 requires score = 1.0 (scope = the fixture list, reported alongside).
 
 The corpus IS the rule set: each declared equivalence is simultaneously a
 conformance fixture, a rewrite rule the engine runs, and a preservation test.
-Fields (profiles/ecosystem/egglog/CONTRACT.oaas):
+Fields (profiles/ecosystem/egglog/CONTRACT.osil):
   rule_identity     — every declared equivalence translates 1:1 to a native
                       rewrite; none silently dropped. Bidirectional when BOTH
                       directions are realizable; DIRECTED otherwise. A
@@ -54,7 +54,7 @@ from egglog import (EGraph, Expr, String, StringLike, birewrite, converter,
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from oaas_check import tokenize  # reference lexer — dogfood, do not fork
+from osil_check import tokenize  # reference lexer — dogfood, do not fork
 
 SATURATION_STEPS = 5
 PRESERVES = ["rule_identity", "equivalence", "guard_selectivity", "term_extraction"]
@@ -180,7 +180,7 @@ def read_equivalences(path):
     return out
 
 
-# ------------------------------------------------- OAAS AST <-> egglog term
+# ------------------------------------------------- OSIL AST <-> egglog term
 def build(node, leaf):
     if node[0] == "var":
         return leaf(node[1])
@@ -204,7 +204,7 @@ PYOP = {pyast.Add: "+", pyast.Sub: "-", pyast.Mult: "*",
 
 
 def repr_to_ast(text):
-    """Extraction image -> OAAS AST. egglog-python reprs extracted terms as a
+    """Extraction image -> OSIL AST. egglog-python reprs extracted terms as a
     Python expression over Num.var("x") / Num(n) / operators — parseable with
     the stdlib ast module; anything unmappable raises (never guess)."""
     def conv(n):
@@ -327,7 +327,7 @@ def run_adapter_suite():
     pin proves guard facts stay literal. An XPASS here is an ALARM (pin
     lifecycle, G10): capability arrived unratified — the run fails."""
     verdicts = []
-    for path in sorted((ROOT / "conformance" / "equivalence").glob("*.oaas")):
+    for path in sorted((ROOT / "conformance" / "equivalence").glob("*.osil")):
         expects, pin_assert, suite = read_directives(path)
         if suite is not None:  # foreign suite — owned by its own tool
             print(f"SKIP (suite: {suite}) {path.name}")
@@ -381,7 +381,7 @@ def write_matrix_cell(upstream, status, verified, all_field, cases, today):
 
 def main():
     fixtures = []
-    for path in sorted((ROOT / "conformance" / "corpus").glob("*.oaas")):
+    for path in sorted((ROOT / "conformance" / "corpus").glob("*.osil")):
         fixtures.extend(read_equivalences(path))
     if not fixtures:
         print("FAIL: no equivalence declarations found in corpus/")
@@ -420,7 +420,7 @@ def main():
     report = [f"# EGraph round-trip report — {today}",
               f"Metric: preservation score = {verified}/{len(PRESERVES)} -> {status.upper()}",
               f"Upstream actually tested: egglog {observed} (PyPI){drift}",
-              f"Loop: OAAS-SIR -> egglog -> saturate({SATURATION_STEPS}) -> extract -> OAAS-SIR",
+              f"Loop: OSIL-SIR -> egglog -> saturate({SATURATION_STEPS}) -> extract -> OSIL-SIR",
               f"Suite: {len(fixtures)} equivalence declarations (corpus IS the rule set)", ""]
     for name, (results, fx) in sorted(per_case.items()):
         flags = ", ".join(f"{f}={'ok' if results[f] else 'FAIL'}"

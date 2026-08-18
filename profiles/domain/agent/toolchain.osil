@@ -1,5 +1,5 @@
-// profiles/domain/agent/toolchain.oaas
-// Use case #2: the repo's own machinery described in OAAS (self-description
+// profiles/domain/agent/toolchain.osil
+// Use case #2: the repo's own machinery described in OSIL (self-description
 // bootstrap, docs/design/self-description-bootstrap.md). Vocabulary only;
 // the pipelines live in conformance/corpus/ (016, 017, 019).
 
@@ -13,7 +13,7 @@ invariant PixelDiffNeverGates
 
 concept Validate {
     equivalent_under { grammar_version = 2 }
-    to { oaas_check }
+    to { osil_check }
 }
 
 operator render {
@@ -24,7 +24,7 @@ operator render {
 }
 
 projection Identity {
-    from OAAS-NATIVE
+    from OSIL-NATIVE
     preserve everything
 }
 

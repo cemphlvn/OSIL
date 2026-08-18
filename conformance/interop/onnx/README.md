@@ -2,7 +2,7 @@
 
 The project's first REGISTERED LF interop: ONNX is a Linux Foundation (LF AI &
 Data) graduated project; registration binding lives in `registry/entries/onnx.yaml`
-(`interop:` block), contract in `profiles/ecosystem/onnx/CONTRACT.oaas`.
+(`interop:` block), contract in `profiles/ecosystem/onnx/CONTRACT.osil`.
 
 ground-truth: FOREIGN (ONNX semantics) exercised against SHARED claims (our contract)
 loops: round-trip harness (`just roundtrip`) — computes the PRESERVATION SCORE

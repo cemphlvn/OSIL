@@ -1,5 +1,5 @@
 // MUST-FAIL-RESOLUTION: dangling stratum — MagicIR is not in the core
-// stratum universe {OAAS-SIR, OAAS-CIR, OAAS-NATIVE}. Design A (G13):
+// stratum universe {OSIL-SIR, OSIL-CIR, OSIL-NATIVE}. Design A (G13):
 // strata are core-defined metamodel symbols, never user declarations.
 projection Mystery {
     from MagicIR
