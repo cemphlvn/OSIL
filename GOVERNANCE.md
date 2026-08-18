@@ -65,6 +65,7 @@ upstream version. Matrix cells are agent-maintained and machine-checkable.
 
 ## Licensing & foundation status
 
-PENDING: license pairing (research U2) and LF onboarding path (research U1).
-Until a license lands, treat external contributions as blocked. DCO-vs-CLA follows
-U2's finding.
+RATIFIED 2026-08-18: Apache-2.0 repo-wide + DCO sign-off (see LICENSING.md).
+Contributions are open (CONTRIBUTING.md). LF onboarding path per research U1:
+Community-Spec-template-free phase now, LF AI & Data Sandbox at GX; the OAAX
+naming collision is resolved by rename BEFORE any foundation submission.
