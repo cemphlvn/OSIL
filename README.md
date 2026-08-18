@@ -6,10 +6,11 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: draft-0](https://img.shields.io/badge/spec-draft--0-orange.svg)](docs/GATES.md)
 
-OAAS is an open specification — a grammar, a conformance suite, and reference
-tooling — for describing computational architectures by their **declared
-meaning**, so that toolchains can exchange, verify, and optimize them across
-ecosystem boundaries without losing what they were intended to be.
+In plain words: OAAS is a small written language, plus the tests and tools
+around it, for writing down what a piece of computation *means*: what it is,
+what it must never violate, and what may be traded away. Once that is written
+down, work can move between otherwise unrelated tools without silently losing
+the parts its author cared about.
 
 **Contents** · [Why](#why) · [The language](#the-language-in-three-fragments) ·
 [What works today](#what-works-today) · [Getting started](#getting-started) ·
@@ -19,33 +20,45 @@ ecosystem boundaries without losing what they were intended to be.
 
 ## Why
 
-Interchange formats move bytes; what gets lost between ecosystems is *meaning* —
-intent, invariants, equivalence conditions, security requirements, even diagram
-layout. OAAS takes three positions on that problem:
+When a book is translated, some meaning always slips away, and a careful
+translator tells you what was kept and what was sacrificed. Software has the
+same problem. Programs and machine learning models are constantly "translated"
+between tools, and each hop can quietly drop something the original author
+cared about: an intention, a safety requirement, even the layout of a diagram
+someone drew. Today those losses are invisible, because nobody writes them
+down.
 
-- **Interoperability is declared preservation, not "works with X."** Every
-  connection to an external ecosystem is a *projection* governed by a
-  machine-readable *preservation contract* stating exactly which semantic
-  properties survive and which may be lost — then a harness scores it.
-- **Ecosystems stay sovereign.** OAAS never redefines the semantics of ONNX,
-  egglog, MLIR, or WASM. `onnx::MatMul@13` means what ONNX says it means, at
-  that version, always. OAAS contributes shared architectural context around
-  native identities — coordination, not absorption.
-- **Meaning is stratified.** An architecture states *what it is* (OAAS-SIR)
-  separately from *how it is computed* (OAAS-CIR), connected by *realization* —
-  and the space of valid realizations under declared constraints and invariants
-  is the object compilation should search. Security requirements (constant-time
-  behavior, information flow, category-level crypto requirements) are
-  first-class semantic properties in that search, not annotations.
+OAAS takes three positions on that problem:
 
-Visual layout is content here, not decoration: the native serialization is the
-*identity projection*, contractually required to preserve everything — diagrams
-included.
+- **Promises are written down and checked.** Every bridge from OAAS to another
+  tool comes with a *preservation contract*: a short, machine-readable list of
+  what survives the crossing and what may be lost. A test suite then scores
+  whether the promise actually holds. The vague claim "works with X" is
+  replaced by a written, audited one.
+- **Other tools keep their own dictionaries.** OAAS never redefines what
+  another system's operations mean. `onnx::MatMul@13` means exactly what ONNX
+  (a widely used format for exchanging machine learning models) says it means,
+  at exactly that version. OAAS adds shared context around such names; it
+  never replaces them.
+- **What something IS stays separate from HOW it is done.** A dish is not its
+  recipe: one dish can have many recipes, and the best recipe depends on your
+  kitchen. OAAS keeps an architecture's identity (what it is, the stratum
+  called OAAS-SIR) apart from its concrete computation steps (how it is done,
+  OAAS-CIR). Choosing the best recipe that honors every stated requirement,
+  including security requirements such as constant-time behavior, is what
+  optimization means in this project.
+
+And one more stance, unusual enough to state up front: **diagrams are
+content**. OAAS's native file format is contractually required to preserve
+everything, including the visual layout people draw. Nothing is "just
+cosmetic."
 
 ## The language, in three fragments
 
-Two document kinds: `.oaas` declares vocabulary (the general); `.flow` composes
-dataflow (the particular). A flow, pinned to real ONNX semantics:
+OAAS files come in two kinds: `.oaas` files declare vocabulary (the general),
+and `.flow` files compose actual dataflow (the particular).
+
+A flow, pinned to real ONNX semantics:
 
 ```
 use ecosystem.onnx
@@ -57,8 +70,10 @@ output Y : Tensor<f32>[N,8]
 X, W -> onnx::MatMul@13 -> Y
 ```
 
-An equivalence, valid only in its declared numeric regime (associativity
-silently fails under floating point — the guard is the point):
+Read it as: take an input X and a constant W, multiply them using ONNX's exact
+definition of matrix multiplication (version 13), and call the result Y.
+
+An equivalence, valid only inside its declared numeric regime:
 
 ```
 equivalence add_associativity {
@@ -72,8 +87,11 @@ equivalence add_associativity {
 }
 ```
 
-A preservation contract — what the ONNX projection guarantees, and what it
-honestly gives up:
+Read it as: these two ways of adding three numbers are interchangeable, but
+*only* under exact arithmetic. On floating-point hardware the swap can change
+results, and the guard writes that boundary down instead of hoping.
+
+A preservation contract, in full:
 
 ```
 projection ONNX {
@@ -94,29 +112,33 @@ may_lose {
 }
 ```
 
-More: the full corpus in [`conformance/corpus/`](conformance/corpus/), guided
-paths in [`curriculum/paths/`](curriculum/paths/), the spec in
-[`spec/`](spec/).
+Read it as: crossing into ONNX keeps the types, the operation versions, the
+structure, and the constants; annotations and diagram layout may be lost, and
+the format says so up front rather than losing them silently.
+
+More examples: the full corpus in [`conformance/corpus/`](conformance/corpus/),
+guided reading paths in [`curriculum/paths/`](curriculum/paths/), the
+specification in [`spec/`](spec/).
 
 ## What works today
 
 Grammar **v0.6**, spec **draft-0** (pre-release; nothing is normative yet).
-Every capability below is verified by a command, and CI runs the same suite on
-every push:
+Everything in this table runs today, each row has a command that proves it,
+and CI runs the same suite on every push:
 
 | Capability | Verify with |
 |---|---|
-| Grammar + corpus validation (dual coverage; negative fixtures) | `just check` |
-| Reference resolution — namespaces, strata, dataflow wiring | `just resolve` |
-| ONNX round-trip with per-field preservation score | `just roundtrip` |
-| Equivalence projection into egglog, scored | `just egraph` |
+| Grammar and corpus validation (every rule exemplified; illegal inputs pinned) | `just check` |
+| Reference resolution: every name must point at a real declaration | `just resolve` |
+| ONNX round-trip with a scored preservation contract | `just roundtrip` |
+| Equivalence search via egglog, scored | `just egraph` |
 | Pipeline commutation analysis (the toolchain tests itself) | `just stages` |
-| Visual identity projection — golden layout gate, SVG render | `just render` · `just draw FILE` |
-| Governed vocabulary views (diagrams derived from declarations) | `just views` |
-| Policy agreement — self-hosted policy vs. the agent skill layer | `just policy` |
-| Compression-ladder metrics | `just compress` |
+| Visual rendering with an exact layout-preservation gate | `just render` · `just draw FILE` |
+| Diagrams derived from the same declarations the tests read | `just views` |
+| Policy check: the repo's own rules, written in OAAS, verified mechanically | `just policy` |
+| Size and compression metrics | `just compress` |
 
-`just test` runs the full gatekeeper. Expected tail of a healthy run:
+`just test` runs the full suite. Expected tail of a healthy run:
 
 ```
 resolution rate: 18/18 = 1.00 (north-star metric #1; gate requires 1.00)
@@ -125,9 +147,10 @@ Resolution contract satisfied: every reference finds its universal.
 
 ## Getting started
 
-**Prerequisites**: Python 3 (core tools are dependency-free stdlib),
-[`just`](https://github.com/casey/just), and [`uv`](https://docs.astral.sh/uv/)
-(supplies `onnx`/`egglog` ephemerally for the interop suites).
+**Prerequisites**: Python 3 (the core tools have zero dependencies),
+[`just`](https://github.com/casey/just) (a command runner), and
+[`uv`](https://docs.astral.sh/uv/) (fetches `onnx` and `egglog` on demand for
+the interop suites).
 
 ```sh
 git clone https://github.com/cemphlvn/oaas.git
@@ -140,79 +163,77 @@ just draw conformance/corpus/019-toolchain-render.flow   # render a flow to SVG
 
 ## Repository layout
 
-Every top-level directory carries its own README card stating its ground-truth
-owner, change cadence, and policy:
+Every top-level directory carries its own README card stating who owns its
+ground truth, how fast it changes, and what agents may do there:
 
 ```
-spec/          normative prose: core, conformance, execution, visual, interop contracts
-grammar/       the EBNF (v0.6) + gap ledger — single source for the validator
-conformance/   corpus · rejections · resolution refusals · golden renders · matrix · interop suites
-profiles/      ecosystem (ONNX, egglog, MLIR, WASM) · ontology (BFO/DOLCE/UFO) · domain
-registry/      machine-readable ecosystem manifests (the resolver's oracle)
-curriculum/    learning paths — ordered views over the corpus
+spec/          the specification text: core concepts, conformance, visual layout, interop contracts
+grammar/       the language definition (EBNF, v0.6), single source for the validator
+conformance/   examples that must parse, inputs that must be rejected, golden renders, interop suites
+profiles/      ecosystem bindings (ONNX, egglog, MLIR, WASM) · ontologies · domain vocabularies
+registry/      machine-readable descriptions of each ecosystem (the resolver's oracle)
+curriculum/    ordered reading paths through the examples, for learning
 improvable/    the agent skill layer: procedures, evals, changelogs
-tools/         reference validator, resolver, harnesses, renderers (stdlib Python)
-docs/          gate ledger · ADRs · dated reports · research memos · design docs
+tools/         reference validator, resolver, test harnesses, renderers (plain Python)
+docs/          gate ledger · decision records · dated reports · research memos
 ```
 
 ## Conformance and governance
 
-Development proceeds through **falsifiable gates** — claims someone could prove
-false, closed only by machinery. Sixteen are closed; the ledger with evidence
-is [`docs/GATES.md`](docs/GATES.md) (`just gates` for a quick view).
+Progress here happens through **falsifiable gates**: every milestone is a
+claim someone could prove wrong, and it counts as done only when machinery
+demonstrates it. Sixteen gates are closed; the full ledger with evidence is
+[`docs/GATES.md`](docs/GATES.md) (`just gates` for a quick view).
 
-The conformance system is the project's distinguishing surplus:
+The habits that keep it honest:
 
-- a positive corpus where every grammar production must be exemplified;
-- **negative fixtures with lifecycles** — temporal pins for open gaps
-  (closable only through a documented ritual) and permanent rejections that
-  must never parse;
-- a **boundary obligation**: grammar enlargements ship their refusals;
-- **policy as code**: the repo's own operating policy is written in OAAS,
-  parsed, and mechanically checked against the agent skill layer;
-- a **witness-diversity requirement**: no semantic-closure claim on the
-  strength of a single reader lineage.
+- every grammar rule must have a working example, checked mechanically;
+- illegal inputs are collected too: things that must *never* parse are kept as
+  permanent test fixtures, so the language's boundaries are as tested as its
+  features;
+- any change that grows the grammar must also ship the new boundary it creates;
+- the repository's own operating rules are written in OAAS itself, parsed, and
+  verified, so the project is its own first user;
+- no claim of completeness is accepted on the word of a single reader,
+  human or machine (witness diversity, in [`GOVERNANCE.md`](GOVERNANCE.md)).
 
-Details: [`spec/conformance.md`](spec/conformance.md) ·
-[`GOVERNANCE.md`](GOVERNANCE.md). The repo is designed to be operated by
-humans and AI agents alike — [`AGENTS.md`](AGENTS.md) is the operating manual.
+The repo is designed to be operated by humans and AI agents alike;
+[`AGENTS.md`](AGENTS.md) is the operating manual.
 
 ## Roadmap
 
-Toward the goal — a semantic interoperability layer that *chooses, compresses,
-searches, and binds* implementations, not just describes them:
+The goal is a semantic interoperability layer that not only describes
+implementations but helps choose, compress, search, and bind them:
 
-- **MLIR and WASM** projection contracts with scored suites (ONNX and egglog
-  are the templates);
-- **configuration wizard** (`oaas add <ecosystem>`): expand declared intent +
-  machine capabilities into concrete toolchain configuration;
-- **compiler search** over realization sets — the semantic optimization space
-  made operational;
-- **ABI / component boundary** (Wasm Component Model / WIT study first) — a
-  separate falsifiable pillar; OAAS claims *interchange* compatibility today,
-  never binary compatibility;
-- **ontology federation** across BFO / DOLCE / UFO commitments.
+- **MLIR and WASM** bridges with scored contracts (ONNX and egglog are the
+  templates);
+- a **configuration wizard** (`oaas add <ecosystem>`): state your intent and
+  your machine, get a concrete working setup expanded for you;
+- **compiler search** across the many valid recipes for one declared dish;
+- an **ABI and component boundary** (studying the Wasm Component Model first),
+  kept as its own separately tested pillar. OAAS claims *interchange*
+  compatibility today, never binary compatibility;
+- **ontology federation** across BFO, DOLCE, and UFO commitments.
 
-Tracked honestly against the vision in
+Progress is tracked honestly against the vision in
 [`docs/design/idea-coverage.md`](docs/design/idea-coverage.md).
 
 ## Contributing
 
 Contributions are welcome under **Apache-2.0** with **DCO sign-off**
-(`git commit -s`). Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) — it
-documents the mechanical rules (triple representation, corpus discipline,
-negative-fixture lifecycles) that CI enforces. Community standards:
+(`git commit -s`). Start with [`CONTRIBUTING.md`](CONTRIBUTING.md), which
+explains the house rules that CI enforces. Community standards:
 [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · security:
 [`SECURITY.md`](SECURITY.md).
 
 ## A note on the name
 
 "OAAS" is a working name with a known collision risk (OAAX, an existing
-LF AI & Data project). A rename is planned before any foundation submission —
-build against the repo, not the acronym.
+LF AI & Data project). A rename is planned before any foundation submission.
+Build against the repo, not the acronym.
 
 ## License
 
-[Apache-2.0](LICENSE). The full design record — intake analysis, ADRs, dated
-gate reports, research memos — lives under [`docs/`](docs/); every normative
-decision is traceable to its ratification.
+[Apache-2.0](LICENSE). The full design record (intake analysis, decision
+records, dated gate reports, research memos) lives under [`docs/`](docs/);
+every normative decision is traceable to its ratification.
