@@ -6,59 +6,37 @@
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: draft-0](https://img.shields.io/badge/spec-draft--0-orange.svg)](docs/GATES.md)
 
-In plain words: OAAS is a small written language, plus the tests and tools
-around it, for writing down what a piece of computation *means*: what it is,
-what it must never violate, and what may be traded away. Once that is written
-down, work can move between otherwise unrelated tools without silently losing
-the parts its author cared about.
-
-**Contents** · [Why](#why) · [The language](#the-language-in-three-fragments) ·
+**Contents** · [The two layers](#the-two-layers) ·
+[What this enables](#what-this-enables-for-interoperability-research) ·
+[Why](#why) · [The language](#the-language-two-more-fragments) ·
 [What works today](#what-works-today) · [Getting started](#getting-started) ·
 [Layout](#repository-layout) · [Conformance](#conformance-and-governance) ·
 [Roadmap](#roadmap) · [Contributing](#contributing) · [Naming](#a-note-on-the-name) ·
 [License](#license)
 
-## Why
+## The two layers
 
-When a book is translated, some meaning always slips away, and a careful
-translator tells you what was kept and what was sacrificed. Software has the
-same problem. Programs and machine learning models are constantly "translated"
-between tools, and each hop can quietly drop something the original author
-cared about: an intention, a safety requirement, even the layout of a diagram
-someone drew. Today those losses are invisible, because nobody writes them
-down.
+OAAS is built on one separation. Every architecture is described at two
+levels, kept strictly apart:
 
-OAAS takes three positions on that problem:
+**OAAS-SIR, the semantic layer: what it is.**
 
-- **Promises are written down and checked.** Every bridge from OAAS to another
-  tool comes with a *preservation contract*: a short, machine-readable list of
-  what survives the crossing and what may be lost. A test suite then scores
-  whether the promise actually holds. The vague claim "works with X" is
-  replaced by a written, audited one.
-- **Other tools keep their own dictionaries.** OAAS never redefines what
-  another system's operations mean. `onnx::MatMul@13` means exactly what ONNX
-  (a widely used format for exchanging machine learning models) says it means,
-  at exactly that version. OAAS adds shared context around such names; it
-  never replaces them.
-- **What something IS stays separate from HOW it is done.** A dish is not its
-  recipe: one dish can have many recipes, and the best recipe depends on your
-  kitchen. OAAS keeps an architecture's identity (what it is, the stratum
-  called OAAS-SIR) apart from its concrete computation steps (how it is done,
-  OAAS-CIR). Choosing the best recipe that honors every stated requirement,
-  including security requirements such as constant-time behavior, is what
-  optimization means in this project.
+```
+concept Attention {
+    equivalent_under { fp16, causal = true }
+    to {
+        decomposition_A
+        decomposition_B
+        fused_kernel_C
+    }
+}
+```
 
-And one more stance, unusual enough to state up front: **diagrams are
-content**. OAAS's native file format is contractually required to preserve
-everything, including the visual layout people draw. Nothing is "just
-cosmetic."
+Read it as: Attention is one identity with three interchangeable ways of
+being computed, together with the exact conditions under which they count as
+the same. Nothing here says how anything runs.
 
-## The language, in three fragments
-
-OAAS files come in two kinds: `.oaas` files declare vocabulary (the general),
-and `.flow` files compose actual dataflow (the particular).
-
-A flow, pinned to real ONNX semantics:
+**OAAS-CIR, the computational layer: how it is computed.**
 
 ```
 use ecosystem.onnx
@@ -70,8 +48,72 @@ output Y : Tensor<f32>[N,8]
 X, W -> onnx::MatMul@13 -> Y
 ```
 
-Read it as: take an input X and a constant W, multiply them using ONNX's exact
-definition of matrix multiplication (version 13), and call the result Y.
+Read it as: take an input X and a constant W, multiply them using ONNX's
+exact definition of matrix multiplication (version 13), and call the result
+Y. This is one concrete computation, step by step.
+
+**Realization is the bridge.** A realization is a commitment from one
+semantic identity to one concrete computation that honors every declared
+constraint and invariant. One identity usually has many valid realizations,
+and that set is the whole point:
+
+> **semantic optimization space = valid realizations(SIR, constraints, invariants)**
+
+Choosing the best realization for a given machine, under stated requirements
+(including security requirements such as constant-time behavior), is what
+optimization means in this project. A dish is not its recipe: one dish has
+many recipes, and the best recipe depends on your kitchen.
+
+## What this enables for interoperability research
+
+- **Measured interoperability.** Preservation contracts turn "format A works
+  with format B" into a scored, reproducible claim; formats and bridges can
+  be compared by what they provably keep.
+- **Optimization as search.** With identity separated from computation,
+  implementation choice becomes search over a declared realization set;
+  equality-saturation engines (egglog here) slot in directly instead of
+  pattern-matching opaque code.
+- **Loss accounting across toolchains.** Every hop declares what it may lose,
+  so end-to-end meaning loss across a chain of tools becomes auditable,
+  security properties included.
+- **Category-level substitution.** Requirements stated as categories (say,
+  authenticated encryption rather than one cipher's name) let each target
+  swap implementations legally.
+- **Machine-governable specifications.** The spec's own policy language
+  governs the repository that develops it, a live testbed for standards work
+  operated jointly by humans and AI agents.
+
+## Why
+
+When a book is translated, some meaning always slips away, and a careful
+translator tells you what was kept and what was sacrificed. Software has the
+same problem. Programs and machine learning models are constantly "translated"
+between tools, and each hop can quietly drop something the original author
+cared about: an intention, a safety requirement, even the layout of a diagram
+someone drew. Today those losses are invisible, because nobody writes them
+down.
+
+Beyond the two-layer separation above, OAAS takes two further positions:
+
+- **Promises are written down and checked.** Every bridge from OAAS to another
+  tool comes with a *preservation contract*: a short, machine-readable list of
+  what survives the crossing and what may be lost. A test suite then scores
+  whether the promise actually holds.
+- **Other tools keep their own dictionaries.** OAAS never redefines what
+  another system's operations mean. `onnx::MatMul@13` means exactly what ONNX
+  says it means, at exactly that version. OAAS adds shared context around
+  native names; it never replaces them.
+
+And one more stance, unusual enough to state up front: **diagrams are
+content**. OAAS's native file format is contractually required to preserve
+everything, including the visual layout people draw. Nothing is "just
+cosmetic."
+
+## The language, two more fragments
+
+OAAS files come in two kinds: `.oaas` files declare vocabulary (the general),
+and `.flow` files compose actual dataflow (the particular). You have already
+seen one of each above. Two more constructs carry the honesty:
 
 An equivalence, valid only inside its declared numeric regime:
 
@@ -112,9 +154,10 @@ may_lose {
 }
 ```
 
-Read it as: crossing into ONNX keeps the types, the operation versions, the
-structure, and the constants; annotations and diagram layout may be lost, and
-the format says so up front rather than losing them silently.
+Read it as: crossing into ONNX starts from the computational layer, keeps the
+types, the operation versions, the structure, and the constants; annotations
+and diagram layout may be lost, and the format says so up front rather than
+losing them silently.
 
 More examples: the full corpus in [`conformance/corpus/`](conformance/corpus/),
 guided reading paths in [`curriculum/paths/`](curriculum/paths/), the
