@@ -4,7 +4,7 @@
 describing computation by its declared meaning.
 
 [![gates](https://github.com/cemphlvn/osil/actions/workflows/gates.yml/badge.svg)](https://github.com/cemphlvn/osil/actions/workflows/gates.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status: draft-0](https://img.shields.io/badge/spec-draft--0-orange.svg)](docs/GATES.md)
 
 **Contents** · [The two layers](#the-two-layers) ·
@@ -264,7 +264,7 @@ Progress is tracked honestly against the vision in
 
 ## Contributing
 
-Contributions are welcome under **Apache-2.0** with **DCO sign-off**
+Contributions are welcome under **MIT** with **DCO sign-off**
 (`git commit -s`). Start with [`CONTRIBUTING.md`](CONTRIBUTING.md), which
 explains the house rules that CI enforces. Community standards:
 [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) · security:
@@ -280,6 +280,6 @@ GitHub URL redirects.
 
 ## License
 
-[Apache-2.0](LICENSE). The full design record (intake analysis, decision
+[MIT](LICENSE). The full design record (intake analysis, decision
 records, dated gate reports, research memos) lives under [`docs/`](docs/);
 every normative decision is traceable to its ratification.

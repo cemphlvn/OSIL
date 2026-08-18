@@ -65,7 +65,8 @@ upstream version. Matrix cells are agent-maintained and machine-checkable.
 
 ## Licensing & foundation status
 
-RATIFIED 2026-08-18: Apache-2.0 repo-wide + DCO sign-off (see LICENSING.md).
+RATIFIED 2026-08-18: MIT repo-wide + DCO sign-off (see LICENSING.md for the
+same-day Apache-2.0 -> MIT history and the recorded patent-grant trade-off).
 Contributions are open (CONTRIBUTING.md). LF onboarding path per research U1:
 Community-Spec-template-free phase now, LF AI & Data Sandbox at GX. The OAAX
 naming collision was resolved 2026-08-18 by the rename to OSIL (ADR-0012);

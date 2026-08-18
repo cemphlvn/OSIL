@@ -6,7 +6,7 @@ for where it stands.
 
 ## License and sign-off (DCO)
 
-Contributions are accepted under **Apache-2.0** (inbound = outbound). Every
+Contributions are accepted under **MIT** (inbound = outbound). Every
 commit must carry a Developer Certificate of Origin sign-off:
 
     git commit -s
