@@ -59,6 +59,6 @@ compress:
 corpus:
     @ls -1 conformance/corpus/
 
-# show gate status (grep the README table)
+# show gate status (grep the gate ledger)
 gates:
-    @grep -A2 '^| G' README.md | head -20
+    @grep -E '^\| G' docs/GATES.md
