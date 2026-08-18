@@ -1,7 +1,8 @@
 # ADR-0012: Rename to OSIL (Open Semantic Interoperability Layer)
 
 Date: 2026-08-18 · Status: RATIFIED (maintainer selection via decision
-dialog; full-depth rename ratified in the same dialog). Gate G17.
+dialog; full-depth rename ratified in the same dialog). Gate G18 (renumbered from
+G17 by maintainer instruction, 2026-08-18).
 
 ## Context
 The working name OAAS carried a collision risk identified by research U1:
