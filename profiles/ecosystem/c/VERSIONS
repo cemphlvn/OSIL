@@ -1,0 +1,6 @@
+# upstream pins (drift-watch reads this; bumps are propose-only)
+# 2026-08-24 (G17): observed on the machine that closed the gate.
+c_standard = c11              # -std=c11; the emitted core is ISO C ...
+vector_ext = gnu_vector_size  # ... EXCEPT this, a GNU/Clang extension (not ISO)
+cc_observed = "Apple clang 17.0.0 (clang-1700.6.3.2)"
+target_observed = "arm64-apple-darwin25.5.0"   # NEON 128-bit; no SVE

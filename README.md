@@ -10,10 +10,43 @@ describing computation by its declared meaning.
 **Contents** · [The two layers](#the-two-layers) ·
 [What this enables](#what-this-enables-for-interoperability-research) ·
 [Why](#why) · [The language](#the-language-two-more-fragments) ·
+[Run the demo](#run-the-demo-30-seconds) · [Results](#results-the-optimizer-track) ·
 [What works today](#what-works-today) · [Getting started](#getting-started) ·
 [Layout](#repository-layout) · [Conformance](#conformance-and-governance) ·
 [Roadmap](#roadmap) · [Contributing](#contributing) · [Naming](#a-note-on-the-name) ·
 [License](#license)
+
+## Run the demo (30 seconds)
+
+```sh
+cd demo && ./run.sh          # needs clang and/or gcc, nothing else
+```
+
+One TSVC loop that **every compiler tested refuses to vectorize**, and a
+rewrite of it that is **exact to the bit**:
+
+```c
+for (int i = 0; i < N; i++) a[i] = a[N/2] + b[i];
+```
+
+`a[N/2]` is read every iteration and overwritten on exactly one of them. That
+single crossing point splits the loop into two independent maps.
+
+| | clang 17 | gcc 16 |
+|---|---|---|
+| `-O3`, `-ffast-math`, `-Ofast` | refused | refused |
+| `#pragma clang loop vectorize(enable)` | refused | — |
+| `#pragma clang loop distribute(enable)` | refused | — |
+| **split, `max abs diff = 0.000e+00`** | **~5.2x** | **~4.0x** |
+
+`distribute(enable)` is the pragma clang's *own diagnostic* tells you to use.
+It refuses that too.
+
+This is not a fast-math trade and not a new technique — it is textbook loop
+distribution over a false dependence. It is the smallest honest example of the
+gap OSIL exists to study: **a transformation that is trivially correct once the
+dependence structure is stated, and unreachable when it must be inferred.**
+Full caveats in [`demo/README.md`](demo/README.md).
 
 ## The two layers
 
@@ -164,9 +197,43 @@ More examples: the full corpus in [`conformance/corpus/`](conformance/corpus/),
 guided reading paths in [`curriculum/paths/`](curriculum/paths/), the
 specification in [`spec/`](spec/).
 
+## Results: the optimizer track
+
+The demo above generalizes into a mechanical pipeline — lift C loops with
+libclang, classify their dependence structure, choose a transformation, verify
+it correct, verify it faster, accept or reject:
+
+| | TSVC2 (151 kernels) |
+|---|---|
+| `clang -O3 -mcpu=native` alone | 64/151 = 42.4% |
+| clang + this pipeline | **74/151 = 49.0%** |
+| recovered, all bit-identical or within 1e-6 | **10 kernels**, 1.3x–4.5x |
+
+**Read this carefully, because the number is smaller than it looks.** Every
+transformation used is textbook 1980s work — distribution, dead-store
+elimination, preloading, peeling. Nothing in the method is new. The published
+record on this suite is GCC at 56.0% on A64FX/SVE-512 hardware
+([arXiv:2502.11906](https://arxiv.org/abs/2502.11906)); ours is Apple clang on
+M4/NEON-128, so **the two numbers are not comparable and no record was broken**.
+This project has never beaten a tuned baseline.
+
+What the track actually produced is a measured account of *where the headroom
+is and is not*:
+
+- the analyser's own ceiling is **52.3%** — derived from declared capabilities
+  (`just ceiling`), and below the record *before the attempt started*;
+- capabilities are **complementary**, so pricing them one at a time
+  systematically under-values them (`just price`);
+- ~50% of TSVC loops and **0%** of pointer-walking code lift at all.
+
+Details, including a kill condition that fired and a retracted result:
+[`docs/design/theoretical-cap.md`](docs/design/theoretical-cap.md) ·
+[`docs/design/record-attempt.md`](docs/design/record-attempt.md) ·
+[`docs/design/measurement-contention.md`](docs/design/measurement-contention.md)
+
 ## What works today
 
-Grammar **v0.6**, spec **draft-0** (pre-release; nothing is normative yet).
+Grammar **v0.7**, spec **draft-0** (pre-release; nothing is normative yet).
 Everything in this table runs today, each row has a command that proves it,
 and CI runs the same suite on every push:
 
@@ -180,6 +247,11 @@ and CI runs the same suite on every push:
 | Visual rendering with an exact layout-preservation gate | `just render` · `just draw FILE` |
 | Diagrams derived from the same declarations the tests read | `just views` |
 | Policy check: the repo's own rules, written in OSIL, verified mechanically | `just policy` |
+| C projection with a scored preservation contract | `just cproj` |
+| Mechanical lifting of C loops into dependence structure | `just lift` |
+| Transformation choice, correctness-gated and speed-gated | `just choose` |
+| The analyser's own reach, declared — and its ceiling derived | `just ceiling` · `just price FILE` |
+| Harness validity: the measurement discipline is checked, not remembered | `just harness` |
 | Size and compression metrics | `just compress` |
 
 `just test` runs the full suite. Expected tail of a healthy run:
@@ -218,6 +290,8 @@ profiles/      ecosystem bindings (ONNX, egglog, MLIR, WASM) · ontologies · do
 registry/      machine-readable descriptions of each ecosystem (the resolver's oracle)
 curriculum/    ordered reading paths through the examples, for learning
 improvable/    the agent skill layer: procedures, evals, changelogs
+demo/          a 30-second standalone repro; the smallest honest example
+optimizer/     the C loop optimizer (PROBE status: not gated, research code)
 tools/         reference validator, resolver, test harnesses, renderers (plain Python)
 docs/          gate ledger · decision records · dated reports · research memos
 ```

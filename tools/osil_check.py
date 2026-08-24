@@ -120,6 +120,7 @@ class Parser:
             "invariant": self.invariant_decl, "operator": self.operator_decl,
             "preserves": self.contract_decl, "concept": self.concept_decl,
             "actor": self.actor_decl, "stage": self.stage_decl,
+            "capability": self.capability_decl,
         }
         fn = dispatch.get(t.text)
         if fn is None:
@@ -178,6 +179,29 @@ class Parser:
             self.expr()
         if self.at_word("guards"):
             self.guards_block()
+        self.expect_op("}")
+
+    def capability_decl(self):
+        """G21: the analyser's own reach, declared. See corpus 026."""
+        self.fire("capability_decl")
+        self.expect_word("capability")
+        self.expect_ident()
+        self.expect_op("{")
+        while not self.at_op("}"):
+            self.capability_field()
+        self.expect_op("}")
+
+    def capability_field(self):
+        self.fire("capability_field")
+        t = self.peek()
+        if not self.at_word("admits", "refuses"):
+            raise ParseError(f"line {t.line}: expected admits/refuses block, "
+                             f"got {t.text!r}")
+        self.alt(f"capability_field:{t.text}")
+        self.expect_word(t.text)
+        self.expect_op("{")
+        while not self.at_op("}"):
+            self.qualified_id()
         self.expect_op("}")
 
     def stage_decl(self):
@@ -726,7 +750,8 @@ ALL_PRODUCTIONS = [
     "layout_block", "layout_stmt", "node_layout", "edge_layout",
     "label_layout", "viewport_stmt", "bounds", "point", "coord",
     "out_spec", "path_component",
-    "stage_decl", "resource_block", "compose_expr",
+    "stage_decl", "resource_block", "capability_decl", "capability_field",
+    "compose_expr",
 ]
 
 
@@ -749,6 +774,7 @@ ALT_EXPECTED = sorted(
         "path_component": ["plain", "dotted"],
         "equivalence_decl": ["arith", "compose"],
         "resource_block": ["reads", "writes"],
+        "capability_field": ["admits", "refuses"],
     }.items() for alt in alt_names
 )
 

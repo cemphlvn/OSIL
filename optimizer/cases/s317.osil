@@ -1,0 +1,21 @@
+// provenance: TSVC_2 `s317` — "product reduction ... closed form solution:
+// q = factor**n" (the benchmark's OWN comment names the closed form).
+// clang 17 -O3 refuses to vectorize it.
+//
+// NUMERICAL NOTE: with TSVC's literal factor 0.99 over 16000 iterations the
+// true value is 1.46e-70, far below f32 min normal (1.18e-38). The kernel
+// computes a denormal (7e-44) that is not the right answer either. The
+// realization is unaffected; only the benchmark's numeric usefulness is.
+// bench/ therefore exercises it at a non-degenerate factor as well.
+model s317 {
+    purpose: reduce
+    constraints { extent = 16000  element_type = f32 }
+
+    // `repeat` is a binder-free source: n copies of a loop-invariant scalar.
+    sir { (reduce mul (repeat k 16000)) }
+
+    guards {
+        numeric_semantics = reassociable
+        closed_form = permitted
+    }
+}

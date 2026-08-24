@@ -1,0 +1,9 @@
+// provenance: TSVC_2 `s312` — "reductions / product reduction".
+// clang 17 -O3 on Apple M4 refuses:
+//   "cannot prove it is safe to reorder floating-point operations"
+model s312 {
+    purpose: reduce
+    constraints { extent = 32000  element_type = f32 }
+    sir { (reduce mul (range a 32000)) }
+    guards { numeric_semantics = reassociable }
+}

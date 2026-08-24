@@ -1,0 +1,7 @@
+// provenance: G17 (ADR-0014) — the C lowering ecosystem, pinned in-language.
+// `vector_ext` records a GNU/Clang extension, NOT ISO C: sovereignty means we
+// reference it and never redefine it (spec/interop/ecosystem-contract.md §1).
+profile ecosystem.c {
+    c_standard = c11
+    vector_ext = gnu_vector_size
+}

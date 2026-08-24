@@ -1,0 +1,36 @@
+// provenance: G21 — the architecture analysing ITSELF. Each capability names
+// loop FEATURES the analyser admits or refuses; the ceiling on what any chooser
+// of this kind could recover is then DERIVED (tools/capability_ceiling.py)
+// rather than asserted. Declaring a capability moves the ceiling, so the payoff
+// of building one can be measured BEFORE it is built.
+// Measured basis: docs/design/theoretical-cap.md
+//
+// NOTE these capabilities are COMPLEMENTARY, not independent: a loop blocked by
+// two features is unlocked by neither alone, so joint prices EXCEED the sum of
+// marginals (+68 for all four, vs +43 summed). Marginal pricing under-values a
+// capability that only pays in company — `access.multi_dimensional` prices at
+// +1 alone and +18 in combination. Choose build order from the JOINT table.
+
+capability affine_subscript {
+    admits { subscript.affine }
+    refuses { subscript.indirect subscript.wraparound }
+}
+
+capability straight_line {
+    admits { body.sequential }
+    refuses { body.control_flow }
+}
+
+capability single_index {
+    admits { access.one_dimensional }
+    refuses { access.multi_dimensional }
+}
+
+// A carried flow dependence BETWEEN statements is separable by distribution
+// (s211 1.66x, s1213 1.67x, both bit-identical). Only a dependence CYCLE is an
+// irreducible recurrence. Conflating the two charged the scan capability for
+// kernels distribution had already won — U14.
+capability separable_dependence {
+    admits { dep.loop_independent dep.anti dep.output_dead dep.carried_separable }
+    refuses { dep.recurrence_cycle }
+}

@@ -32,8 +32,33 @@ policy:
 resolve:
     python3 tools/osil_resolve.py
 
+# G17 C projection: the lowering-ecosystem contract (needs a C compiler)
+cproj:
+    python3 tools/c_roundtrip.py
+
+# G19 C lifter (OQ-2): does mechanical lifting reproduce the hand analysis?
+lift:
+    uv run --with libclang python3 tools/lift_check.py
+
+# G20 transformation chooser (OQ-2): decisions follow the dependence graph,
+# and no accepted candidate is ever semantically wrong
+choose:
+    uv run --with libclang python3 tools/choose_check.py
+
+# G21 capability ceiling: the architecture analysing its own reach
+ceiling:
+    uv run --with libclang python3 tools/ceiling_check.py
+
+# price a capability BEFORE building it: just price <corpus.c>
+price FILE:
+    uv run --with libclang python3 tools/capability_ceiling.py {{FILE}}
+
+# G22 harness discipline: the test-case validity problem, made mechanical
+harness:
+    uv run --with libclang python3 tools/harness_check.py
+
 # full gatekeeper: contract + round-trips + render + policy + resolution + stages + views
-test: check roundtrip egraph render policy resolve stages views
+test: check roundtrip egraph cproj lift choose ceiling harness render policy resolve stages views
 
 # G15 stage commutation: the pipeline tests itself (uv supplies egglog)
 stages:

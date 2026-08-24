@@ -1,0 +1,8 @@
+// C-projection case: sum reduction. Same shape, different operator — pins that
+// the projection is operator-general and not special-cased to `mul`.
+model c002 {
+    purpose: reduce
+    constraints { extent = 4096  element_type = f32 }
+    sir { (reduce add (range a 4096)) }
+    guards { numeric_semantics = reassociable }
+}

@@ -2,6 +2,30 @@
  "projections": [
   {
    "declared_in": [
+    "profiles/ecosystem/c/CONTRACT.osil"
+   ],
+   "ecosystem": "c",
+   "from": "OSIL-CIR",
+   "may_lose": [
+    "declared_licence",
+    "ontology_annotations",
+    "visual_layout"
+   ],
+   "preserve": [
+    "execution"
+   ],
+   "preserves": [
+    "emission_determinism",
+    "guard_selectivity",
+    "realization_identity",
+    "value_equivalence"
+   ],
+   "projection": "C",
+   "score": "4/4",
+   "status": "pass"
+  },
+  {
+   "declared_in": [
     "conformance/corpus/004-projections.osil",
     "profiles/ecosystem/egglog/CONTRACT.osil"
    ],

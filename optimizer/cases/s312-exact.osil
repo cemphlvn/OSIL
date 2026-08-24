@@ -1,0 +1,8 @@
+// Same kernel, STRICTER declared regime. `exact` withholds the premise, so
+// the space collapses to the single order-preserving realization.
+model s312 {
+    purpose: reduce
+    constraints { extent = 32000  element_type = f32 }
+    sir { (reduce mul (range a 32000)) }
+    guards { numeric_semantics = exact }
+}

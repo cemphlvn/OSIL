@@ -1,0 +1,8 @@
+// C-projection case: product reduction over an array.
+// Guard `numeric_semantics = reassociable` licenses the lane-split realization.
+model c001 {
+    purpose: reduce
+    constraints { extent = 4096  element_type = f32 }
+    sir { (reduce mul (range a 4096)) }
+    guards { numeric_semantics = reassociable }
+}

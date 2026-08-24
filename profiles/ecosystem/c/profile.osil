@@ -1,0 +1,7 @@
+// profiles/ecosystem/c/profile.osil
+// CANONICAL in-language pins (G12 pattern): `use ecosystem.c` resolves here.
+// VERSIONS mirrors this for drift-watch; the resolver enforces they agree.
+profile ecosystem.c {
+    c_standard = c11
+    vector_ext = gnu_vector_size
+}

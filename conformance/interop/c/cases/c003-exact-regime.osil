@@ -1,0 +1,10 @@
+// C-projection case: the SAME computation as c001 under the STRICTER regime.
+// `exact` withholds the reassociation premise, so the licensed space collapses
+// to the single order-preserving realization. This is the positive half of the
+// guard_selectivity lane; the harness also withholds guards programmatically.
+model c003 {
+    purpose: reduce
+    constraints { extent = 4096  element_type = f32 }
+    sir { (reduce mul (range a 4096)) }
+    guards { numeric_semantics = exact }
+}
