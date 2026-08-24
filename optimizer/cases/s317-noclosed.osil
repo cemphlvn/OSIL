@@ -1,0 +1,8 @@
+// Same kernel WITHOUT the closed-form licence. Reassociation is still
+// permitted, so lanes remain in the space — but the O(1) realization does not.
+model s317 {
+    purpose: reduce
+    constraints { extent = 16000  element_type = f32 }
+    sir { (reduce mul (repeat k 16000)) }
+    guards { numeric_semantics = reassociable }
+}

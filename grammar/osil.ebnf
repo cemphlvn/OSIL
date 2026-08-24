@@ -1,4 +1,8 @@
-(* OSIL grammar — v0.6
+(* OSIL grammar — v0.7
+   v0.7 (G21): capability declarations — the toolchain's own analysis reach as
+   vocabulary, so the ceiling on recoverable loops is derived, not asserted.
+   ONE new construct; triple representation shipped with it (corpus 026).
+   v0.6
    v0.6 (G15, ratified 2026-08-13 per staged gate row + ADR-0010): stage-
    composition term language — `stage` declarations (runs/reads/writes
    resource footprint) and `then` composition in equivalences (CONTEXTUAL
@@ -28,7 +32,8 @@
 osil_document   = { osil_declaration } ;
 flow_document   = { flow_statement } ;
 
-osil_declaration = profile_decl
+osil_declaration = capability_decl
+                 | profile_decl
                  | projection_decl
                  | equivalence_decl
                  | model_decl
@@ -70,6 +75,16 @@ resource_block  = ( "reads" | "writes" ) , "{" , { qualified_id } , "}" ;
    identifiers only (a declared stage name = ground constant, anything else
    = pattern variable — ADR-0010). Sorts do not mix: R008. *)
 compose_expr    = identifier , "then" , identifier , { "then" , identifier } ;
+
+(* -- capabilities: what the toolchain can ANALYSE, as vocabulary (G21) -------
+   The architecture describing its own reach. `admits`/`refuses` name loop
+   FEATURES, so the analysable set -- and therefore the ceiling on what any
+   chooser could ever recover -- is DERIVED from declarations rather than
+   asserted by a script. Declaring a new capability moves the ceiling, which
+   makes this a design instrument: the payoff of a capability can be measured
+   before it is built. *)
+capability_decl = "capability" , identifier , "{" , { capability_field } , "}" ;
+capability_field = ( "admits" | "refuses" ) , "{" , id_list , "}" ;
 
 (* -- models: intention + constraints (configuration compression) ----------- *)
 model_decl      = "model" , identifier , "{" , { model_field } , "}" ;

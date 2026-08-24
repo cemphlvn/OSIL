@@ -45,3 +45,49 @@ edges (same src AND same dst twice).
   document becomes real (U4's stated validity trigger).
 - labels carry geometry only; label CONTENT currently renders as the owner's
   identifier — text overrides are an open design question.
+
+## Ratification 2026-08-24 — view goldens re-blessed (G17)
+
+WHO: maintainer, via the G17 change (ADR-0014).
+WHY: the derived view data changed because the DECLARATIONS changed, not the
+renderer. Two deliberate additions:
+  - `projection C` (profiles/ecosystem/c/CONTRACT.osil) — a new row in
+    views/projection-map, requiring `ECOSYSTEM_OF`/`ADAPTER_OF` in
+    tools/view_render.py to be grown deliberately (the harness refused to guess).
+  - `stage cproj` (conformance/corpus/023) — stage-commutation pair matrix
+    28 -> 36.
+Lie-detection held through the change (2/2 perturbations still move the data),
+and determinism held (double build identical), so the goldens are being
+re-blessed against a change that the gate itself witnessed.
+
+## Ratification 2026-08-24 — view goldens re-blessed (G19)
+
+WHO: maintainer, via the G19 change (the C lifter, ADR-0014 OQ-2).
+WHY: `stage lift` was added to conformance/corpus/023 and to the justfile
+`test:` line (standing agreement, 1:1), so the stage-commutation pair matrix
+grew 36 -> 45. The DECLARATIONS changed; the renderer did not. Lie-detection
+held through the change (2/2 perturbations still move the data) and determinism
+held, so the goldens are re-blessed against a change the gate itself witnessed.
+projection-map is unchanged (no new projection at G19).
+
+## Ratification 2026-08-24 — view goldens re-blessed (G20)
+
+WHO: maintainer, via the G20 change (the transformation chooser).
+WHY: `stage choose` added to corpus 023 and the justfile `test:` line
+(standing agreement, 1:1); stage-commutation pair matrix 45 -> 55. The
+DECLARATIONS changed, the renderer did not. Lie-detection and determinism both
+held through the change. projection-map unchanged (no new projection).
+
+## Ratification 2026-08-24 — view goldens re-blessed (G21)
+
+WHO: maintainer, via the G21 change (capability declarations).
+WHY: `stage ceiling` added to corpus 023 and the justfile `test:` line
+(standing agreement, 1:1); pair matrix 55 -> 66. Declarations changed, renderer
+did not. Lie-detection and determinism held.
+
+## Ratification 2026-08-24 — view goldens re-blessed (G22)
+
+WHO: maintainer, via the G22 change (harness discipline gate).
+WHY: `stage harness` added to corpus 023 and the justfile `test:` line
+(standing agreement, 1:1); pair matrix 66 -> 78. Declarations changed, renderer
+did not. Lie-detection and determinism held.

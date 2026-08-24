@@ -1,0 +1,9 @@
+// MUST-FAIL-PROJECTION: `maxof` is not a reduction operator the projection
+// supports. There is no identity element declared for it, so emitting a fold
+// would require the projector to INVENT one. Refuse instead.
+model rc002 {
+    purpose: reduce
+    constraints { extent = 4096  element_type = f32 }
+    sir { (reduce maxof (range a 4096)) }
+    guards { numeric_semantics = reassociable }
+}

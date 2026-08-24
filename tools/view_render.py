@@ -39,8 +39,9 @@ VIEWS = ROOT / "conformance" / "golden-render" / "views"
 
 # a view must grow deliberately: unknown projections fail loudly, never guess
 ECOSYSTEM_OF = {"EGraph": "egglog", "ONNX": "onnx", "MLIR": "mlir",
-                "Identity": "native"}
-ADAPTER_OF = {"EGraph": "egglog-roundtrip", "ONNX": "onnx-roundtrip"}
+                "C": "c", "Identity": "native"}          # C added at G17
+ADAPTER_OF = {"EGraph": "egglog-roundtrip", "ONNX": "onnx-roundtrip",
+              "C": "c-projection"}
 STRATA_ORDER = ["OSIL-SIR", "OSIL-CIR", "OSIL-NATIVE"]
 
 

@@ -1,7 +1,14 @@
 {
- "commuting": 27,
- "pairs_total": 28,
+ "commuting": 75,
+ "pairs_total": 78,
  "stages": {
+  "ceiling": {
+   "reads": [
+    "conformance.corpus",
+    "optimizer.probe.none60"
+   ],
+   "writes": []
+  },
   "check": {
    "reads": [
     "conformance.corpus",
@@ -9,6 +16,23 @@
     "profiles"
    ],
    "writes": []
+  },
+  "choose": {
+   "reads": [
+    "conformance.lift.ground_truth",
+    "optimizer.probe.none60"
+   ],
+   "writes": []
+  },
+  "cproj": {
+   "reads": [
+    "conformance.interop.c.cases",
+    "profiles.ecosystem.c.VERSIONS"
+   ],
+   "writes": [
+    "conformance.matrix.matrix_yaml",
+    "docs.reports.roundtrip_c_dated"
+   ]
   },
   "egraph": {
    "reads": [
@@ -20,6 +44,22 @@
    "writes": [
     "conformance.matrix.matrix_yaml",
     "docs.reports.roundtrip_egraph_dated"
+   ]
+  },
+  "harness": {
+   "reads": [
+    "optimizer.probe.none60",
+    "tools"
+   ],
+   "writes": []
+  },
+  "lift": {
+   "reads": [
+    "conformance.lift.ground_truth",
+    "optimizer.probe.none60"
+   ],
+   "writes": [
+    "conformance.lift.lifted_json"
    ]
   },
   "policy": {
@@ -76,6 +116,20 @@
  },
  "view": "stage-commutation",
  "withheld": [
+  {
+   "a": "cproj",
+   "b": "egraph",
+   "collision": [
+    "conformance.matrix.matrix_yaml"
+   ]
+  },
+  {
+   "a": "cproj",
+   "b": "roundtrip",
+   "collision": [
+    "conformance.matrix.matrix_yaml"
+   ]
+  },
   {
    "a": "egraph",
    "b": "roundtrip",

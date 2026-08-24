@@ -1,0 +1,18 @@
+// provenance: TSVC_2 `s352` — "loop rerolling / unrolled dot product".
+// The source is hand-unrolled by 5; the SIR states the dot product it IS,
+// so the rerolling question never arises.
+model s352 {
+    purpose: reduce
+    constraints { extent = 32000  element_type = f32 }
+
+    // `zip` fuses the elementwise multiply into the source — a dot product
+    // is a sum-reduction over a pointwise product, stated directly.
+    sir { (reduce add (zip mul a b 32000)) }
+
+    guards {
+        numeric_semantics = reassociable
+        // licenses fusing the zip's multiply into the reduction's add as a
+        // single FMA: one rounding instead of two, so a different result.
+        fp_contraction = permitted
+    }
+}

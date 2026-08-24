@@ -19,6 +19,33 @@ stage egraph {
     writes { conformance.matrix.matrix_yaml  docs.reports.roundtrip_egraph_dated }
 }
 
+stage cproj {
+    runs = tools.c_roundtrip
+    reads { conformance.interop.c.cases  profiles.ecosystem.c.VERSIONS }
+    writes { conformance.matrix.matrix_yaml  docs.reports.roundtrip_c_dated }
+}
+
+stage lift {
+    runs = tools.lift_check
+    reads { optimizer.probe.none60  conformance.lift.ground_truth }
+    writes { conformance.lift.lifted_json }
+}
+
+stage choose {
+    runs = tools.choose_check
+    reads { optimizer.probe.none60  conformance.lift.ground_truth }
+}
+
+stage ceiling {
+    runs = tools.ceiling_check
+    reads { conformance.corpus  optimizer.probe.none60 }
+}
+
+stage harness {
+    runs = tools.harness_check
+    reads { tools  optimizer.probe.none60 }
+}
+
 stage render {
     runs = tools.render_check
     reads { conformance.corpus  conformance.golden-render }

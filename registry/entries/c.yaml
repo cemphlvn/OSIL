@@ -1,0 +1,16 @@
+# validates against registry/schema/manifest.schema.json (v0)
+name: c
+kind: lowering
+capabilities: [portable-lowering, native-execution, measurement-substrate]
+operators: []              # C is not an operator ecosystem; realizations are emitted
+requirements: [c-compiler]
+versions:
+  c_standard: c11
+  vector_ext: gnu_vector_size   # NOT ISO C — a GNU/Clang extension, pinned honestly
+targets: [cpu]
+cost_hints: {}
+recipes: []
+interop:                    # REGISTERED (G17): described -> tested ecosystem
+  suite: conformance/interop/c
+  contract: profiles/ecosystem/c/CONTRACT.osil
+  profile: profiles/ecosystem/c        # triad linked (G8)

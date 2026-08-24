@@ -1,0 +1,10 @@
+// MUST-FAIL-PROJECTION: `gather` is not a source form the C projection knows.
+// The projector MUST refuse loudly rather than emit something plausible.
+// A projection that silently mis-lowers an unknown construct is worse than one
+// that has no support for it: it produces code that looks right and is not.
+model rc001 {
+    purpose: reduce
+    constraints { extent = 4096  element_type = f32 }
+    sir { (reduce mul (gather a idx 4096)) }
+    guards { numeric_semantics = reassociable }
+}

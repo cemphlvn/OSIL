@@ -1,0 +1,20 @@
+// machine-readable preservation contract for the C projection
+// provenance: G17 (ADR-0014). Verification status: all four `preserves` fields
+// VERIFIED mechanically at G17 (2026-08-24) — see docs/reports/.
+projection C {
+    from OSIL-CIR
+    preserve execution
+}
+
+preserves {
+    realization_identity
+    value_equivalence
+    guard_selectivity
+    emission_determinism
+}
+
+may_lose {
+    declared_licence
+    visual_layout
+    ontology_annotations
+}

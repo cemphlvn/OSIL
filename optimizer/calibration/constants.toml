@@ -1,0 +1,12 @@
+# Calibrated 2026-08-24 on Apple M4, clang 17 -O3 -march=native.
+# Fitted by calibration/fit.py against measurements.jsonl (weighted least
+# squares, weight = 1/measured, per Halide/Ansor's throughput-weighted loss).
+# These are DATA. The model's FORM lives in src/main.rs and is not fitted.
+version = "v1"
+mul_latency_cycles = 3.1997   # was 4.0, an unmeasured ASSUMPTION
+lanes_per_cycle    = 17.9893   # was 8.0, an unmeasured ASSUMPTION
+fit_target         = "measured cycles (ri_cycles), not wall time"
+machine     = "Apple-M4"
+git_sha     = "09b0da9"
+fit_train   = ['s312', 's317-noclosed']
+fit_heldout = ['s352']
