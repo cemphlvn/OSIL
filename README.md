@@ -226,7 +226,50 @@ is and is not*:
   systematically under-values them (`just price`);
 - ~50% of TSVC loops and **0%** of pointer-walking code lift at all.
 
-Details, including a kill condition that fired and a retracted result:
+### What happened when it left the benchmark
+
+The same pipeline, pointed at **ten repositories it did not author** — opus,
+vorbis, speexdsp, libsamplerate, darknet, genann, PolyBench/C, NPB, milc_qcd
+(lattice QCD) and GSL. **10,777 distinct loops.**
+
+**Zero applicable candidates.** PolyBench — the canonical *affine* benchmark —
+lifts at 7%, the worst of the ten, because its loops are multi-dimensional. GSL
+lifts at 91%, the best, and still yields nothing. Reach and yield are
+independent: being able to analyse a loop says nothing about there being a
+transformation worth making. These four families target a pathology TSVC
+contains by construction and maintained numeric C mostly does not.
+
+Two things came out of that which are worth more than a speedup would have been:
+
+**Measurement priced its own gaps at +599; the buildable species delivered +14.**
+The capability model ranked `body.control_flow` as the top declared refusal on
+real code, which is *why* predicated execution was built rather than something
+else. It returned **+14** — an overstatement of **43x**. The arithmetic was
+never wrong: +599 is the correct answer to a question nobody can act on, because
+prices are quoted for a **genus** and capabilities are built for a **species**.
+Most of that genus turned out to be `body.nested_loop` (+2,888), which is not
+conditionals at all. First *prospective* test of the pricing instrument — its
+arithmetic survived, its interpretation did not.
+
+**Leaving the home benchmark found eight wrong-code classes.** Five were in the
+already-shipped tools, each hiding behind a coincidence uniform across the ten
+probe loops — they all step by 1, all ascend, all write their dead store last,
+all name arrays with plain identifiers, and all stay inside the differential
+harness's buffers ([`conformance/lift/repo-pins/`](conformance/lift/repo-pins/),
+one pin and one live witness each). Two more surfaced while building the new
+capability, both now refused rather than detected — including a
+**pointer-validity guard** (`if (da) da[i] += x;`, whose select form
+dereferences null on both arms) that the correctness gate *structurally cannot*
+catch, because the harness only ever passes valid pointers. The eighth was found
+by the independent validator on its first run.
+
+The worst was not a transformation bug at all: the differential harness
+**indexed past its own buffers**, so wrong code was scored EXACT over undefined
+behaviour. Gate 2 is the safety property of the whole track, and it was quietly
+weaker than advertised.
+
+Details, including a kill condition that fired and several retracted results:
+[`docs/design/repo-scale-probe.md`](docs/design/repo-scale-probe.md) ·
 [`docs/design/theoretical-cap.md`](docs/design/theoretical-cap.md) ·
 [`docs/design/record-attempt.md`](docs/design/record-attempt.md) ·
 [`docs/design/measurement-contention.md`](docs/design/measurement-contention.md)

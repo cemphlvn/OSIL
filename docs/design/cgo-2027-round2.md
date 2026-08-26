@@ -27,7 +27,7 @@ been a competition.
 
 | # | claim | evidence | gate |
 |---|---|---|---|
-| C1 | Capability prices computed at **genus** level do not forecast what building a capability delivers, because capabilities are built at **species** level. Measured overstatement: **43x** (+599 priced, +14 realized). | `docs/design/repo-scale-probe.md`, ADR-0015 | `just ceiling`, `just choose` |
+| C1 | **Measurement priced its own gaps at +599; the buildable species delivered +14.** Capability prices computed at **genus** level do not forecast what building a capability delivers, because capabilities are built at **species** level — a measured overstatement of **43x**. | `docs/design/repo-scale-probe.md`, ADR-0015 | `just ceiling`, `just choose` |
 | C2 | Pointing a loop optimizer at code it did not author finds defects a home benchmark structurally cannot. **Five**, each traced to a coincidence uniform across the probe set (step, replay distance, member naming, iteration direction, harness bounds). | `conformance/lift/repo-pins/` | `just choose` |
 | C3 | A performance gate that destroys its input distribution can **invert** decisions, not merely mis-estimate them. Fixture `p004` was published at ACCEPT 1.56x and is a 5.9x regression. | ADR-0016 | `just choose` |
 | C4 | Preservation claims validated by an **independent** checker find bugs the producing harness cannot. Found dead-store wrong at n = 0 on first run. | ADR-0017 | `just witness` |
