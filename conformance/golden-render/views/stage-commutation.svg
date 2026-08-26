@@ -26,11 +26,13 @@
 <text x="679" y="215">stages</text>
 <rect x="20" y="270" width="180" height="40" fill="none" stroke="#000"/>
 <text x="34" y="295">views</text>
+<rect x="235" y="270" width="180" height="40" fill="none" stroke="#000"/>
+<text x="249" y="295">witness</text>
 <polyline points="755,50 110,130" fill="none" stroke="#000" stroke-dasharray="3 3"/>
 <text x="432" y="84" font-size="11">conformance.matrix.matrix_yaml</text>
 <polyline points="755,50 540,210" fill="none" stroke="#000" stroke-dasharray="3 3"/>
 <text x="647" y="124" font-size="11">conformance.matrix.matrix_yaml</text>
 <polyline points="110,130 540,210" fill="none" stroke="#000" stroke-dasharray="3 3"/>
 <text x="325" y="164" font-size="11">conformance.matrix.matrix_yaml</text>
-<text x="20" y="404" font-size="11">75/78 pairs commute; only constraints drawn (dashed = shared write)</text>
+<text x="20" y="404" font-size="11">88/91 pairs commute; only constraints drawn (dashed = shared write)</text>
 </svg>

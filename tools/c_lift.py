@@ -78,6 +78,7 @@ class Loop:
     step: int | None = None
     accesses: list = field(default_factory=list)
     scalars: list = field(default_factory=list)   # (name, is_write, stmt)
+    guards: list = field(default_factory=list)    # per stmt: predicate text | None
     deps: list = field(default_factory=list)
     unhandled: list = field(default_factory=list)
 
@@ -147,13 +148,200 @@ CONTROL_FLOW = {
 }
 
 
+# Control flow, resolved into SPECIES. `body.control_flow` was a genus: once the
+# analyser admits ANY control flow it stops being univocal, so it is replaced by
+# the species below (ADR-0015). Each is a distinct risk with a distinct price.
+EARLY_EXIT = {K.GOTO_STMT, K.INDIRECT_GOTO_STMT, K.LABEL_STMT, K.BREAK_STMT,
+              K.CONTINUE_STMT, K.RETURN_STMT, K.SWITCH_STMT}
+NESTED_LOOP = {K.WHILE_STMT, K.DO_STMT, K.FOR_STMT}
+TRAPPING = {"/", "%", "/=", "%="}
+
+
+def _species(c) -> str:
+    if c.kind in EARLY_EXIT:
+        return f"body.early_exit ({c.kind.name})"
+    if c.kind in NESTED_LOOP:
+        return f"body.nested_loop ({c.kind.name})"
+    if c.kind in (K.IF_STMT, K.CONDITIONAL_OPERATOR):
+        return f"body.nested_guard ({c.kind.name})"
+    return f"body.early_exit ({c.kind.name})"
+
+
+def _effectful(node) -> bool:
+    """A predicate that calls, assigns or increments cannot be evaluated for
+    iterations the original skipped."""
+    for c in node.walk_preorder():
+        if c.kind in (K.CALL_EXPR, K.COMPOUND_ASSIGNMENT_OPERATOR):
+            return True
+        toks = [t.spelling for t in c.get_tokens()]
+        if c.kind == K.UNARY_OPERATOR and ("++" in toks or "--" in toks):
+            return True
+        if c.kind == K.BINARY_OPERATOR and "=" in toks:
+            return True
+    return False
+
+
+def maskable_if(st, index: str, loop: Loop):
+    """Recognise `if (P) lhs = rhs;` — the only control flow this lifter admits.
+
+    Returns (guard_text, inner_cursor) or None, appending the refusal SPECIES to
+    loop.unhandled. See ADR-0015 for why each condition is required; the short
+    form is that if-conversion executes the guarded work on iterations the
+    original skipped, so that work must be safe to execute unconditionally.
+    """
+    ch = list(st.get_children())
+    if len(ch) < 2:
+        loop.unhandled.append("body.guarded_nonassignment (malformed if)")
+        return None
+    if len(ch) > 2:
+        # `if/else` masks to `lhs = P ? a : b` when both arms assign the same
+        # lvalue. Genuinely convertible, deliberately NOT built here: declared,
+        # priced, and left for a later capability rather than assumed.
+        loop.unhandled.append("body.guarded_alternative (if/else)")
+        return None
+    cond, then = ch[0], ch[1]
+    if _effectful(cond):
+        loop.unhandled.append("body.unsafe_speculation (effectful predicate)")
+        return None
+    # A predicate over the loop INDEX bounds the iteration space; converting it
+    # speculates loads outside the range the guard was protecting. That is
+    # index-set splitting's job, not predication's.
+    #
+    # The index INSIDE a subscript does not count: `c[i] > 0` is data-dependent,
+    # and reading it as index-dependence refused every admissible case on the
+    # first run of this recogniser. Only a BARE reference — `i < m` — bounds the
+    # iteration space.
+    subscripted = set()
+    for c in cond.walk_preorder():
+        if c.kind == K.ARRAY_SUBSCRIPT_EXPR:
+            subscripted.update(d.hash for d in c.walk_preorder())
+    if any(c.kind == K.DECL_REF_EXPR and c.spelling == index
+           and c.hash not in subscripted for c in cond.walk_preorder()):
+        loop.unhandled.append("body.unsafe_speculation (index-dependent guard)")
+        return None
+    # Species BEFORE shape: `if (P) break;` is an early exit, not a malformed
+    # assignment, and naming it the latter prices the wrong capability.
+    for c in then.walk_preorder():
+        if c.kind in EARLY_EXIT | NESTED_LOOP:
+            loop.unhandled.append(_species(c))
+            return None
+    # A POINTER-VALIDITY guard protects the dereference itself. `if (da) da[i]
+    # += x;` converts to `da[i] = (da) ? ... : (da[i])`, and BOTH arms subscript
+    # `da` — a null dereference on exactly the iterations the guard existed to
+    # prevent. Found on darknet src/blas.c:61.
+    #
+    # The correctness gate CANNOT catch this class: the differential harness
+    # only ever passes valid, non-null arrays, so the input that would expose it
+    # is not in the test distribution. That makes it an ANALYSIS obligation, not
+    # something the stopwatch can be trusted to find. (G22's test-case validity
+    # problem, one level up.)
+    for c in cond.walk_preorder():
+        if c.kind != K.DECL_REF_EXPR:
+            continue
+        if c.hash in subscripted:
+            continue                      # `c[i] > 0` — a value, not a pointer
+        if c.type.kind in (ci.TypeKind.POINTER, ci.TypeKind.CONSTANTARRAY,
+                           ci.TypeKind.INCOMPLETEARRAY):
+            loop.unhandled.append(
+                "body.unsafe_speculation (pointer-validity guard)")
+            return None
+    inner = then
+    if inner.kind == K.COMPOUND_STMT:
+        kids = list(inner.get_children())
+        if len(kids) != 1:
+            loop.unhandled.append(
+                f"body.guarded_nonassignment ({len(kids)} statements)")
+            return None
+        inner = kids[0]
+    if inner.kind not in (K.BINARY_OPERATOR, K.COMPOUND_ASSIGNMENT_OPERATOR):
+        loop.unhandled.append("body.guarded_nonassignment (not an assignment)")
+        return None
+    ikids = list(inner.get_children())
+    if inner.kind == K.BINARY_OPERATOR:
+        toks = [t.spelling for t in inner.get_tokens()]
+        if "=" not in toks:
+            loop.unhandled.append("body.guarded_nonassignment (not an assignment)")
+            return None
+    if not ikids or ikids[0].kind != K.ARRAY_SUBSCRIPT_EXPR:
+        loop.unhandled.append(
+            "body.guarded_nonassignment (target is not an array element)")
+        return None
+    # The guarded work runs on every iteration after conversion, so it must not
+    # TRAP. Division is the case that matters: `if (a[i]) b[i] = c[i]/a[i];`
+    # converts to a division by zero on exactly the iterations the guard existed
+    # to prevent.
+    for c in inner.walk_preorder():
+        if c.kind in (K.BINARY_OPERATOR, K.COMPOUND_ASSIGNMENT_OPERATOR):
+            if any(t.spelling in TRAPPING for t in c.get_tokens()):
+                loop.unhandled.append(
+                    "body.unsafe_speculation (trapping guarded expression)")
+                return None
+        if c.kind == K.CALL_EXPR:
+            loop.unhandled.append(
+                "body.unsafe_speculation (call in guarded expression)")
+            return None
+    for c in inner.walk_preorder():
+        if c.kind in EARLY_EXIT | NESTED_LOOP | {K.IF_STMT, K.CONDITIONAL_OPERATOR}:
+            loop.unhandled.append(_species(c))
+            return None
+    return (_txt(cond).strip(), inner)
+
+
+def qualified_base(base) -> str | None:
+    """Name the array by its FULL base expression, not by the first identifier.
+
+    `psDD->sAR2_Q14[j]` was named `psDD`, which merges every array member of one
+    struct into a single name. Two disjoint members then look like one location:
+    on a reduction of opus silk/NSQ_del_dec.c the lifter INVENTED a loop-carried
+    output dependence between `p->x` and `p->y`, and the chooser proposed
+    deleting the stores to one of them. Distinct members are distinct storage,
+    so the qualified name is both sound and strictly more precise.
+
+    Accepts identifier chains joined by `.` / `->`. Anything else -- a call, an
+    indexed base like `p[k]->m`, arithmetic -- is REFUSED rather than named
+    after whichever identifier happened to come first.
+    """
+    toks = [t.spelling for t in base.get_tokens()]
+    while len(toks) >= 2 and toks[0] == "(" and toks[-1] == ")":
+        toks = toks[1:-1]
+    if not toks or len(toks) % 2 == 0:
+        return None
+    for i, t in enumerate(toks):
+        if i % 2 == 0:
+            if not t.isidentifier():
+                return None
+        elif t not in (".", "->"):
+            return None
+    return "".join(toks)
+
+
 def collect(body, index: str, loop: Loop) -> None:
-    """Walk the loop body in program order, recording array accesses."""
-    for c in body.walk_preorder():
-        if c.kind in CONTROL_FLOW:
-            loop.unhandled.append(f"control flow in loop body: {c.kind.name}")
-            break
-    stmts = list(body.get_children()) if body.kind == K.COMPOUND_STMT else [body]
+    """Walk the loop body in program order, recording array accesses.
+
+    A top-level `if (P) lhs = rhs;` is NORMALISED, not refused: the predicate is
+    lifted onto the statement and the body becomes straight-line again, so every
+    downstream analysis applies unchanged. Everything else about control flow is
+    still refused, now by SPECIES rather than as one genus (ADR-0015).
+
+    The whole `if` cursor is what gets scanned for accesses, so the PREDICATE's
+    own reads are recorded. Dropping them would hide a real dependence.
+    """
+    raw = list(body.get_children()) if body.kind == K.COMPOUND_STMT else [body]
+    stmts, guards, texts = [], [], []
+    for st in raw:
+        if st.kind == K.IF_STMT:
+            m = maskable_if(st, index, loop)
+            if m is None:
+                return
+            guards.append(m[0]); stmts.append(st); texts.append(_txt(m[1]))
+            continue
+        bad = next((c for c in st.walk_preorder() if c.kind in CONTROL_FLOW),
+                   None)
+        if bad is not None:
+            loop.unhandled.append(_species(bad))
+            return
+        guards.append(None); stmts.append(st); texts.append(_txt(st))
+    loop.stmts, loop.guards = texts, guards
 
     def subscripts(node, writes: set):
         for sub in node.walk_preorder():
@@ -163,12 +351,17 @@ def collect(body, index: str, loop: Loop) -> None:
             if len(ch) != 2:
                 continue
             base, idxe = ch
-            name = None
-            for b in base.walk_preorder():
-                if b.kind == K.DECL_REF_EXPR:
-                    name = b.spelling
-                    break
+            name = qualified_base(base)
             if name is None:
+                # Label the SHAPE, not just the failure. G21 prices capabilities
+                # from these strings, and a multi-dimensional access filed under
+                # `subscript.indirect` prices the wrong capability. `A[i][j]` has
+                # an INDEXED base; that is the structural test, and it replaces
+                # the hard-coded list of TSVC array names the classifier used.
+                btxt = _txt(base).strip()
+                shape = "multi_dimensional" if "[" in btxt else "opaque_base"
+                loop.unhandled.append(
+                    f"non-affine base ({shape}) {btxt[:40]}[...]")
                 continue
             a = affine(idxe, index)
             if a is None:
@@ -247,6 +440,11 @@ def collect(body, index: str, loop: Loop) -> None:
         for name, coeff, off, sub in subscripts(st, write_nodes):
             is_w = sub.hash in write_nodes
             loop.accesses.append(Access(name, coeff, off, is_w, n))
+            # A GUARDED store becomes `lhs = P ? rhs : lhs`, which READS the
+            # location it writes on the iterations the guard excludes. That read
+            # is real and must appear in the dependence graph.
+            if is_w and loop.guards[n] is not None:
+                loop.accesses.append(Access(name, coeff, off, False, n))
             # a compound assignment (`a[i] += ...`) both reads AND writes
             if is_w:
                 par = sub.semantic_parent
@@ -375,15 +573,37 @@ def lift_file(path: Path, flags: list[str]) -> list[Loop]:
             kids = list(node.get_children())
             if i and kids:
                 body = kids[-1]
-                hdr = _txt(node)
-                hdr = hdr[:hdr.index("{")].strip() if "{" in hdr else hdr
+                # The header is every token BEFORE the body starts. Cutting
+                # at the first `{` works only for a braced body: on
+                # `for (...) if (P) a[i] = b[i];` there is no brace, so the
+                # whole loop became its own header and the emitted function
+                # failed to compile. Ask the cursor extents instead of the text.
+                _b0 = body.extent.start.offset
+                hdr = " ".join(t.spelling for t in node.get_tokens()
+                               if t.extent.start.offset < _b0).strip()
                 bs = (list(body.get_children())
                       if body.kind == K.COMPOUND_STMT else [body])
                 lp = Loop(func or "?", node.location.line, hdr,
                           [_txt(x) for x in bs], i, lo, up, st)
                 collect(kids[-1], i, lp)
-                if lp.accesses:
-                    analyse(lp)
+                # A REFUSED loop is still a loop. `collect` returns before
+                # recording accesses when it refuses, so gating on accesses
+                # alone would drop refusals from every corpus count — shrinking
+                # the denominator and inflating the affine rate.
+                if lp.accesses or lp.unhandled:
+                    # An UNPARSED header is not a step-1 ascending loop. On
+                    # `for (k = lt-1; k >= 1; k--)` the header yields no upper
+                    # bound and no step, and analysing the body anyway assumes
+                    # both -- reversing every dependence direction, since under
+                    # a descending step a LOWER offset is reached EARLIER. The
+                    # chooser then proposed deleting a live store (NPB MG
+                    # mg.c:343). Refuse, never approximate.
+                    if lp.upper is None or lp.step is None:
+                        lp.unhandled.append(
+                            "unparsed loop header (iteration.unparsed_header) "
+                            + hdr[:50])
+                    else:
+                        analyse(lp)
                     out.append(lp)
         for c in node.get_children():
             walk(c, func)

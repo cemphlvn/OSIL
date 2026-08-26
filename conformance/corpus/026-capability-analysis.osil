@@ -18,7 +18,20 @@ capability affine_subscript {
 
 capability straight_line {
     admits { body.sequential }
-    refuses { body.control_flow }
+    refuses { body.early_exit body.nested_loop }
+}
+
+// G23. `body.control_flow` was a GENUS, and a genus-level refusal stops being
+// univocal the moment the analyser admits one of its species. It is replaced by
+// its species here (ADR-0015): a guarded assignment is admitted, and each way a
+// conditional can fail to be one is named and priced separately.
+//
+// `body.guarded_alternative` (if/else) is genuinely convertible and deliberately
+// NOT built — declared and priced rather than silently assumed away.
+capability predicated_execution {
+    admits { body.guarded_assignment }
+    refuses { body.nested_guard body.unsafe_speculation
+              body.guarded_nonassignment body.guarded_alternative }
 }
 
 capability single_index {
@@ -30,6 +43,16 @@ capability single_index {
 // (s211 1.66x, s1213 1.67x, both bit-identical). Only a dependence CYCLE is an
 // irreducible recurrence. Conflating the two charged the scan capability for
 // kernels distribution had already won — U14.
+// A loop whose header yields no upper bound or no step is not a step-1
+// ascending loop -- it is an UNREAD iteration space. Descending loops
+// (`for (k = lt-1; k >= 1; k--)`) reverse every dependence direction, so
+// analysing one under the default assumption inverts the answer. Added at the
+// repo-scale probe (docs/design/repo-scale-probe.md).
+capability countable_iteration {
+    admits { iteration.countable }
+    refuses { iteration.unparsed_header }
+}
+
 capability separable_dependence {
     admits { dep.loop_independent dep.anti dep.output_dead dep.carried_separable }
     refuses { dep.recurrence_cycle }

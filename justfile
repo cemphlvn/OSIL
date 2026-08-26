@@ -57,8 +57,14 @@ price FILE:
 harness:
     uv run --with libclang python3 tools/harness_check.py
 
+# G25 witness validation: an INDEPENDENT checker re-decides every preservation
+# claim (SV-COMP's discipline; shares no code with the chooser)
+witness:
+    uv run --with libclang python3 tools/witness_emit.py /tmp/osil-witnesses.json
+    python3 tools/witness_check.py /tmp/osil-witnesses.json
+
 # full gatekeeper: contract + round-trips + render + policy + resolution + stages + views
-test: check roundtrip egraph cproj lift choose ceiling harness render policy resolve stages views
+test: check roundtrip egraph cproj lift choose ceiling harness witness render policy resolve stages views
 
 # G15 stage commutation: the pipeline tests itself (uv supplies egglog)
 stages:

@@ -61,7 +61,10 @@ def h1_filter_extracts_something() -> list[str]:
     probe = ROOT / "optimizer" / "probe" / "none60" / "k.c"
     if not probe.exists():
         return ["probe source missing; cannot exercise the filter"]
-    r = subprocess.run(["clang", "-O3", "-mcpu=native", "-c", str(probe),
+    sys.path.insert(0, str(TOOLS))
+    from c_choose import arch_flag           # ARM/x86, probed not assumed
+    r = subprocess.run(["clang", "-O3", *([arch_flag()] if arch_flag() else []),
+                        "-c", str(probe),
                         "-o", "/dev/null", "-Rpass=loop-vectorize",
                         "-Rpass-missed=loop-vectorize"],
                        capture_output=True, text=True)
