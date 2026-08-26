@@ -46,6 +46,16 @@ stage harness {
     reads { tools  optimizer.probe.none60 }
 }
 
+// G25. The producer lifts and evaluates; the validator only reads the emitted
+// witnesses. They are declared as ONE stage because `just witness` runs them as
+// a pair -- the independence that matters is between their CODE, not between
+// their pipeline slots.
+stage witness {
+    runs = tools.witness_check
+    reads { optimizer.probe.none60  conformance.lift.predication
+            conformance.lift.repo_pins }
+}
+
 stage render {
     runs = tools.render_check
     reads { conformance.corpus  conformance.golden-render }

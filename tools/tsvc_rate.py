@@ -26,7 +26,7 @@ KERNEL = re.compile(r'^(s\d|vif|vpv|vtv|vpvtv|vpvts|vpvpv|vtvtv|vsumr|vdotr|vbor
 
 
 def baseline(src: Path, inc: Path) -> tuple[set, set]:
-    r = subprocess.run(["clang", "-O3", "-std=c99", "-w", "-mcpu=native",
+    r = subprocess.run(["clang", "-O3", "-std=c99", "-w", *([c_choose.arch_flag()] if c_choose.arch_flag() else []),
                         "-c", str(src), "-o", "/dev/null", f"-I{inc}",
                         "-Rpass=loop-vectorize"], capture_output=True, text=True)
     lines = src.read_text(errors="replace").splitlines()
@@ -149,7 +149,7 @@ def eval_ctx(lp, p, tmp: Path, inc: Path, extra: list[Path]) -> dict:
                                  "targets": ", ".join(arrays),
                                  "scratch": scratch})
     exe = tmp / "run"
-    c = subprocess.run(["clang", "-O3", "-std=c99", "-w", "-mcpu=native",
+    c = subprocess.run(["clang", "-O3", "-std=c99", "-w", *([c_choose.arch_flag()] if c_choose.arch_flag() else []),
                         str(cf), str(rf), *[str(e) for e in extra],
                         f"-I{inc}", "-o", str(exe), "-lm"],
                        capture_output=True, text=True)
@@ -174,7 +174,7 @@ def eval_ctx(lp, p, tmp: Path, inc: Path, extra: list[Path]) -> dict:
 def clang_vectorizes(csrc: str, tmp: Path, inc: Path = None) -> bool:
     f = tmp / "chk.c"
     f.write_text(csrc)
-    cmd = ["clang", "-O3", "-std=c99", "-w", "-mcpu=native", "-c", str(f),
+    cmd = ["clang", "-O3", "-std=c99", "-w", *([c_choose.arch_flag()] if c_choose.arch_flag() else []), "-c", str(f),
            "-o", "/dev/null", "-Rpass=loop-vectorize"]
     if inc: cmd.append(f"-I{inc}")
     r = subprocess.run(cmd, capture_output=True, text=True)
@@ -219,7 +219,7 @@ def main() -> int:
     base, tot = len(vec), len(vec) + len(recovered)
     print(f"  === TSVC2 vectorization rate (compiler-reported) ===")
     print(f"  kernels                       : {n}")
-    print(f"  clang -O3 -mcpu=native alone  : {base}/{n} = {100*base/n:.1f}%")
+    print(f"  clang -O3 {c_choose.arch_flag()} alone  : {base}/{n} = {100*base/n:.1f}%")
     print(f"  kernels the chooser attempted : {attempted}")
     print(f"  RECOVERED (correct + faster + clang then vectorizes) : {len(recovered)}")
     print(f"  clang + chooser               : {tot}/{n} = {100*tot/n:.1f}%")

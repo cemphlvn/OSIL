@@ -1,6 +1,6 @@
 {
- "commuting": 75,
- "pairs_total": 78,
+ "commuting": 88,
+ "pairs_total": 91,
  "stages": {
   "ceiling": {
    "reads": [
@@ -110,6 +110,14 @@
     "conformance.golden-render.views",
     "conformance.matrix.matrix_yaml",
     "profiles"
+   ],
+   "writes": []
+  },
+  "witness": {
+   "reads": [
+    "conformance.lift.predication",
+    "conformance.lift.repo_pins",
+    "optimizer.probe.none60"
    ],
    "writes": []
   }

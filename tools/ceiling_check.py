@@ -52,6 +52,17 @@ def classify(refused: set) -> tuple[set, dict]:
     for lp in loops:
         if not lp["func"].endswith("_v0"):
             continue
+        # A loop with NO accesses affine in its own index is scaffolding, not a
+        # kernel: in k.c that is the outer `for (nl = 0; nl < reps; nl++)`
+        # repeat loop, whose body's subscripts are affine in `i`, not `nl`.
+        # These are keyed by FUNCTION, so unioning the scaffolding's features
+        # into the kernel's makes every kernel look blocked by
+        # `body.nested_loop` — which it is not. The scaffolding used to be
+        # dropped for having no accesses; it now survives so that refused loops
+        # are counted at repo scale, so the exclusion has to be stated here
+        # instead of happening by accident.
+        if not lp["accesses"]:
+            continue
         feats.setdefault(lp["func"], set()).update(cc.features(lp))
     ok = {f for f, ft in feats.items() if not (ft & refused)}
     return ok, feats

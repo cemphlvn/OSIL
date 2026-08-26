@@ -47,6 +47,12 @@ unsound transformation.
 | genann | 10 | 9 (90%) | 1 | 0 | 0 |
 | **kissfft** | 2 | **0 (0%)** | 2 | 0 | 0 |
 
+> Those rows were measured before 2026-08-25 and with the pre-qualified-base
+> naming (`p->x[i]` was recorded as `p`). A whole-repository scan of six
+> projects — 1,871 distinct loops, 38% fully affine — is in
+> `docs/design/repo-scale-probe.md`, together with the four defects that scan
+> found in the shipped tools.
+
 **Coverage is set by code style, not by effort.** Array-indexed numeric code
 lifts at 50-90%. Pointer-walking code (kissfft's FFT, libsvm's sparse dot
 products) lifts at **0%** — and no amount of work on the affine analyzer changes

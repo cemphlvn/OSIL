@@ -1,4 +1,15 @@
 # The merge gate, mechanized (GOVERNANCE.md): every push runs the gates.
+#
+# Until 2026-08-26 this ran six tools while `just test` ran thirteen, and none
+# of the optimizer track (lift, choose, ceiling, harness, witness, egraph,
+# cproj, stages, views) was among them. The badge went green without executing
+# a single line of G17-G25. For a repo whose argument is that claims are
+# checked rather than remembered, that was the sharpest inconsistency in it.
+#
+# The justfile's `test:` recipe is now the SINGLE SOURCE OF TRUTH for what the
+# gatekeeper runs. Re-listing the gates here would create a third place to
+# drift -- the justfile and corpus 023 already have to agree, stage for stage,
+# and `just stages` checks it.
 name: gates
 on: [push, pull_request]
 jobs:
@@ -7,15 +18,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - name: corpus contract (grammar/coverage/pins/rejections)
-        run: python3 tools/osil_check.py
-      - name: policy agreement (actors vs skills)
-        run: python3 tools/policy_check.py
-      - name: resolution (references find their universals)
-        run: python3 tools/osil_resolve.py
-      - name: golden render (data gate, svg advisory)
-        run: python3 tools/render_check.py
-      - name: ONNX round-trip (preservation score)
-        run: uv run --with onnx python3 tools/onnx_roundtrip.py
-      - name: compression ladder (baselines, reachability)
-        run: uv run --with onnx python3 tools/compression_scan.py
+
+      - name: toolchain
+        run: |
+          clang --version
+          mkdir -p "$HOME/.local/bin"
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
+            | bash -s -- --to "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: just --version
+        run: just --version
+
+      # Measurement gates are safe to run on a shared runner BY DESIGN: the
+      # chooser gates DECISIONS and CORRECTNESS, never speedups (CHOOSER.md,
+      # "what is gated, and what is not"). CI noise cannot make this flaky --
+      # it can only make the advisory profitability lines less flattering.
+      - name: full gatekeeper (just test)
+        run: just test

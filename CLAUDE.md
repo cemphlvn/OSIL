@@ -50,7 +50,9 @@ render + policy + resolve + stages). Standing agreement loops inside the
 gatekeeper: policy (repo-policy.osil actors == skill frontmatter, G8) and
 stages (justfile `test:` line == corpus 023 stage declarations, 1:1). Gate
 convention: numbered gates append BEFORE the terminal gate GX (Linux
-Foundation submission — blocked on maintainer calls: name-vs-OAAX, license).
+Foundation submission — no maintainer blockers remain: naming RESOLVED
+(OSIL, ADR-0012), license RATIFIED (MIT, ADR-0013); submission prep is
+the gate).
 Recent: G14 = equivalence preservation contract on egglog (ADR-0009;
 realizability defined in core.md; adapter self-suite ES001–003); G15 =
 stage composition (`then`, ADR-0010; the pipeline's pair matrix is gated;

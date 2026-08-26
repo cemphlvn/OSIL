@@ -81,12 +81,30 @@ def read_capabilities(path: Path) -> dict:
 def features(lp: dict) -> set[str]:
     """The features a lifted loop exhibits, in the capabilities' vocabulary."""
     f = set()
+    # Control-flow SPECIES. `body.control_flow` was a genus, and once the
+    # analyser admits `body.guarded_assignment` a genus-level refusal stops
+    # being univocal (ADR-0015). The lifter now emits the species name as the
+    # head of the unhandled string; these literals must stay spelled out here,
+    # because the gate derives reachability from this function's source.
+    SPECIES = ("body.early_exit", "body.nested_loop", "body.nested_guard",
+               "body.unsafe_speculation", "body.guarded_nonassignment",
+               "body.guarded_alternative")
     for u in lp["unhandled"]:
-        if "control flow" in u:
-            f.add("body.control_flow")
+        hit = next((sp for sp in SPECIES if u.startswith(sp)), None)
+        if hit:
+            f.add(hit)
+        elif "unparsed loop header" in u:
+            f.add("iteration.unparsed_header")
+        elif "(multi_dimensional)" in u:
+            # `A[i][j]` — an INDEXED base, detected structurally by the lifter.
+            f.add("access.multi_dimensional")
         elif "non-affine" in u:
             f.add("subscript.wraparound" if "(wraparound)" in u
                   else "subscript.indirect")
+    # TSVC's `flat_2d_array[i*LEN+j]` is a one-dimensional array carrying a
+    # two-dimensional access: structurally it is a non-affine subscript, and
+    # only the NAME says what it means. Kept as a corpus-specific override,
+    # and marked as one.
     arrays = {a["array"] for a in lp["accesses"]}
     if arrays & {"aa", "bb", "cc", "tt", "flat_2d_array"}:
         f.add("access.multi_dimensional")
