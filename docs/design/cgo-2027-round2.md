@@ -6,10 +6,18 @@ makes artifact evaluation **mandatory**; artifacts are badged Available /
 Functional / Reusable / Results Reproduced, with up to 10% Distinguished Papers
 and up to 10% Distinguished Artifacts.
 
-`ASSUMPTION:` the artifact-evaluation cycle listed on the CGO 2027 site
-(submission 31 Aug, notification 15 Oct) aligns with **Round 1** acceptances.
-The Round 2 AE schedule is not stated there and must be confirmed with the
-chairs before committing to the tool-paper track.
+**Verified 2026-08-29** against `2027.cgo.org/track/cgo-2027-papers`
+(cross-checked `conf.researchr.org/track/cgo-2027/cgo-2027-papers`): Round 2
+has a distinct "new R2 submissions" category, separate from "R1-revision
+submissions" — a paper that never went through Round 1 may submit fresh on
+10 September 2026, 11:59pm AoE. Format is ACM, 11 pages of text excluding
+bibliography, unlimited references, and supplementary material without page
+limit (reviewers not obliged to read it). Double-blind: anonymize, discuss own
+prior work in third person. **Artifact evaluation is optional for standard
+research papers** — the mandatory-AE requirement binds only the tool-paper
+track. The earlier `ASSUMPTION:` here (that the Round 2 AE schedule needed
+chair confirmation) is resolved: it does not apply, because this submission is
+not entering the tool-paper track at all (see DECISION below).
 
 ## What this is not
 
@@ -72,3 +80,17 @@ A journal is the lower-risk home for C1–C4 — ACM TACO has published exactly 
 genre (*"Evaluating Auto-Vectorizing Compilers through Objective Withdrawal of
 Useful Information"*), with no deadline pressure. `ASSUMPTION:` TACO's current
 submission process has not been checked.
+
+---
+
+## DECISION (2026-08-29)
+
+Accepted this document's own recommendation: **skip the tool-paper track,
+submit C1–C4 as a "new R2 submission" to CGO 2027's regular research track**,
+deadline 10 September 2026, 11:59pm AoE. E remains open and unattempted (no
+code exists toward C, D, or E as of this date) and is not required for this
+track — optional AE, if pursued, can rest on the already-closed C1–C4 evidence
+without waiting on E. Hold the tool-paper track for a future round where E has
+passed once, per this doc's original condition. TACO submission process
+remains an open `ASSUMPTION:`, not yet checked, and is not needed unless the
+CGO submission is rejected.
