@@ -1,0 +1,92 @@
+// profiles/domain/thread/thread.osil
+// provenance: threadlab PLAN.md, stage P1 (2026-08-29) — "intent/fork/thread/
+// realization" as OSIL-SIR vocabulary, first proven against grammar v0.7 with
+// zero grammar/resolver/core changes (just check / just resolve, exit 0).
+// Extended 2026-08-29 (ADR-0018): capability + model declarations position
+// this domain against NAS's own three-part taxonomy (Elsken, Metzen & Hutter
+// 2018, arXiv:1808.05377) using ONLY constructs this repo already ships —
+// proof that `capability_decl` (G21, built for the C-loop optimizer) and
+// `model_decl` (intake, corpus 006) generalize to a second, unrelated domain
+// rather than being C-optimizer-specific machinery.
+//
+// Real fork this models: 2026-08-29, two concurrent Claude Code sessions
+// collided over shared files while building a GPU lifecycle kernel feature
+// in persona-fidelity-lab.
+
+profile domain.thread {
+    version = 0
+}
+
+// -- search space: the fork itself, one identity with >=2 realizations -----
+// (NAS dimension: search space. Unchanged from the P1 draft.)
+concept ForkedIntent {
+    equivalent_under { fork_point = file_ownership_collision }
+    to {
+        continue_kernel_lifecycle_feature,
+        spawn_parallel_gpu_suite_thread
+    }
+}
+
+// -- performance estimator: what a continuity mechanism can actually carry -
+// (NAS dimension: performance estimation strategy — the zero-cost-proxy
+// shape, priced from declared structure rather than measured by execution,
+// exactly as G21 prices a loop capability before the transformation needing
+// it is built.)
+//
+// Grounded in a real trial, not hypothesis: three continuity mechanisms were
+// run live against Prime Agent on matraix-lab, 2026-08-29 (threadlab PLAN.md,
+// "3-step ladder"). Each admits/refuses named context-switch scenarios.
+capability session_scoped_memory {
+    admits { same_process_turn }
+    refuses { new_session daemon_restart cross_machine }
+}
+
+capability global_project_memory {
+    admits { same_process_turn new_session daemon_restart }
+    refuses { cross_machine_without_shared_disk }
+}
+
+capability git_based_ledger {
+    admits { same_process_turn new_session daemon_restart cross_machine days_later }
+    refuses { zero_setup }
+}
+
+// -- search strategy: the objective a resumption mechanism must satisfy ----
+// (NAS dimension: search strategy. `model` compresses intent+constraints the
+// way the C-optimizer's chooser does implicitly in Python; here it is
+// declared, not buried in a script.)
+//
+// No `ecosystem` binding yet: no continuity mechanism here has a tested
+// preservation contract of its own the way `ecosystem c`/`ecosystem onnx` do
+// (each required a full CONTRACT.osil before being referenced). Declaring
+// this without one is the honest state, not a placeholder standing in for
+// work not yet done.
+model ColdResumption {
+    purpose: intent_preservation
+
+    constraints {
+        preserved_fields >= 4
+        context_switch_kind = cross_daemon_restart
+    }
+}
+
+// -- projection: what crossing into a NEW session/conversation preserves and
+// may lose. (unchanged from the P1 draft that already passed just check /
+// just resolve, 2026-08-29)
+projection ContextSwitch {
+    from OSIL-SIR
+    preserve intent_identity
+}
+
+preserves {
+    intent_identity
+    constraint_set
+    fork_point
+    realization_set
+}
+
+may_lose {
+    conversational_scaffold
+    transcript_history
+    exact_phrasing
+}
