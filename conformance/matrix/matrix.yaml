@@ -10,7 +10,7 @@ cells:
     preservation_score: "4/4"
     fields: {tensor_types: true, operator_versions: true, graph_topology: true, constants: true}
     cases: [add, matmul, split]
-    checked: 2026-08-26
+    checked: 2026-08-29
   - spec: "0.0.0-draft (grammar v0.5)"
     adapter: "egglog-roundtrip v0 (tools/egraph_roundtrip.py)"
     upstream: "egglog 13.2.0 (PyPI; vendored core rev 2e5657b)"
@@ -18,7 +18,7 @@ cells:
     preservation_score: "4/4"
     fields: {rule_identity: true, equivalence: true, guard_selectivity: true, term_extraction: true}
     cases: [add_associativity, distributivity, identity_div, inverse_add, shift_zero, strength_reduction]
-    checked: 2026-08-26
+    checked: 2026-08-29
   - spec: "0.0.0-draft (grammar v0.6)"
     adapter: "c-projection v0 (tools/c_roundtrip.py)"
     upstream: "Apple clang version 17.0.0 (clang-1700.6.3.2)"
@@ -26,4 +26,4 @@ cells:
     preservation_score: "4/4"
     fields: {realization_identity: true, value_equivalence: true, guard_selectivity: true, emission_determinism: true}
     cases: [c001, c002, c003]
-    checked: 2026-08-26
+    checked: 2026-08-29
