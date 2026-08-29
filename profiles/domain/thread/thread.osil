@@ -51,6 +51,13 @@ capability git_based_ledger {
     refuses { zero_setup }
 }
 
+// "merge" here means explicit branch reconciliation by concurrent writers;
+// OSIL declares the facts but does not resolve conflicting intent by itself.
+capability concurrent_writers_with_merge {
+    admits { concurrent_forks branch_reconciliation }
+    refuses { automatic_semantic_merge }
+}
+
 // -- search strategy: the objective a resumption mechanism must satisfy ----
 // (NAS dimension: search strategy. `model` compresses intent+constraints the
 // way the C-optimizer's chooser does implicitly in Python; here it is
