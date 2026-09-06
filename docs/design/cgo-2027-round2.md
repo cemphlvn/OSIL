@@ -116,3 +116,18 @@ passed once, per this doc's original condition. TACO submission process is now
 checked (see above) and confirmed a genre and page-budget fit; not needed
 unless the CGO submission is rejected, at which point re-verify the APC rate
 in effect at that time before submitting.
+
+## DECISION (2026-09-06) — anonymity vs. the public repository
+
+First full draft (`paper/main.tex`) written and compiled clean at 5 of 11
+pages. `cemphlvn/OSIL` is a **public** repository; CGO's own guidelines say
+only *"author names as well as hints of identity are to be removed from the
+submitted paper... if in doubt, contact the PC Chairs"* — no explicit
+policy on a pre-existing public repository that matches the submission.
+Checked the paper text directly: it names neither the project ("OSIL"), the
+repository, nor the author anywhere. Decision: **accept the residual risk**
+rather than email the chairs or build an anonymized mirror — this is common
+practice for an established open-source project predating submission. Do
+not reference the real repository URL anywhere in the submitted paper or
+its supplementary material; do not advertise the connection during review.
+
