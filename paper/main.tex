@@ -1,5 +1,8 @@
 \documentclass[sigconf,review,anonymous]{acmart}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
 \acmConference[CGO 2027]{International Symposium on Code Generation and
 Optimization}{March 20--24, 2027}{Salt Lake City, UT, USA}
 \acmDOI{}
@@ -90,6 +93,26 @@ share no code with the component whose claims it checks, found a
 correctness bug -- wrong output at a trip count the producing harness never
 exercised -- on its first run (\S\ref{sec:c4}).
 \end{itemize}
+
+\begin{table*}[t]
+\caption{The four findings, at a glance. Every number is machine-checked by
+a single reproducible entry point, \texttt{just test}.}
+\label{tab:summary}
+\small
+\begin{tabular}{@{}p{0.03\linewidth}p{0.40\linewidth}p{0.32\linewidth}p{0.15\linewidth}@{}}
+\toprule
+\textbf{\#} & \textbf{What was trusted, and shouldn't have been} & \textbf{What caught it} & \textbf{Magnitude} \\
+\midrule
+C1 & A genus-level capability price, read as a species-level forecast & A prospective build-then-compare, recorded before the fact & 599 vs.\ 14 (43$\times$) \\
+\addlinespace
+C2 & A benchmark's own internal uniformities, mistaken for coverage & Running unmodified on 10 unrelated repositories & 8 defect classes, 0/10{,}777 wins \\
+\addlinespace
+C3 & A timing rig that reused corrupted state across trials & Resetting input outside the timed region & 1.56$\times$ ACCEPT $\rightarrow$ 5.9$\times$ regression \\
+\addlinespace
+C4 & A correctness harness's own claim about its own output & A validator sharing no code with the producer & $-86 \rightarrow{}+50$ score, 1st run \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 We position these as a single argument rather than four anecdotes:
 \emph{self-measurement is not evidence about a system, no matter how
@@ -184,6 +207,33 @@ differential harness run over many input regimes, verify it faster against a
 timing gate, and accept or reject. All measurements in this paper were taken
 on an Apple M4 (4 performance + 6 efficiency cores, 128-bit NEON, no
 general-purpose SVE).
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=6mm,
+  box/.style={draw, rounded corners, align=center, minimum height=8mm,
+    minimum width=15mm, font=\scriptsize, fill=gray!8},
+  gate/.style={box, fill=gray!22},
+  arr/.style={-{Stealth[length=1.6mm]}, thick}
+]
+\node[box] (lift) {Lift\\\tiny(libclang)};
+\node[box, right=of lift] (classify) {Classify\\\tiny(dependence)};
+\node[box, right=of classify] (choose) {Choose\\\tiny(transformation)};
+\node[gate, right=of choose] (correct) {Verify\\correct\\\tiny(\S\ref{sec:c2}, \S\ref{sec:c4})};
+\node[gate, right=of correct] (fast) {Verify\\faster\\\tiny(\S\ref{sec:c3})};
+\node[box, right=of fast] (accept) {Accept /\\Reject};
+\draw[arr] (lift) -- (classify);
+\draw[arr] (classify) -- (choose);
+\draw[arr] (choose) -- (correct);
+\draw[arr] (correct) -- (fast);
+\draw[arr] (fast) -- (accept);
+\end{tikzpicture}
+\caption{The pipeline under study. Shaded stages are gates a candidate must
+pass; the two we found broken (\S\ref{sec:c2}--\S\ref{sec:c4}) are the ones
+this paper is actually about, not the transformation catalogue itself.}
+\label{fig:pipeline}
+\end{figure*}
 
 \paragraph{TSVC2 headline.} Clang \texttt{-O3 -mcpu=native} alone vectorizes
 64/151 = 42.4\% of TSVC2's kernels. Adding the pipeline recovers 10 further
