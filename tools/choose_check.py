@@ -14,7 +14,7 @@ WHAT IS NOT GATED (machine-dependent, reported only):
     The stopwatch still runs on every invocation of `tools/c_choose.py`; it is
     just not a repo invariant.
 """
-import json, subprocess, sys, tempfile
+import json, os, platform, subprocess, sys, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -114,7 +114,13 @@ EXPECT_PROFIT = {
     # (CHOOSER.md); s221 is the marginal case the stopwatch keeps rejecting.
     "s116_v0": "not-faster", "s221_v0": "not-faster",
     "p001_mask_v0": "faster", "p003_twoarray_v0": "faster",
-    "p002_accum_v0": "not-faster",
+    # p002 is PLATFORM-dependent (loop wave 6-7, cw03). On x86_64 + gcc + AVX-512,
+    # the original compiles to a masked load + masked read-modify-write STORE of
+    # a[], while the select form loads a[] in full and does one UNMASKED store.
+    # An independent ABBA bench gave 1.46-1.51x (3 runs x 2 regimes, no order
+    # effect), equal to the rig's worst regime. The default records the prior
+    # declaration, whose source platform is not documented.
+    "p002_accum_v0": {"x86_64-gcc": "faster", "*": "not-faster"},
     # p004 was ACCEPT 1.56x under the old harness and is a 5.9x REGRESSION under
     # fresh inputs — confirmed independently outside the rig. The expectation
     # records the corrected fact, not the one that was published.
@@ -123,8 +129,30 @@ EXPECT_PROFIT = {
 PROFIT_LOG = []
 
 
-def log_profit(name, e):
+def platform_tag() -> str:
+    """`<machine>-<compiler family>`, e.g. `x86_64-gcc` or `arm64-clang`.
+    Profitability can depend on the ISA and the compiler (p002), not only on the
+    data profile. A dict expectation is keyed by this tag, with `*` as fallback.
+    A per-platform entry needs its own independent evidence; it is never copied
+    from another platform."""
+    cc = os.environ.get("CC", "clang")
+    try:
+        v = subprocess.run([cc, "--version"], capture_output=True, text=True).stdout.lower()
+    except OSError:
+        v = ""
+    fam = "clang" if "clang" in v else "gcc" if ("gcc" in v or "free software" in v) else os.path.basename(cc)
+    return f"{platform.machine()}-{fam}"
+
+
+def expected(name):
     want = EXPECT_PROFIT.get(name)
+    if isinstance(want, dict):
+        want = want.get(platform_tag(), want.get("*"))
+    return want
+
+
+def log_profit(name, e):
+    want = expected(name)
     if want is None:
         return
     v = e.get("verdict", "?")
