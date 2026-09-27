@@ -27,13 +27,51 @@ from onnx import helper, numpy_helper, TensorProto
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from osil_check import tokenize  # reference lexer — dogfood, do not fork
+from osil_check import Parser, tokenize  # reference lexer/parser — dogfood, do not fork
 
 ELEM_TO_TEXT = {TensorProto.FLOAT: "f32", TensorProto.FLOAT16: "f16",
                 TensorProto.BFLOAT16: "bf16", TensorProto.DOUBLE: "f64",
                 TensorProto.INT8: "i8", TensorProto.INT32: "i32",
                 TensorProto.INT64: "i64", TensorProto.BOOL: "bool_"}
 TEXT_TO_ELEM = {v: k for k, v in ELEM_TO_TEXT.items()}
+
+# statement-leading words of a flow document; a value spelled like one would be
+# read as the statement, so it is renamed like any non-identifier
+FLOW_KEYWORDS = {"use", "input", "const", "output", "layout"}
+
+
+def is_flow_ident(name):
+    """True iff the reference lexer reads `name` as exactly one identifier."""
+    try:
+        toks = [t for t in tokenize(name) if t.kind not in ("ws", "comment")]
+    except Exception:
+        return False
+    return len(toks) == 1 and toks[0].kind == "ident" and toks[0].text == name \
+        and name not in FLOW_KEYWORDS
+
+
+def flow_names(model):
+    """ONNX value name -> flow identifier, for the names that are not already one.
+    Deterministic (first occurrence order) and collision-free; the inverse rides
+    the passthrough so import restores the original names exactly (wave 2)."""
+    g = model.graph
+    names = [v.name for v in g.input] + [i.name for i in g.initializer] + [v.name for v in g.output]
+    for n in g.node:
+        names += list(n.input) + list(n.output)
+    names = [n for n in dict.fromkeys(names) if n]
+    taken = {n for n in names if is_flow_ident(n)}
+    ren = {}
+    for n in names:
+        if n in taken:
+            continue
+        base = "v_" + ("".join(c if c.isascii() and (c.isalnum() or c == "_") else "_" for c in n)
+                       .strip("_") or "x")
+        cand, k = base, 1
+        while cand in taken:
+            cand, k = f"{base}_{k}", k + 1
+        taken.add(cand)
+        ren[n] = cand
+    return ren
 
 
 def dims_of(vi):
@@ -64,24 +102,29 @@ def export_flow(model):
     g = model.graph
     opset = main_opset(model)
     init_names = {i.name for i in g.initializer}
+    ren = flow_names(model)
+
+    def f(name):
+        return ren.get(name, name)
+
     lines = ["use ecosystem.onnx", ""]
     for vi in g.input:
         if vi.name in init_names:
             continue
         t = ELEM_TO_TEXT[vi.type.tensor_type.elem_type]
-        lines.append(f"input {vi.name} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
+        lines.append(f"input {f(vi.name)} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
     for init in g.initializer:
         t = ELEM_TO_TEXT[init.data_type]
-        lines.append(f"const {init.name} : Tensor<{t}>[{','.join(map(str, init.dims))}]")
+        lines.append(f"const {f(init.name)} : Tensor<{t}>[{','.join(map(str, init.dims))}]")
     for vi in g.output:
         t = ELEM_TO_TEXT[vi.type.tensor_type.elem_type]
-        lines.append(f"output {vi.name} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
+        lines.append(f"output {f(vi.name)} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
     lines.append("")
     for node in g.node:
         since = op_since_version(node.op_type, opset)
-        outs = node.output[0] if len(node.output) == 1 \
-            else "(" + ", ".join(node.output) + ")"       # positional, D3/G6
-        lines.append(f"{', '.join(node.input)} -> onnx::{node.op_type}@{since} -> {outs}")
+        outs = f(node.output[0]) if len(node.output) == 1 \
+            else "(" + ", ".join(map(f, node.output)) + ")"       # positional, D3/G6
+        lines.append(f"{', '.join(map(f, node.input))} -> onnx::{node.op_type}@{since} -> {outs}")
     passthrough = {
         # full NodeProtos ride the sanctioned opaque passthrough (attributes,
         # names, domains); the text stays authoritative for the modeled
@@ -93,6 +136,7 @@ def export_flow(model):
         "graph_name": g.name,
         "opset_import": [(o.domain, o.version) for o in model.opset_import],
         "initializers": {i.name: i.SerializeToString().hex() for i in g.initializer},
+        "flow_names": {v: k for k, v in ren.items()},   # flow identifier -> ONNX name
     }
     return "\n".join(lines) + "\n", passthrough
 
@@ -175,6 +219,13 @@ def read_flow(text):
 def import_model(text, passthrough):
     uses, ios, edges = read_flow(text)
     assert "ecosystem.onnx" in uses, "flow must `use ecosystem.onnx`"
+    back = passthrough.get("flow_names", {})   # absent in pre-wave-2 passthroughs
+
+    def o(name):
+        return back.get(name, name)
+
+    ios = [(r, o(n), b, e, d) for (r, n, b, e, d) in ios]
+    edges = [([o(s) for s in srcs], op, [o(d) for d in dsts]) for (srcs, op, dsts) in edges]
 
     def vi(name, elem, dims):
         return helper.make_tensor_value_info(name, TEXT_TO_ELEM[elem], dims)
@@ -260,6 +311,9 @@ def main():
         onnx.checker.check_model(model)
 
         text, passthrough = export_flow(model)
+        # the projection's output must itself be OSIL: a round-trip that preserves
+        # everything through text the reference parser rejects proves nothing (GAP-6)
+        Parser(tokenize(text), set(), set()).parse_flow_document()
         rebuilt = import_model(text, passthrough)
         onnx.checker.check_model(rebuilt)
 
