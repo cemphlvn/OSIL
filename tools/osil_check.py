@@ -573,6 +573,11 @@ class Parser:
             self.expect_op(">")
         if self.at_op("["):
             self.take()
+            if self.at_op("]"):  # GAP-6: `[]` = rank 0 (scalar); no brackets = shape unstated
+                self.alt("type:rank0")
+                self.take()
+                return
+            self.alt("type:shaped")
             self.fire("dim_list")
             self.dim()
             while self.at_op(","):
@@ -760,6 +765,7 @@ ALL_PRODUCTIONS = [
 ALT_EXPECTED = sorted(
     f"{prod}:{alt}" for prod, alt_names in {
         "io_decl": ["input", "const", "output"],
+        "type": ["shaped", "rank0"],
         "add_op": ["+", "-"],
         "mul_op": ["*", "/", "<<", ">>"],
         "rel_op": ["<", "<=", ">", ">=", "=", "=="],

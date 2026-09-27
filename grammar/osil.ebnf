@@ -1,4 +1,7 @@
-(* OSIL grammar — v0.7
+(* OSIL grammar — v0.8 (proposed, awaiting ratification)
+   v0.8 (GAP-6): rank-0 tensor type `Tensor<T>[]`. No new production; the
+   dimension list inside brackets becomes optional. Pin 027 flips via XPASS.
+   v0.7
    v0.7 (G21): capability declarations — the toolchain's own analysis reach as
    vocabulary, so the ceiling on recoverable loops is derived, not asserted.
    ONE new construct; triple representation shipped with it (corpus 026).
@@ -134,7 +137,9 @@ out_spec        = identifier
                 | "(" , id_list , ")" ;     (* positional multi-output, D3/G6 *)
 op_ref          = [ identifier , "::" ] , identifier , [ "@" , integer ] ;
 type            = identifier , [ "<" , identifier , ">" ] ,
-                  [ "[" , dim_list , "]" ] ;
+                  [ "[" , [ dim_list ] , "]" ] ;
+                  (* v0.8 (GAP-6): `[]` = rank 0 (scalar), as ExportFlow already
+                     writes rank-0 initializers; no brackets = shape unstated. *)
 dim_list        = dim , { "," , dim } ;
 dim             = identifier | integer ;
 
