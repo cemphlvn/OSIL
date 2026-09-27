@@ -1,0 +1,12 @@
+// EXPECTED-FAIL: GAP-6
+// provenance: onto↔osil↔flow loop, wave 1 (2026-09-27). ONNX rank-0 initializers
+// (Reshape/Unsqueeze axes, scalar scales) are exported by the toolchain itself as
+// `Tensor<T>[]` (tools/onnx_roundtrip.py:75, `','.join([])`), and osil_read accepts
+// them (tools/osil_read.py:66-76), but the reference parser rejects the empty
+// dimension list (tools/osil_check.py:587). Found in deneme/birim_lm.flow:49.
+use ecosystem.onnx
+
+input X : Tensor<f32>[N,D]
+const s : Tensor<f32>[]
+
+X, s -> onnx::Mul@14 -> Y
