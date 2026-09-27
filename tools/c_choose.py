@@ -23,6 +23,7 @@ regression, and a chooser without a stopwatch would ship it.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -30,7 +31,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CC = "clang"
+CC = os.environ.get("CC", "clang")   # same contract as c_roundtrip.py (G17): $CC or clang
 
 
 def arch_flag(cc: str = CC) -> str:
