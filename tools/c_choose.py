@@ -41,6 +41,14 @@ def arch_flag(cc: str = CC) -> str:
     x86 clang it is a deprecated alias that tunes nothing, so the numbers would
     silently be untuned-baseline numbers. `demo/run.sh` has probed for this
     since G17; the gated tools had not. Probed once per process, not per call.
+
+    A flag is accepted only on a CLEAN compile: exit 0 and no diagnostic. On x86,
+    gcc accepts `-mcpu=native` with only a driver deprecation warning and exit 0,
+    and enables no ISA extension (`-march=x86-64`: no AVX2, no AVX-512). The
+    driver warning ignores `-Werror`. Probing by exit code alone picked it, and every loop was built at the
+    SSE2 baseline. There the original's guarded store cannot vectorize (no
+    masked store) while the select form can, so p004 read 4.8x/16.9x faster
+    when the real ratio is ~1.00x. Found in loop wave 6.
     """
     global _ARCH
     try:
@@ -54,7 +62,7 @@ def arch_flag(cc: str = CC) -> str:
         for f in ("-mcpu=native", "-march=native"):
             r = subprocess.run([cc, f, str(src), "-o", str(Path(td) / "a")],
                                capture_output=True, text=True)
-            if r.returncode == 0:
+            if r.returncode == 0 and not r.stderr.strip():   # a CLEAN compile, see above
                 _ARCH = f
                 break
     return _ARCH

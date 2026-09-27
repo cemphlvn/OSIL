@@ -10,7 +10,9 @@ set -u
 archflag() {  # -mcpu=native on ARM, -march=native on x86, neither if unsupported
   echo 'int main(void){return 0;}' > /tmp/_a.c
   for f in "-mcpu=native" "-march=native"; do
-    "$1" $f /tmp/_a.c -o /tmp/_a 2>/dev/null && { echo "$f"; return; }
+    # CLEAN compile only: x86 gcc takes -mcpu=native with a warning and exit 0 but
+    # enables no ISA extension (tools/c_choose.py arch_flag, loop wave 6)
+    e=$("$1" $f /tmp/_a.c -o /tmp/_a 2>&1) && [ -z "$e" ] && { echo "$f"; return; }
   done; echo ""
 }
 CCS=(); for c in "${CC:-clang}" gcc gcc-16 gcc-15 gcc-14; do
