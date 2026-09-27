@@ -1,5 +1,5 @@
-// EXPECTED-FAIL: GAP-6
-// provenance: onto↔osil↔flow loop, wave 1 (2026-09-27). ONNX rank-0 initializers
+// provenance: onto↔osil↔flow loop, wave 1 (2026-09-27); pinned GAP-6 from birth
+// via the expected-fail marker, flipped with grammar v0.8 (pending ratification). ONNX rank-0 initializers
 // (Reshape/Unsqueeze axes, scalar scales) are exported by the toolchain itself as
 // `Tensor<T>[]` (tools/onnx_roundtrip.py:75, `','.join([])`), and osil_read accepts
 // them (tools/osil_read.py:66-76), but the reference parser rejects the empty
