@@ -95,6 +95,16 @@ def main_opset(model):
     raise RuntimeError("no default-domain opset")
 
 
+def constant_value(node):
+    """The tensor of an input-less Constant node carried in `value`, else None.
+    Such a node IS a constant: it projects to a flow `const`, not to an edge with
+    no sources (which the grammar rightly has no form for). Wave 3."""
+    if node.op_type == "Constant" and not node.input and len(node.output) == 1 \
+            and len(node.attribute) == 1 and node.attribute[0].name == "value":
+        return node.attribute[0].t
+    return None
+
+
 # --------------------------------------------------- projection: model -> text
 def export_flow(model):
     """ModelProto -> (.flow text, passthrough). Text carries what OSIL models;
@@ -116,11 +126,21 @@ def export_flow(model):
     for init in g.initializer:
         t = ELEM_TO_TEXT[init.data_type]
         lines.append(f"const {f(init.name)} : Tensor<{t}>[{','.join(map(str, init.dims))}]")
+    constant_nodes = []   # (node index, ONNX output name): restored as nodes, in place
+    for idx, node in enumerate(g.node):
+        cv = constant_value(node)
+        if cv is None:
+            continue
+        constant_nodes.append((idx, node.output[0]))
+        t = ELEM_TO_TEXT[cv.data_type]
+        lines.append(f"const {f(node.output[0])} : Tensor<{t}>[{','.join(map(str, cv.dims))}]")
     for vi in g.output:
         t = ELEM_TO_TEXT[vi.type.tensor_type.elem_type]
         lines.append(f"output {f(vi.name)} : Tensor<{t}>[{','.join(map(str, dims_of(vi)))}]")
     lines.append("")
     for node in g.node:
+        if constant_value(node) is not None:
+            continue
         since = op_since_version(node.op_type, opset)
         outs = f(node.output[0]) if len(node.output) == 1 \
             else "(" + ", ".join(map(f, node.output)) + ")"       # positional, D3/G6
@@ -137,6 +157,7 @@ def export_flow(model):
         "opset_import": [(o.domain, o.version) for o in model.opset_import],
         "initializers": {i.name: i.SerializeToString().hex() for i in g.initializer},
         "flow_names": {v: k for k, v in ren.items()},   # flow identifier -> ONNX name
+        "constant_nodes": constant_nodes,
     }
     return "\n".join(lines) + "\n", passthrough
 
@@ -232,9 +253,11 @@ def import_model(text, passthrough):
 
     inputs = [vi(n, e, d) for (r, n, b, e, d) in ios if r == "input"]
     outputs = [vi(n, e, d) for (r, n, b, e, d) in ios if r == "output"]
+    const_at = {idx: name for idx, name in passthrough.get("constant_nodes", [])}
+    decl = {n: (e, d) for (r, n, b, e, d) in ios if r == "const"}
     inits = []
     for (r, n, b, e, d) in ios:
-        if r != "const":
+        if r != "const" or n in const_at.values():
             continue
         tp = TensorProto()
         tp.ParseFromString(bytes.fromhex(passthrough["initializers"][n]))
@@ -244,7 +267,18 @@ def import_model(text, passthrough):
         inits.append(tp)
     nodes = []
     protos = passthrough.get("node_protos")
-    for idx, (srcs, op, dsts) in enumerate(edges):
+    edge_it = iter(edges)
+    for idx in range(len(protos) if protos else len(edges)):
+        if idx in const_at:   # a flow `const` that was a Constant node: back in place
+            np_ = onnx.NodeProto()
+            np_.ParseFromString(bytes.fromhex(protos[idx]))
+            cv, (e, d) = constant_value(np_), decl.get(const_at[idx], (None, None))
+            assert cv is not None and np_.output[0] == const_at[idx] \
+                and list(cv.dims) == d and cv.data_type == TEXT_TO_ELEM.get(e), \
+                f"passthrough/text mismatch for Constant node {idx} ({const_at[idx]})"
+            nodes.append(np_)
+            continue
+        srcs, op, dsts = next(edge_it)
         if protos:
             np_ = onnx.NodeProto()
             np_.ParseFromString(bytes.fromhex(protos[idx]))
@@ -255,6 +289,7 @@ def import_model(text, passthrough):
             nodes.append(np_)
         else:
             nodes.append(helper.make_node(op, srcs, dsts))
+    assert next(edge_it, None) is None, "flow has more edges than the passthrough has nodes"
     graph = helper.make_graph(nodes, passthrough["graph_name"],
                               inputs, outputs, initializer=inits)
     model = helper.make_model(graph, opset_imports=[
